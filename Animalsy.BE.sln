@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34408.163
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{713775F4-DD74-4576-AB72-9F0DFE984614}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Animalsy.BE.Services.PetAPI", "Animalsy.BE.Services.PetAPI\Animalsy.BE.Services.PetAPI.csproj", "{CDCD3836-F14D-4F29-8F56-E6096231929C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CDCD3836-F14D-4F29-8F56-E6096231929C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDCD3836-F14D-4F29-8F56-E6096231929C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDCD3836-F14D-4F29-8F56-E6096231929C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDCD3836-F14D-4F29-8F56-E6096231929C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CDCD3836-F14D-4F29-8F56-E6096231929C} = {713775F4-DD74-4576-AB72-9F0DFE984614}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E0E46E6D-3F9D-4DA3-895D-B1A376045056}
+	EndGlobalSection
+EndGlobal
