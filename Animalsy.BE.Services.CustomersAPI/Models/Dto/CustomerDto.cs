@@ -3,7 +3,6 @@
     public class CustomerDto
     {
         public Guid Id { get; set; }
-        public Guid VendorId { get; set; }
         public string Name { get; set; }
         public string LastName { get; set; }
         public string City { get; set; }
