@@ -9,7 +9,13 @@ namespace Animalsy.BE.Services.PetsAPI
         public static MapperConfiguration RegisterMaps()
         {
             return new MapperConfiguration(config =>
-                config.CreateMap<PetDto, Pet>().ReverseMap());
+            {
+                config.CreateMap<Pet, PetDto>();
+                config.CreateMap<UpdatePetDto, Pet>();
+                config.CreateMap<CreatePetDto, Pet>()
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
+            });
+
         }
     }
 }

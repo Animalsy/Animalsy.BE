@@ -20,11 +20,6 @@ namespace Animalsy.BE.Services.PetsAPI.Repository
             return pet.Id;
         }
 
-        public async Task<IEnumerable<Pet>> GetAllAsync()
-        {
-            return await _dbContext.Pets.ToListAsync();
-        }
-
         public async Task<IEnumerable<Pet>> GetByCustomerAsync(Guid customerId)
         {
             return await _dbContext.Pets
@@ -46,6 +41,8 @@ namespace Animalsy.BE.Services.PetsAPI.Repository
             existingPet.Species = pet.Species;
             existingPet.Race = pet.Race;
             existingPet.DateOfBirth = pet.DateOfBirth;
+            existingPet.ImageUrl = pet.ImageUrl;
+            await _dbContext.SaveChangesAsync();
             return true;
         }
 
