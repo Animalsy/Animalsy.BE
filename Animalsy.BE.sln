@@ -5,7 +5,7 @@ VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{713775F4-DD74-4576-AB72-9F0DFE984614}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Animalsy.BE.Services.PetAPI", "Animalsy.BE.Services.PetAPI\Animalsy.BE.Services.PetAPI.csproj", "{CDCD3836-F14D-4F29-8F56-E6096231929C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Animalsy.BE.Services.PetsAPI", "Animalsy.BE.Services.PetAPI\Animalsy.BE.Services.PetsAPI.csproj", "{CDCD3836-F14D-4F29-8F56-E6096231929C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
