@@ -1,3 +1,4 @@
+using Animalsy.BE.Services.PetsAPI;
 using Animalsy.BE.Services.PetsAPI.Data;
 using Animalsy.BE.Services.PetsAPI.Repository;
 using Animalsy.BE.Services.PetsAPI.Utilities;
@@ -9,6 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddSingleton(MappingConfig.RegisterMaps().CreateMapper());
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<IPetRepository, PetRepository>();
 
