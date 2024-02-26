@@ -25,14 +25,14 @@ namespace Animalsy.BE.Services.CustomersAPI.Repository
             return await _dbContext.Customers.ToListAsync();
         }
 
-        public async Task<Customer?> GetByIdAsync(Guid id)
+        public async Task<Customer?> GetByIdAsync(Guid customerId)
         {
-            return await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == id);
+            return await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
         }
 
-        public async Task<bool> TryUpdateAsync(Guid id, Customer customer)
+        public async Task<bool> TryUpdateAsync(Guid customerId, Customer customer)
         {
-            var existingCustomer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == id);
+            var existingCustomer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
             if (existingCustomer == null) return false;
             
             existingCustomer.Name = customer.Name;
@@ -49,9 +49,9 @@ namespace Animalsy.BE.Services.CustomersAPI.Repository
             return true;
         }
 
-        public async Task<bool> TryDeleteAsync(Guid id)
+        public async Task<bool> TryDeleteAsync(Guid customerId)
         {
-            var existingCustomer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == id);
+            var existingCustomer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
             if (existingCustomer == null) return false;
 
             _dbContext.Customers.Remove(existingCustomer);

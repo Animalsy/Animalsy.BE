@@ -27,14 +27,14 @@ namespace Animalsy.BE.Services.PetsAPI.Repository
                 .ToListAsync();
         }
 
-        public async Task<Pet?> GetByIdAsync(Guid id)
+        public async Task<Pet?> GetByIdAsync(Guid petId)
         {
-            return await _dbContext.Pets.FirstOrDefaultAsync(p => p.Id == id);
+            return await _dbContext.Pets.FirstOrDefaultAsync(p => p.Id == petId);
         }
 
-        public async Task<bool> TryUpdateAsync(Guid id, Pet pet)
+        public async Task<bool> TryUpdateAsync(Guid petId, Pet pet)
         {
-            var existingPet = await _dbContext.Pets.FirstOrDefaultAsync(p => p.Id == id);
+            var existingPet = await _dbContext.Pets.FirstOrDefaultAsync(p => p.Id == petId);
             if (existingPet == null) return false;
 
             existingPet.Name = pet.Name;
@@ -46,9 +46,9 @@ namespace Animalsy.BE.Services.PetsAPI.Repository
             return true;
         }
 
-        public async Task<bool> TryDeleteAsync(Guid id)
+        public async Task<bool> TryDeleteAsync(Guid petId)
         {
-            var existingPet = await _dbContext.Pets.FirstOrDefaultAsync(p => p.Id == id);
+            var existingPet = await _dbContext.Pets.FirstOrDefaultAsync(p => p.Id == petId);
             if (existingPet == null) return false;
 
             _dbContext.Pets.Remove(existingPet);
