@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Animalsy.BE.Services.ProductsAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240226173356_initial")]
+    [Migration("20240226182509_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -66,6 +66,9 @@ namespace Animalsy.BE.Services.ProductsAPI.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<Guid>("VendorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
