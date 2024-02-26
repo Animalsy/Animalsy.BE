@@ -6,6 +6,8 @@ namespace Animalsy.BE.Services.ProductsAPI.Models
     {
         [Key]
         public Guid Id { get; set; }
+        [Required]
+        public Guid VendorId { get; set; }
         [Required, MaxLength(50)]
         public string Name { get; set; }
         [Required, MaxLength(1000)]
