@@ -18,5 +18,6 @@ namespace Animalsy.BE.Services.PetAPI.Models
         public DateTime DateOfBirth { get; set; }
         [MinLength(1), MaxLength(500)]
         public string ImageUrl { get; set; }
+
     }
 }
