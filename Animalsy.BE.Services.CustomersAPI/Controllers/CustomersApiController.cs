@@ -84,11 +84,6 @@ namespace Animalsy.BE.Services.CustomersAPI.Controllers
         [HttpDelete("DeleteCustomer/{customerId}")]
         public async Task<ResponseDto> DeleteAsync([FromRoute] Guid customerId)
         {
-            if (!ModelState.IsValid) return new ResponseDto
-            {
-                Result = ModelState
-            };
-
             var deleteResult = await _customerRepository.TryDeleteAsync(customerId);
             return new ResponseDto
             {

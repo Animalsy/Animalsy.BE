@@ -8,19 +8,15 @@ namespace Animalsy.BE.Services.ProductsAPI.Repository
     public class ProductRepository : IProductRepository
     {
         private readonly AppDbContext _dbContext;
-        private readonly IMapper _mapper;
 
-        public ProductRepository(AppDbContext dbContext, IMapper mapper)
+        public ProductRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
-            _mapper = mapper;
         }
 
-        public async Task<Guid> CreateAsync(Product product)
+        public async Task<IEnumerable<Product>> GetAllAsync()
         {
-            await _dbContext.Products.AddAsync(product);
-            await _dbContext.SaveChangesAsync();
-            return product.Id;
+            return await _dbContext.Products.ToListAsync();
         }
 
         public async Task<IEnumerable<Product>> GetByVendorAsync(Guid vendorId)
@@ -28,6 +24,13 @@ namespace Animalsy.BE.Services.ProductsAPI.Repository
             return await _dbContext.Products
                 .Where(p => p.VendorId == vendorId)
                 .ToListAsync();
+        }
+
+        public async Task<Guid> CreateAsync(Product product)
+        {
+            await _dbContext.Products.AddAsync(product);
+            await _dbContext.SaveChangesAsync();
+            return product.Id;
         }
 
         public async Task<Product?> GetByIdAsync(Guid productId)
