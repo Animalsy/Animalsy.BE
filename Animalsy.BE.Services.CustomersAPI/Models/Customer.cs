@@ -16,12 +16,12 @@ namespace Animalsy.BE.Services.CustomersAPI.Models
         public string City { get; set; }
         [MaxLength(40)]
         public string Street { get; set; }
-        [MaxLength(6)]
-        public string PostalCode { get; set; }
         [MaxLength(10)]
         public string Building { get; set; }
         [MaxLength(10)]
         public string Flat { get; set; }
+        [MaxLength(6)]
+        public string PostalCode { get; set; }
         [MaxLength(9)]
         public string PhoneNumber { get; set; }
         [Required, MaxLength(50)]
