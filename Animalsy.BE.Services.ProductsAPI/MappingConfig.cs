@@ -12,7 +12,7 @@ namespace Animalsy.BE.Services.ProductsAPI
             {
                 config.CreateMap<Product, ProductDto>();
                 config.CreateMap<UpdateProductDto, Product>();
-                config.CreateMap<ProductDto, Product>()
+                config.CreateMap<CreateProductDto, Product>()
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
             });
 
