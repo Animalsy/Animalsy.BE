@@ -1,29 +1,17 @@
-﻿using Animalsy.BE.Services.CustomersAPI.Models;
-using Animalsy.BE.Services.CustomersAPI.Models.Dto;
+﻿using Animalsy.BE.Services.CustomersAPI.Models.Dto;
 using Animalsy.BE.Services.CustomersAPI.Repository;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Animalsy.BE.Services.CustomersAPI.Controllers
 {
     [Route("api/customers")]
     [ApiController]
-    public class CustomersApiController : Controller
+    public class CustomersApiController(ICustomerRepository customerRepository) : Controller
     {
-        private readonly IMapper _mapper;
-        private readonly ICustomerRepository _customerRepository;
-
-        public CustomersApiController(IMapper mapper, ICustomerRepository customerRepository)
-        {
-            _mapper = mapper;
-            _customerRepository = customerRepository;
-        }
-
-
         [HttpGet("GetCustomers")]
         public async Task<ResponseDto> GetAllAsync()
         {
-            var customers = await _customerRepository.GetAllAsync();
+            var customers = await customerRepository.GetAllAsync();
             return new ResponseDto
             {
                 IsSuccess = true,
@@ -34,7 +22,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Controllers
         [HttpGet("GetCustomer/{customerId}")]
         public async Task<ResponseDto> GetAllAsync([FromRoute] Guid customerId)
         {
-            var customer = await _customerRepository.GetByIdAsync(customerId);
+            var customer = await customerRepository.GetByIdAsync(customerId);
             return customer != null
                 ? new ResponseDto
                 {
@@ -55,7 +43,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Controllers
                 Result = ModelState
             };
 
-            var createdCustomerId = await _customerRepository.CreateAsync(_mapper.Map<Customer>(dto));
+            var createdCustomerId = await customerRepository.CreateAsync(dto);
             return new ResponseDto
             {
                 IsSuccess = true,
@@ -72,7 +60,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Controllers
                 Result = ModelState
             };
 
-            var updateResult = await _customerRepository.TryUpdateAsync(customerId, _mapper.Map<Customer>(dto));
+            var updateResult = await customerRepository.TryUpdateAsync(customerId, dto);
             return new ResponseDto
             {
                 IsSuccess = updateResult,
@@ -84,7 +72,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Controllers
         [HttpDelete("DeleteCustomer/{customerId}")]
         public async Task<ResponseDto> DeleteAsync([FromRoute] Guid customerId)
         {
-            var deleteResult = await _customerRepository.TryDeleteAsync(customerId);
+            var deleteResult = await customerRepository.TryDeleteAsync(customerId);
             return new ResponseDto
             {
                 IsSuccess = deleteResult,

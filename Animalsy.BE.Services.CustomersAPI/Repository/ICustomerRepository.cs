@@ -1,13 +1,13 @@
-﻿using Animalsy.BE.Services.CustomersAPI.Models;
+﻿using Animalsy.BE.Services.CustomersAPI.Models.Dto;
 
 namespace Animalsy.BE.Services.CustomersAPI.Repository
 {
     public interface ICustomerRepository
     {
-        Task<Guid> CreateAsync(Customer customer);
-        Task<IEnumerable<Customer>> GetAllAsync();
-        Task<Customer?> GetByIdAsync(Guid customerId);
-        Task<bool> TryUpdateAsync(Guid customerId, Customer customer);
+        Task<Guid> CreateAsync(CreateCustomerDto customerDto);
+        Task<IEnumerable<CustomerDto>> GetAllAsync();
+        Task<CustomerDto> GetByIdAsync(Guid customerId);
+        Task<bool> TryUpdateAsync(Guid customerId, UpdateCustomerDto customerDto);
         Task<bool> TryDeleteAsync(Guid customerId);
     }
 }

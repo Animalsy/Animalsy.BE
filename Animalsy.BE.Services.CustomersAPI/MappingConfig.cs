@@ -11,11 +11,9 @@ namespace Animalsy.BE.Services.CustomersAPI
             return new MapperConfiguration(config =>
             {
                 config.CreateMap<Customer, CustomerDto>();
-                config.CreateMap<UpdateCustomerDto, Customer>();
                 config.CreateMap<CreateCustomerDto, Customer>()
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
             });
-
         }
     }
 }

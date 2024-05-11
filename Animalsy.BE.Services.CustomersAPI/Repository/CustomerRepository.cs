@@ -1,61 +1,59 @@
 ﻿using Animalsy.BE.Services.CustomersAPI.Data;
 using Animalsy.BE.Services.CustomersAPI.Models;
+using Animalsy.BE.Services.CustomersAPI.Models.Dto;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Animalsy.BE.Services.CustomersAPI.Repository
 {
-    public class CustomerRepository : ICustomerRepository
+    public class CustomerRepository(AppDbContext dbContext, IMapper mapper) : ICustomerRepository
     {
-        private readonly AppDbContext _dbContext;
-
-        public CustomerRepository(AppDbContext dbContext)
+        public async Task<Guid> CreateAsync(CreateCustomerDto customerDto)
         {
-            _dbContext = dbContext;
-        }
-
-        public async Task<Guid> CreateAsync(Customer customer)
-        {
-            await _dbContext.Customers.AddAsync(customer);
-            await _dbContext.SaveChangesAsync();
+            var customer = mapper.Map<Customer>(customerDto);
+            await dbContext.Customers.AddAsync(customer);
+            await dbContext.SaveChangesAsync();
             return customer.Id;
         }
 
-        public async Task<IEnumerable<Customer>> GetAllAsync()
+        public async Task<IEnumerable<CustomerDto>> GetAllAsync()
         {
-            return await _dbContext.Customers.ToListAsync();
+            var results = await dbContext.Customers.ToListAsync();
+            return mapper.Map<IEnumerable<CustomerDto>>(results);
         }
 
-        public async Task<Customer?> GetByIdAsync(Guid customerId)
+        public async Task<CustomerDto> GetByIdAsync(Guid customerId)
         {
-            return await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
+            var result = await dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
+            return mapper.Map<CustomerDto>(result);
         }
 
-        public async Task<bool> TryUpdateAsync(Guid customerId, Customer customer)
+        public async Task<bool> TryUpdateAsync(Guid customerId, UpdateCustomerDto customerDto)
         {
-            var existingCustomer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
+            var existingCustomer = await dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
             if (existingCustomer == null) return false;
-            
-            existingCustomer.Name = customer.Name;
-            existingCustomer.LastName = customer.LastName;
-            existingCustomer.City = customer.City;
-            existingCustomer.Street = customer.Street;
-            existingCustomer.Building = customer.Building;
-            existingCustomer.Flat = customer.Flat;
-            existingCustomer.PostalCode = customer.PostalCode;
-            existingCustomer.PhoneNumber = customer.PhoneNumber;
-            existingCustomer.EmailAddress = customer.EmailAddress;
 
-            await _dbContext.SaveChangesAsync();
+            existingCustomer.Name = customerDto.Name;
+            existingCustomer.LastName = customerDto.LastName;
+            existingCustomer.City = customerDto.City;
+            existingCustomer.Street = customerDto.Street;
+            existingCustomer.Building = customerDto.Building;
+            existingCustomer.Flat = customerDto.Flat;
+            existingCustomer.PostalCode = customerDto.PostalCode;
+            existingCustomer.PhoneNumber = customerDto.PhoneNumber;
+            existingCustomer.EmailAddress = customerDto.EmailAddress;
+
+            await dbContext.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> TryDeleteAsync(Guid customerId)
         {
-            var existingCustomer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
+            var existingCustomer = await dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
             if (existingCustomer == null) return false;
 
-            _dbContext.Customers.Remove(existingCustomer);
-            await _dbContext.SaveChangesAsync();
+            dbContext.Customers.Remove(existingCustomer);
+            await dbContext.SaveChangesAsync();
             return true;
         }
     }
