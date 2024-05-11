@@ -1,28 +1,17 @@
-﻿using Animalsy.BE.Services.PetAPI.Models;
-using Animalsy.BE.Services.PetsAPI.Models.Dto;
+﻿using Animalsy.BE.Services.PetsAPI.Models.Dto;
 using Animalsy.BE.Services.PetsAPI.Repository;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Animalsy.BE.Services.PetsAPI.Controllers
 {
     [Route("api/pets")]
     [ApiController]
-    public class PetsApiController : ControllerBase
+    public class PetsApiController(IPetRepository petRepository) : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly IPetRepository _petRepository;
-
-        public PetsApiController(IMapper mapper, IPetRepository petRepository)
-        {
-            _mapper = mapper;
-            _petRepository = petRepository;
-        }
-
         [HttpGet("GetPets/{customerId}")]
         public async Task<ResponseDto> GetByCustomerAsync([FromRoute] Guid customerId)
         {
-            var pets = await _petRepository.GetByCustomerAsync(customerId);
+            var pets = await petRepository.GetByCustomerAsync(customerId);
             return pets.Any()
                 ? new ResponseDto
                 {
@@ -39,7 +28,7 @@ namespace Animalsy.BE.Services.PetsAPI.Controllers
         [Route("GetPet/{petId}")]
         public async Task<ResponseDto> GetByIdAsync([FromRoute] Guid petId)
         {
-            var pet = await _petRepository.GetByIdAsync(petId);
+            var pet = await petRepository.GetByIdAsync(petId);
             return pet != null
                 ? new ResponseDto
                 {
@@ -53,14 +42,14 @@ namespace Animalsy.BE.Services.PetsAPI.Controllers
         }
 
         [HttpPost("CreatePet")]
-        public async Task<ResponseDto> CreateAsync([FromBody] CreatePetDto dto)
+        public async Task<ResponseDto> CreateAsync([FromBody] CreatePetDto petDto)
         {
             if (!ModelState.IsValid) return new ResponseDto
             {
                 Result = ModelState
             };
 
-            var createdPetId = await _petRepository.CreateAsync(_mapper.Map<Pet>(dto));
+            var createdPetId = await petRepository.CreateAsync(petDto);
             return new ResponseDto
             {
                 IsSuccess = true,
@@ -70,14 +59,14 @@ namespace Animalsy.BE.Services.PetsAPI.Controllers
         }
 
         [HttpPut("UpdatePet/{petId}")]
-        public async Task<ResponseDto> UpdateAsync([FromRoute] Guid petId, [FromBody] UpdatePetDto dto)
+        public async Task<ResponseDto> UpdateAsync([FromRoute] Guid petId, [FromBody] UpdatePetDto petDto)
         {
             if (!ModelState.IsValid) return new ResponseDto
             {
                 Result = ModelState
             };
 
-            var updateResult = await _petRepository.TryUpdateAsync(petId, _mapper.Map<Pet>(dto));
+            var updateResult = await petRepository.TryUpdateAsync(petId, petDto);
             return new ResponseDto
             {
                 IsSuccess = updateResult,
@@ -89,7 +78,7 @@ namespace Animalsy.BE.Services.PetsAPI.Controllers
         [HttpDelete("DeletePet/{petId}")]
         public async Task<ResponseDto> DeleteAsync([FromRoute] Guid petId)
         {
-            var deleteResult = await _petRepository.TryDeleteAsync(petId);
+            var deleteResult = await petRepository.TryDeleteAsync(petId);
             return new ResponseDto
             {
                 IsSuccess = deleteResult,
