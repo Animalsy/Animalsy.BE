@@ -1,6 +1,6 @@
 ﻿namespace Animalsy.BE.Services.CustomersAPI.Models.Dto
 {
-    public class ResponseDto
+    public record ResponseDto
     {
         public object? Result { get; set; }
         public bool IsSuccess { get; set; }

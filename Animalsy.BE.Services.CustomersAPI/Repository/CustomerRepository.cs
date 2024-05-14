@@ -22,18 +22,24 @@ namespace Animalsy.BE.Services.CustomersAPI.Repository
             return mapper.Map<IEnumerable<CustomerDto>>(results);
         }
 
-        public async Task<CustomerDto> GetByIdAsync(Guid customerId)
+        public async Task<CustomerDto?> GetByIdAsync(Guid customerId)
         {
             var result = await dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
             return mapper.Map<CustomerDto>(result);
         }
 
-        public async Task<bool> TryUpdateAsync(Guid customerId, UpdateCustomerDto customerDto)
+        public async Task<CustomerDto?> GetByEmailAsync(string email)
         {
-            var existingCustomer = await dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
+            var result = await dbContext.Customers.FirstOrDefaultAsync(c => c.EmailAddress == email);
+            return mapper.Map<CustomerDto>(result);
+        }
+
+        public async Task<bool> UpdateAsync(UpdateCustomerDto customerDto)
+        {
+            var existingCustomer = await dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerDto.Id);
             if (existingCustomer == null) return false;
 
-            existingCustomer.Name = customerDto.Name;
+            existingCustomer.Name =  customerDto.Name;
             existingCustomer.LastName = customerDto.LastName;
             existingCustomer.City = customerDto.City;
             existingCustomer.Street = customerDto.Street;

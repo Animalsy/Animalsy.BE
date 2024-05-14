@@ -7,23 +7,23 @@ namespace Animalsy.BE.Services.CustomersAPI.Models
         [Key]
         public Guid Id { get; set; }
         [Required, MaxLength(20)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         [Required, MaxLength(20)]
-        public string LastName { get; set; }
+        public string LastName { get; set; } = string.Empty;
         [Required, MaxLength(20)]
-        public string City { get; set; }
+        public string City { get; set; } = string.Empty;
         [MaxLength(40)]
-        public string Street { get; set; }
+        public string Street { get; set; } = string.Empty;
         [MaxLength(10)]
-        public string Building { get; set; }
+        public string Building { get; set; } = string.Empty;
         [MaxLength(10)]
-        public string Flat { get; set; }
+        public string? Flat { get; set; }
         [MaxLength(6)]
-        public string PostalCode { get; set; }
+        public string PostalCode { get; set; } = string.Empty;
         [MaxLength(9)]
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; } = string.Empty;
         [Required, MaxLength(50)]
-        public string EmailAddress { get; set; }
+        public string? EmailAddress { get; set; }
 
     }
 }
