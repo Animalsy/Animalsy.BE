@@ -1,4 +1,4 @@
-﻿using Animalsy.BE.Services.PetAPI.Models;
+﻿using Animalsy.BE.Services.PetsAPI.Models;
 using Animalsy.BE.Services.PetsAPI.Models.Dto;
 using AutoMapper;
 

@@ -1,5 +1,5 @@
-﻿using Animalsy.BE.Services.PetAPI.Models;
-using Animalsy.BE.Services.PetsAPI.Data;
+﻿using Animalsy.BE.Services.PetsAPI.Data;
+using Animalsy.BE.Services.PetsAPI.Models;
 using Animalsy.BE.Services.PetsAPI.Models.Dto;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;

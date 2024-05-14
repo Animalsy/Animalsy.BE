@@ -1,12 +1,12 @@
 ﻿namespace Animalsy.BE.Services.PetsAPI.Models.Dto
 {
-    public class CreatePetDto
+    public record CreatePetDto
     {
-        public Guid CustomerId { get; set; }
-        public string Species { get; set; }
-        public string Race { get; set; }
-        public string Name { get; set; }
+        public Guid CustomerId { get; set; } = Guid.Empty;
+        public string Species { get; set; } = string.Empty;
+        public string Race { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         public DateTime DateOfBirth { get; set; }
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }
