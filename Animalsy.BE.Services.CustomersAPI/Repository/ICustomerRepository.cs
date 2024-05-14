@@ -8,7 +8,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Repository
         Task<IEnumerable<CustomerResponseDto>> GetAllAsync();
         Task<CustomerResponseDto?> GetByIdAsync(Guid customerId);
         Task<CustomerResponseDto?> GetByEmailAsync (string email);
-        Task<bool> UpdateAsync(UpdateCustomerDto customerDto);
+        Task<bool> TryUpdateAsync(UpdateCustomerDto customerDto);
         Task<bool> TryDeleteAsync(Guid customerId);
     }
 }

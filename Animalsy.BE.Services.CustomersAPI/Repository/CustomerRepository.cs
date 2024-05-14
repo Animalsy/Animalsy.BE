@@ -34,7 +34,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Repository
             return mapper.Map<CustomerResponseDto>(result);
         }
 
-        public async Task<bool> UpdateAsync(UpdateCustomerDto customerDto)
+        public async Task<bool> TryUpdateAsync(UpdateCustomerDto customerDto)
         {
             var existingCustomer = await dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerDto.Id);
             if (existingCustomer == null) return false;

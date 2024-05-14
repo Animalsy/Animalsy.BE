@@ -81,7 +81,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Controllers
             var validationResult = await updateCustomerValidator.ValidateAsync(customerDto);
             if (!validationResult.IsValid) return BadRequest(validationResult);
 
-            var updateSuccessful = await customerRepository.UpdateAsync(customerDto);
+            var updateSuccessful = await customerRepository.TryUpdateAsync(customerDto);
             return updateSuccessful
                 ? Ok("Customer has been updated successfully")
                 : NotFound(CustomerIdNotFoundMessage(customerDto.Id));

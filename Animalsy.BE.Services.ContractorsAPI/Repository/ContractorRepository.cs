@@ -46,7 +46,7 @@ namespace Animalsy.BE.Services.ContractorsAPI.Repository
 
         public async Task<bool> TryDeleteAsync(Guid contractorId)
         {
-            var existingContractor = await dbContext.Contractors.FirstOrDefaultAsync(p => p.Id == contractorId.Id);
+            var existingContractor = await dbContext.Contractors.FirstOrDefaultAsync(p => p.Id == contractorId);
             if (existingContractor == null) return false;
 
             dbContext.Contractors.Remove(existingContractor);
