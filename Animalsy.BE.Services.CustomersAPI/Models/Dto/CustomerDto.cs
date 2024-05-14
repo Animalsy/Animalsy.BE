@@ -2,15 +2,15 @@
 {
     public record CustomerDto
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string LastName { get; set; }
-        public string City { get; set; }
-        public string Street { get; set; }
-        public string Building { get; set; }
-        public string Flat { get; set; }
-        public string PostalCode { get; set; }
-        public string PhoneNumber { get; set; }
-        public string EmailAddress { get; set; }
+        public Guid Id { get; set; } = Guid.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public string Street { get; set; } = string.Empty;
+        public string Building { get; set; } = string.Empty;
+        public string? Flat { get; set; }
+        public string PostalCode { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
+        public string EmailAddress { get; set; } = string.Empty;
     }
 }

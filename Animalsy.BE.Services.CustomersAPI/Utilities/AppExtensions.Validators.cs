@@ -1,5 +1,4 @@
-﻿using Animalsy.BE.Services.CustomersAPI.Models.Dto;
-using Animalsy.BE.Services.CustomersAPI.Validators;
+﻿using Animalsy.BE.Services.CustomersAPI.Validators;
 using FluentValidation;
 namespace Animalsy.BE.Services.CustomersAPI.Utilities
 {
