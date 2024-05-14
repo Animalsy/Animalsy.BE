@@ -1,6 +1,6 @@
 ﻿namespace Animalsy.BE.Services.ProductsAPI.Models.Dto
 {
-    public class ProductDto
+    public class ProductResponseDto
     {
         public Guid Id { get; set; }
         public Guid VendorId { get; set; }

@@ -10,7 +10,7 @@ namespace Animalsy.BE.Services.PetsAPI
         {
             return new MapperConfiguration(config =>
             {
-                config.CreateMap<Pet, PetDto>();
+                config.CreateMap<Pet, PetResponseDto>();
                 config.CreateMap<CreatePetDto, Pet>()
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
             });

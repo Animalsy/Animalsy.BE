@@ -8,18 +8,18 @@ namespace Animalsy.BE.Services.ProductsAPI.Repository
 {
     public class ProductRepository(AppDbContext dbContext, IMapper mapper) : IProductRepository
     {
-        public async Task<IEnumerable<ProductDto>> GetAllAsync()
+        public async Task<IEnumerable<ProductResponseDto>> GetAllAsync()
         {
             var results = await dbContext.Products.ToListAsync();
-            return mapper.Map<IEnumerable<ProductDto>>(results);
+            return mapper.Map<IEnumerable<ProductResponseDto>>(results);
         }
 
-        public async Task<IEnumerable<ProductDto>> GetByVendorAsync(Guid vendorId)
+        public async Task<IEnumerable<ProductResponseDto>> GetByVendorAsync(Guid vendorId)
         {
             var results = await dbContext.Products
                 .Where(p => p.VendorId == vendorId)
                 .ToListAsync();
-            return mapper.Map<IEnumerable<ProductDto>>(results);
+            return mapper.Map<IEnumerable<ProductResponseDto>>(results);
         }
 
         public async Task<Guid> CreateAsync(CreateProductDto productDto)
@@ -30,10 +30,10 @@ namespace Animalsy.BE.Services.ProductsAPI.Repository
             return product.Id;
         }
 
-        public async Task<ProductDto?> GetByIdAsync(Guid productId)
+        public async Task<ProductResponseDto?> GetByIdAsync(Guid productId)
         {
             var result = await dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
-            return mapper.Map<ProductDto>(result);
+            return mapper.Map<ProductResponseDto>(result);
         }
 
         public async Task<bool> TryUpdateAsync(UpdateProductDto productDto)

@@ -1,6 +1,6 @@
 ﻿namespace Animalsy.BE.Services.CustomersAPI.Models.Dto
 {
-    public record CustomerDto
+    public record CustomerResponseDto
     {
         public Guid Id { get; set; } = Guid.Empty;
         public string Name { get; set; } = string.Empty;

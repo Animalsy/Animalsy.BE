@@ -16,18 +16,18 @@ namespace Animalsy.BE.Services.PetsAPI.Repository
             return pet.Id;
         }
 
-        public async Task<IEnumerable<PetDto>> GetByCustomerAsync(Guid customerId)
+        public async Task<IEnumerable<PetResponseDto>> GetByCustomerAsync(Guid customerId)
         {
             var results = await dbContext.Pets
                 .Where(pet => pet.CustomerId == customerId)
                 .ToListAsync();
-            return mapper.Map<IEnumerable<PetDto>>(results);
+            return mapper.Map<IEnumerable<PetResponseDto>>(results);
         }
 
-        public async Task<PetDto?> GetByIdAsync(Guid petId)
+        public async Task<PetResponseDto?> GetByIdAsync(Guid petId)
         {
             var pet = await dbContext.Pets.FirstOrDefaultAsync(p => p.Id == petId);
-            return mapper.Map<PetDto>(pet);
+            return mapper.Map<PetResponseDto>(pet);
         }
 
         public async Task<bool> TryUpdateAsync(UpdatePetDto petDto)

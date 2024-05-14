@@ -1,6 +1,6 @@
 ﻿namespace Animalsy.BE.Services.ContractorsAPI.Models.Dto
 {
-    public record ContractorDto
+    public record ContractorResponseDto
     {
         public Guid Id { get; set; } = Guid.Empty;
         public Guid VendorId { get; set; } = Guid.Empty;

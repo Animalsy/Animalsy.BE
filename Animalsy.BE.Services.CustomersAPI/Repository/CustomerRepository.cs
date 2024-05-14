@@ -16,22 +16,22 @@ namespace Animalsy.BE.Services.CustomersAPI.Repository
             return customer.Id;
         }
 
-        public async Task<IEnumerable<CustomerDto>> GetAllAsync()
+        public async Task<IEnumerable<CustomerResponseDto>> GetAllAsync()
         {
             var results = await dbContext.Customers.ToListAsync();
-            return mapper.Map<IEnumerable<CustomerDto>>(results);
+            return mapper.Map<IEnumerable<CustomerResponseDto>>(results);
         }
 
-        public async Task<CustomerDto?> GetByIdAsync(Guid customerId)
+        public async Task<CustomerResponseDto?> GetByIdAsync(Guid customerId)
         {
             var result = await dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
-            return mapper.Map<CustomerDto>(result);
+            return mapper.Map<CustomerResponseDto>(result);
         }
 
-        public async Task<CustomerDto?> GetByEmailAsync(string email)
+        public async Task<CustomerResponseDto?> GetByEmailAsync(string email)
         {
             var result = await dbContext.Customers.FirstOrDefaultAsync(c => c.EmailAddress == email);
-            return mapper.Map<CustomerDto>(result);
+            return mapper.Map<CustomerResponseDto>(result);
         }
 
         public async Task<bool> UpdateAsync(UpdateCustomerDto customerDto)
