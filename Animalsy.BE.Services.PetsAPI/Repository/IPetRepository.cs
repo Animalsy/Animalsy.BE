@@ -6,8 +6,8 @@ namespace Animalsy.BE.Services.PetsAPI.Repository
     {
         Task<Guid> CreateAsync(CreatePetDto petDto);
         Task<IEnumerable<PetDto>> GetByCustomerAsync(Guid customerId);
-        Task<PetDto> GetByIdAsync(Guid petId);
-        Task<bool> TryUpdateAsync(Guid petId, UpdatePetDto petDto);
+        Task<PetDto?> GetByIdAsync(Guid petId);
+        Task<bool> TryUpdateAsync(UpdatePetDto petDto);
         Task<bool> TryDeleteAsync(Guid petId);
     }
 }

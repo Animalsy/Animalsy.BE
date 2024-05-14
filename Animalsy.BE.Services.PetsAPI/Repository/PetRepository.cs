@@ -24,15 +24,15 @@ namespace Animalsy.BE.Services.PetsAPI.Repository
             return mapper.Map<IEnumerable<PetDto>>(results);
         }
 
-        public async Task<PetDto> GetByIdAsync(Guid petId)
+        public async Task<PetDto?> GetByIdAsync(Guid petId)
         {
             var pet = await dbContext.Pets.FirstOrDefaultAsync(p => p.Id == petId);
             return mapper.Map<PetDto>(pet);
         }
 
-        public async Task<bool> TryUpdateAsync(Guid petId, UpdatePetDto petDto)
+        public async Task<bool> TryUpdateAsync(UpdatePetDto petDto)
         {
-            var existingPet = await dbContext.Pets.FirstOrDefaultAsync(p => p.Id == petId);
+            var existingPet = await dbContext.Pets.FirstOrDefaultAsync(p => p.Id == petDto.Id);
             if (existingPet == null) return false;
 
             existingPet.Name = petDto.Name;

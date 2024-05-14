@@ -1,90 +1,93 @@
 ﻿using Animalsy.BE.Services.PetsAPI.Models.Dto;
 using Animalsy.BE.Services.PetsAPI.Repository;
+using Animalsy.BE.Services.PetsAPI.Validators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Animalsy.BE.Services.PetsAPI.Controllers
 {
     [Route("api/pets")]
     [ApiController]
-    public class PetsApiController(IPetRepository petRepository) : ControllerBase
+    public class PetsApiController(IPetRepository petRepository, UniqueIdValidator idValidator, CreatePetValidator createPetValidator,
+        UpdatePetValidator updatePetValidator) : ControllerBase
     {
         [HttpGet("GetPets/{customerId}")]
-        public async Task<ResponseDto> GetByCustomerAsync([FromRoute] Guid customerId)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetByCustomerAsync([FromRoute] Guid customerId)
         {
+            var validationResult = await idValidator.ValidateAsync(customerId);
+            if (!validationResult.IsValid) return BadRequest(validationResult);
+
             var pets = await petRepository.GetByCustomerAsync(customerId);
             return pets.Any()
-                ? new ResponseDto
-                {
-                    IsSuccess = true,
-                    Result = pets,
-                }
-                : new ResponseDto
-                {
-                    Message = "You have not added any pet yet"
-                };
+                ? Ok(pets)
+                : NotFound("You have not added any pet yet");
         }
 
         [HttpGet]
         [Route("GetPet/{petId}")]
-        public async Task<ResponseDto> GetByIdAsync([FromRoute] Guid petId)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetByIdAsync([FromRoute] Guid petId)
         {
+            var validationResult = await idValidator.ValidateAsync(petId);
+            if (!validationResult.IsValid) return BadRequest(validationResult);
+
             var pet = await petRepository.GetByIdAsync(petId);
             return pet != null
-                ? new ResponseDto
-                {
-                    IsSuccess = true,
-                    Result = pet,
-                }
-                : new ResponseDto
-                {
-                    Message = "Pet with provided Id has not been found"
-                };
+                ? Ok(pet)
+                : NotFound(PetIdNotFoundMessage(petId));
         }
 
         [HttpPost("CreatePet")]
-        public async Task<ResponseDto> CreateAsync([FromBody] CreatePetDto petDto)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateAsync([FromBody] CreatePetDto petDto)
         {
-            if (!ModelState.IsValid) return new ResponseDto
-            {
-                Result = ModelState
-            };
+            var validationResult = await createPetValidator.ValidateAsync(petDto);
+            if (!validationResult.IsValid) return BadRequest(validationResult);
 
             var createdPetId = await petRepository.CreateAsync(petDto);
-            return new ResponseDto
-            {
-                IsSuccess = true,
-                Result = createdPetId,
-                Message = "Pet has been created successfully"
-            };
+            return Ok(createdPetId);
         }
 
         [HttpPut("UpdatePet/{petId}")]
-        public async Task<ResponseDto> UpdateAsync([FromRoute] Guid petId, [FromBody] UpdatePetDto petDto)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateAsync([FromBody] UpdatePetDto petDto)
         {
-            if (!ModelState.IsValid) return new ResponseDto
-            {
-                Result = ModelState
-            };
+            var validationResult = await updatePetValidator.ValidateAsync(petDto);
+            if (!validationResult.IsValid) return BadRequest(validationResult);
 
-            var updateResult = await petRepository.TryUpdateAsync(petId, petDto);
-            return new ResponseDto
-            {
-                IsSuccess = updateResult,
-                Result = petId,
-                Message = updateResult ? "Pet has been updated successfully" : "Pet with provided Id has not been found"
-            };
+            var updateResult = await petRepository.TryUpdateAsync(petDto);
+            return updateResult
+                ? Ok("Pet has been updated successfully")
+                : NotFound(PetIdNotFoundMessage(petDto.Id));
         }
 
         [HttpDelete("DeletePet/{petId}")]
-        public async Task<ResponseDto> DeleteAsync([FromRoute] Guid petId)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteAsync([FromRoute] Guid petId)
         {
+            var validationResult = await idValidator.ValidateAsync(petId);
+            if (!validationResult.IsValid) return BadRequest(validationResult);
+
             var deleteResult = await petRepository.TryDeleteAsync(petId);
-            return new ResponseDto
-            {
-                IsSuccess = deleteResult,
-                Result = petId,
-                Message = deleteResult ? "Pet has been deleted successfully" : "Pet with provided Id has not been found"
-            };
+            return deleteResult
+                ? Ok("Pet has been deleted successfully")
+                : NotFound(PetIdNotFoundMessage(petId));
         }
+
+        private static string PetIdNotFoundMessage(Guid? id) => $"Pet with Id {id} has not been found";
     }
 }
