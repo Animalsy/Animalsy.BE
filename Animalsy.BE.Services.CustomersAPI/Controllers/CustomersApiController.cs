@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Animalsy.BE.Services.CustomersAPI.Controllers
 {
-    [Route("api/customers")]
+    [Route("Api/Customers")]
     [ApiController]
     public class CustomersApiController(ICustomerRepository customerRepository, CreateCustomerValidator createCustomerValidator,
         UpdateCustomerValidator updateCustomerValidator, UniqueIdValidator idValidator, EmailValidator emailValidator) : Controller
     {
-        [HttpGet("GetCustomers")]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -22,7 +22,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Controllers
                 : NotFound("There are no customers added yet");
         }
 
-        [HttpGet("GetCustomer/{customerId}")]
+        [HttpGet("Ids/{customerId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -38,7 +38,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Controllers
                 : NotFound(CustomerIdNotFoundMessage(customerId));
         }
 
-        [HttpGet("GetCustomerByEmail/{email}")]
+        [HttpGet("Emails/{email}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -54,7 +54,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Controllers
                 : NotFound(CustomerEmailNotFoundMessage(email));
         }
 
-        [HttpPost("CreateCustomer")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -71,7 +71,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Controllers
             return Ok(createdCustomerId);
         }
 
-        [HttpPut("UpdateCustomer")]
+        [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -88,7 +88,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Controllers
 
         }
 
-        [HttpDelete("DeleteCustomer/{customerId}")]
+        [HttpDelete("Ids/{customerId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

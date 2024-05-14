@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Animalsy.BE.Services.PetsAPI.Controllers
 {
-    [Route("api/pets")]
+    [Route("Api/Pets")]
     [ApiController]
     public class PetsApiController(IPetRepository petRepository, UniqueIdValidator idValidator, CreatePetValidator createPetValidator,
         UpdatePetValidator updatePetValidator) : ControllerBase
     {
-        [HttpGet("GetPets/{customerId}")]
+        [HttpGet("Customers/Ids/{customerId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -27,7 +27,7 @@ namespace Animalsy.BE.Services.PetsAPI.Controllers
         }
 
         [HttpGet]
-        [Route("GetPet/{petId}")]
+        [Route("Ids/{petId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -43,7 +43,7 @@ namespace Animalsy.BE.Services.PetsAPI.Controllers
                 : NotFound(PetIdNotFoundMessage(petId));
         }
 
-        [HttpPost("CreatePet")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -56,7 +56,7 @@ namespace Animalsy.BE.Services.PetsAPI.Controllers
             return Ok(createdPetId);
         }
 
-        [HttpPut("UpdatePet")]
+        [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -72,7 +72,7 @@ namespace Animalsy.BE.Services.PetsAPI.Controllers
                 : NotFound(PetIdNotFoundMessage(petDto.Id));
         }
 
-        [HttpDelete("DeletePet/{petId}")]
+        [HttpDelete("Ids/{petId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -1,18 +1,16 @@
-﻿using Animalsy.BE.Services.ProductsAPI.Models;
-using Animalsy.BE.Services.ProductsAPI.Models.Dto;
+﻿using Animalsy.BE.Services.ProductsAPI.Models.Dto;
 using Animalsy.BE.Services.ProductsAPI.Repository;
 using Animalsy.BE.Services.ProductsAPI.Validators;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Animalsy.BE.Services.ProductsAPI.Controllers
 {
-    [Route("api/products")]
+    [Route("Api/Products")]
     [ApiController]
     public class ProductsApiController(IProductRepository productRepository, UniqueIdValidator idValidator, 
         CreateProductValidator createProductValidator, UpdateProductValidator updateProductValidator) : ControllerBase
     {
-        [HttpGet("GetProducts")]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -24,7 +22,7 @@ namespace Animalsy.BE.Services.ProductsAPI.Controllers
                 : NotFound("There were no products added yet");
         }
 
-        [HttpGet("GetProductByVendor/{vendorId}")]
+        [HttpGet("Vendors/Ids/{vendorId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -40,7 +38,7 @@ namespace Animalsy.BE.Services.ProductsAPI.Controllers
                 : NotFound(VendorIdNotFoundMessage(vendorId));
         }
 
-        [HttpGet("GetProductById/{productId}")]
+        [HttpGet("Ids/{productId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -56,7 +54,7 @@ namespace Animalsy.BE.Services.ProductsAPI.Controllers
                 : NotFound(ProductIdNotFoundMessage(productId));
         }
 
-        [HttpPost("CreateProduct")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -69,12 +67,12 @@ namespace Animalsy.BE.Services.ProductsAPI.Controllers
             return Ok(createdProductId);
         }
 
-        [HttpPost("UpdateProduct/{productId}")]
+        [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateAsync([FromRoute] Guid productId,[FromBody] UpdateProductDto productDto)
+        public async Task<IActionResult> UpdateAsync([FromBody] UpdateProductDto productDto)
         {
             var validationResult = await updateProductValidator.ValidateAsync(productDto);
             if (!validationResult.IsValid) return BadRequest(validationResult);
@@ -85,7 +83,7 @@ namespace Animalsy.BE.Services.ProductsAPI.Controllers
                 : NotFound(ProductIdNotFoundMessage(productDto.Id));
         }
 
-        [HttpGet("DeleteProduct/{productId}")]
+        [HttpGet("Ids/{productId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
