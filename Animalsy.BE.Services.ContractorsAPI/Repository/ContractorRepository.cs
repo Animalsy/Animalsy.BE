@@ -1,32 +1,57 @@
-﻿using Animalsy.BE.Services.ContractorsAPI.Models.Dto;
+﻿using Animalsy.BE.Services.ContractorsAPI.Data;
+using Animalsy.BE.Services.ContractorsAPI.Models;
+using Animalsy.BE.Services.ContractorsAPI.Models.Dto;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Animalsy.BE.Services.ContractorsAPI.Repository
 {
-    public class ContractorRepository : IContractorRepository
+    public class ContractorRepository(AppDbContext dbContext, IMapper mapper) : IContractorRepository
     {
-        public Task<ContractorResponseDto?> GetByIdAsync(Guid contractorId)
+        public async Task<ContractorResponseDto?> GetByIdAsync(Guid contractorId)
         {
-            throw new NotImplementedException();
+            var result = await dbContext.Contractors.FirstOrDefaultAsync(p => p.Id == contractorId);
+            return mapper.Map<ContractorResponseDto>(result);
         }
 
-        public Task<ContractorResponseDto?> GetByVendorAsync(Guid vendorId)
+        public async Task<IEnumerable<ContractorResponseDto>> GetByVendorAsync(Guid vendorId)
         {
-            throw new NotImplementedException();
+            var results = await dbContext.Contractors
+                .Where(p => p.VendorId == vendorId)
+                .ToListAsync();
+            return mapper.Map<IEnumerable<ContractorResponseDto>>(results);
         }
 
-        public Task<Guid> CreateAsync(CreateContractorDto contractorDto)
+        public async Task<Guid> CreateAsync(CreateContractorDto contractorDto)
         {
-            throw new NotImplementedException();
+            var contractor = mapper.Map<Contractor>(contractorDto);
+            await dbContext.Contractors.AddAsync(contractor);
+            await dbContext.SaveChangesAsync();
+            return contractor.Id;
         }
 
-        public Task<bool> UpdateAsync(UpdateContractorDto customerDto)
+        public async Task<bool> TryUpdateAsync(UpdateContractorDto contractorDto)
         {
-            throw new NotImplementedException();
+            var existingContractor = await dbContext.Contractors.FirstOrDefaultAsync(p => p.Id == contractorDto.Id);
+            if (existingContractor == null) return false;
+
+            existingContractor.Name = contractorDto.Name;
+            existingContractor.LastName = contractorDto.LastName;
+            existingContractor.Specialization = contractorDto.Specialization;
+            existingContractor.ImageUrl = contractorDto.ImageUrl;
+
+            await dbContext.SaveChangesAsync();
+            return true;
         }
 
-        public Task<bool> TryDeleteAsync(Guid contractorId)
+        public async Task<bool> TryDeleteAsync(Guid contractorId)
         {
-            throw new NotImplementedException();
+            var existingContractor = await dbContext.Contractors.FirstOrDefaultAsync(p => p.Id == contractorId.Id);
+            if (existingContractor == null) return false;
+
+            dbContext.Contractors.Remove(existingContractor);
+            await dbContext.SaveChangesAsync();
+            return true;
         }
     }
 }
