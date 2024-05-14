@@ -71,7 +71,7 @@ namespace Animalsy.BE.Services.ContractorsAPI.Controllers
                 : NotFound(ContractorIdNotFoundMessage(contractorDto.Id));
         }
 
-        [HttpGet("Ids/{contractorId}")]
+        [HttpDelete("Ids/{contractorId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
