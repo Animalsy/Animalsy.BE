@@ -1,69 +1,66 @@
 ﻿using Animalsy.BE.Services.ProductsAPI.Data;
 using Animalsy.BE.Services.ProductsAPI.Models;
+using Animalsy.BE.Services.ProductsAPI.Models.Dto;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Animalsy.BE.Services.ProductsAPI.Repository
 {
-    public class ProductRepository : IProductRepository
+    public class ProductRepository(AppDbContext dbContext, IMapper mapper) : IProductRepository
     {
-        private readonly AppDbContext _dbContext;
-
-        public ProductRepository(AppDbContext dbContext)
+        public async Task<IEnumerable<ProductDto>> GetAllAsync()
         {
-            _dbContext = dbContext;
+            var results = await dbContext.Products.ToListAsync();
+            return mapper.Map<IEnumerable<ProductDto>>(results);
         }
 
-        public async Task<IEnumerable<Product>> GetAllAsync()
+        public async Task<IEnumerable<ProductDto>> GetByVendorAsync(Guid vendorId)
         {
-            return await _dbContext.Products.ToListAsync();
-        }
-
-        public async Task<IEnumerable<Product>> GetByVendorAsync(Guid vendorId)
-        {
-            return await _dbContext.Products
+            var results = await dbContext.Products
                 .Where(p => p.VendorId == vendorId)
                 .ToListAsync();
+            return mapper.Map<IEnumerable<ProductDto>>(results);
         }
 
-        public async Task<Guid> CreateAsync(Product product)
+        public async Task<Guid> CreateAsync(CreateProductDto productDto)
         {
-            await _dbContext.Products.AddAsync(product);
-            await _dbContext.SaveChangesAsync();
+            var product = mapper.Map<Product>(productDto);
+            await dbContext.Products.AddAsync(product);
+            await dbContext.SaveChangesAsync();
             return product.Id;
         }
 
-        public async Task<Product?> GetByIdAsync(Guid productId)
+        public async Task<ProductDto?> GetByIdAsync(Guid productId)
         {
-            return await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
+            var result = await dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
+            return mapper.Map<ProductDto>(result);
         }
 
-        public async Task<bool> TryUpdateAsync(Guid productId, Product product)
+        public async Task<bool> TryUpdateAsync(UpdateProductDto productDto)
         {
-            var existingProduct = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
+            var existingProduct = await dbContext.Products.FirstOrDefaultAsync(p => p.Id == productDto.Id);
             if (existingProduct == null) return false;
 
-            existingProduct.Name = product.Name;
-            existingProduct.Description = product.Description;
-            existingProduct.Category = product.Category;
-            existingProduct.SubCategory = product.SubCategory;
-            existingProduct.MinPrice = product.MinPrice;
-            existingProduct.MaxPrice = product.MaxPrice;
-            existingProduct.PromoPrice = product.PromoPrice;
-            existingProduct.Duration = product.Duration;
-            existingProduct.Services = product.Services;
+            existingProduct.Name = productDto.Name;
+            existingProduct.Description = productDto.Description;
+            existingProduct.Category = productDto.Category;
+            existingProduct.SubCategory = productDto.SubCategory;
+            existingProduct.MinPrice = productDto.MinPrice;
+            existingProduct.MaxPrice = productDto.MaxPrice;
+            existingProduct.PromoPrice = productDto.PromoPrice;
+            existingProduct.Duration = productDto.Duration;
 
-            await _dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> TryDeleteAsync(Guid productId)
         {
-            var existingProduct = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
+            var existingProduct = await dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
             if (existingProduct == null) return false;
 
-            _dbContext.Products.Remove(existingProduct);
-            await _dbContext.SaveChangesAsync();
+            dbContext.Products.Remove(existingProduct);
+            await dbContext.SaveChangesAsync();
             return true;
         }
     }

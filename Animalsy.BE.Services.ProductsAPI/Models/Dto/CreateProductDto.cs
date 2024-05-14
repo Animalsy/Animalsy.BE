@@ -2,14 +2,14 @@
 {
     public class CreateProductDto
     {
-        public Guid VendorId { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string Category { get; set; }
-        public string SubCategory { get; set; }
+        public Guid VendorId { get; set; } = Guid.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty;
+        public string SubCategory { get; set; } = string.Empty;
         public decimal MinPrice { get; set; }
-        public decimal MaxPrice { get; set; }
+        public decimal? MaxPrice { get; set; }
+        public decimal? PromoPrice { get; set; }
         public TimeSpan Duration { get; set; }
-        public IEnumerable<string> Services { get; set; }
     }
 }

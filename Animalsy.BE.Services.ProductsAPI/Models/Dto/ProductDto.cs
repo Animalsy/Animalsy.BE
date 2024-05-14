@@ -10,7 +10,7 @@
         public string SubCategory { get; set; }
         public decimal MinPrice { get; set; }
         public decimal MaxPrice { get; set; }
+        public decimal PromoPrice { get; set; }
         public TimeSpan Duration { get; set; }
-        public IEnumerable<string> Services { get; set; }
     }
 }

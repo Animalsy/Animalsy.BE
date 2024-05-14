@@ -1,116 +1,107 @@
 ﻿using Animalsy.BE.Services.ProductsAPI.Models;
 using Animalsy.BE.Services.ProductsAPI.Models.Dto;
 using Animalsy.BE.Services.ProductsAPI.Repository;
-using AutoMapper;
+using Animalsy.BE.Services.ProductsAPI.Validators;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Animalsy.BE.Services.ProductsAPI.Controllers
 {
     [Route("api/products")]
     [ApiController]
-    public class ProductsApiController : ControllerBase
+    public class ProductsApiController(IProductRepository productRepository, UniqueIdValidator idValidator, 
+        CreateProductValidator createProductValidator, UpdateProductValidator updateProductValidator) : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly IProductRepository _productRepository;
-
-        public ProductsApiController(IMapper mapper, IProductRepository productRepository)
-        {
-            _mapper = mapper;
-            _productRepository = productRepository;
-        }
-
         [HttpGet("GetProducts")]
-        public async Task<ResponseDto> GetAllAsync()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAllAsync()
         {
-            var products = await _productRepository.GetAllAsync();
+            var products = await productRepository.GetAllAsync();
             return products.Any()
-                ? new ResponseDto
-                {
-                    IsSuccess = true,
-                    Result = products,
-                }
-                : new ResponseDto
-                {
-                    Message = "There were no products added yet"
-                };
+                ? Ok(products)
+                : NotFound("There were no products added yet");
         }
 
-        [HttpGet("GetProducts/{vendorId}")]
-        public async Task<ResponseDto> GetByVendorAsync([FromRoute] Guid vendorId)
+        [HttpGet("GetProductByVendor/{vendorId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetByVendorAsync([FromRoute] Guid vendorId)
         {
-            var products = await _productRepository.GetByVendorAsync(vendorId);
+            var validationResult = await idValidator.ValidateAsync(vendorId);
+            if (!validationResult.IsValid) return BadRequest(validationResult);
+
+            var products = await productRepository.GetByVendorAsync(vendorId);
             return products.Any()
-                ? new ResponseDto
-                {
-                    IsSuccess = true,
-                    Result = products,
-                }
-                : new ResponseDto
-                {
-                    Message = "There were no products added yet"
-                };
+                ? Ok(products)
+                : NotFound(VendorIdNotFoundMessage(vendorId));
         }
 
-        [HttpGet("GetProduct/{productId}")]
-        public async Task<ResponseDto> GetByIdAsync([FromRoute] Guid productId)
+        [HttpGet("GetProductById/{productId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetByIdAsync([FromRoute] Guid productId)
         {
-            var product = await _productRepository.GetByIdAsync(productId);
+            var validationResult = await idValidator.ValidateAsync(productId);
+            if (!validationResult.IsValid) return BadRequest(validationResult);
+
+            var product = await productRepository.GetByIdAsync(productId);
             return product != null
-                ? new ResponseDto
-                {
-                    IsSuccess = true,
-                    Result = product,
-                }
-                : new ResponseDto
-                {
-                    Message = "Product with provided Id has not been found"
-                };
+                ? Ok(product)
+                : NotFound(ProductIdNotFoundMessage(productId));
         }
 
         [HttpPost("CreateProduct")]
-        public async Task<ResponseDto> CreateAsync([FromBody] CreateProductDto dto)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateAsync([FromBody] CreateProductDto productDto)
         {
-            if (!ModelState.IsValid) return new ResponseDto
-            {
-                Result = ModelState
-            };
+            var validationResult = await createProductValidator.ValidateAsync(productDto);
+            if (!validationResult.IsValid) return BadRequest(validationResult);
 
-            var createdProductId = await _productRepository.CreateAsync(_mapper.Map<Product>(dto));
-            return new ResponseDto
-            {
-                IsSuccess = true,
-                Result = createdProductId,
-                Message = "Product has been created successfully"
-            };
+            var createdProductId = await productRepository.CreateAsync(productDto);
+            return Ok(createdProductId);
         }
 
         [HttpPost("UpdateProduct/{productId}")]
-        public async Task<ResponseDto> UpdateAsync([FromRoute] Guid productId, [FromBody] CreateProductDto dto)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateAsync([FromRoute] Guid productId,[FromBody] UpdateProductDto productDto)
         {
-            if (!ModelState.IsValid) return new ResponseDto
-            {
-                Result = ModelState
-            };
+            var validationResult = await updateProductValidator.ValidateAsync(productDto);
+            if (!validationResult.IsValid) return BadRequest(validationResult);
 
-            var updateResult = await _productRepository.TryUpdateAsync(productId, _mapper.Map<Product>(dto));
-            return new ResponseDto
-            {
-                IsSuccess = updateResult,
-                Result = productId,
-                Message = updateResult ? "Product has been updated successfully" : "Product with provided Id has not been found"
-            };
+            var updateResult = await productRepository.TryUpdateAsync(productDto);
+            return updateResult
+                ? Ok("Product has been updated successfully")
+                : NotFound(ProductIdNotFoundMessage(productDto.Id));
         }
 
         [HttpGet("DeleteProduct/{productId}")]
-        public async Task<ResponseDto> DeleteAsync([FromRoute] Guid productId)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteAsync([FromRoute] Guid productId)
         {
-            var deleteResult = await _productRepository.TryDeleteAsync(productId);
-            return new ResponseDto
-            {
-                IsSuccess = deleteResult,
-                Result = productId,
-                Message = deleteResult ? "Product has been deleted successfully" : "Product with provided Id has not been found"
-            };
+            var validationResult = await idValidator.ValidateAsync(productId);
+            if (!validationResult.IsValid) return BadRequest(validationResult);
+
+            var deleteResult = await productRepository.TryDeleteAsync(productId);
+            return deleteResult
+                ? Ok("Product has been deleted successfully")
+                : NotFound(ProductIdNotFoundMessage(productId));
         }
+
+        private static string ProductIdNotFoundMessage(Guid? id) => $"Product with Id {id} has not been found";
+        private static string VendorIdNotFoundMessage(Guid? id) => $"Vendor with Id {id} has not been found";
     }
 }
