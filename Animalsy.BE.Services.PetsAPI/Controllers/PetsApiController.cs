@@ -56,7 +56,7 @@ namespace Animalsy.BE.Services.PetsAPI.Controllers
             return Ok(createdPetId);
         }
 
-        [HttpPut("UpdatePet/{petId}")]
+        [HttpPut("UpdatePet")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
