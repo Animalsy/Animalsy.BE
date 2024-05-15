@@ -1,23 +1,22 @@
 ﻿using Animalsy.BE.Services.ProductsAPI.Validators;
 using FluentValidation;
 
-namespace Animalsy.BE.Services.ProductsAPI.Utilities
+namespace Animalsy.BE.Services.ProductsAPI.Utilities;
+
+public static partial class AppExtensions
 {
-    public static partial class AppExtensions
+    public static void AddValidators(this IServiceCollection serviceCollection)
     {
-        public static void AddValidators(this IServiceCollection serviceCollection)
-        {
-            DisableValidationTranslation();
+        DisableValidationTranslation();
 
-            serviceCollection
-                .AddScoped<UniqueIdValidator>()
-                .AddScoped<CreateProductValidator>()
-                .AddScoped<UpdateProductValidator>();
-        }
+        serviceCollection
+            .AddScoped<UniqueIdValidator>()
+            .AddScoped<CreateProductValidator>()
+            .AddScoped<UpdateProductValidator>();
+    }
 
-        private static void DisableValidationTranslation()
-        {
-            ValidatorOptions.Global.LanguageManager.Enabled = false;
-        }
+    private static void DisableValidationTranslation()
+    {
+        ValidatorOptions.Global.LanguageManager.Enabled = false;
     }
 }

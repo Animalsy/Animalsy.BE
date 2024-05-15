@@ -1,16 +1,15 @@
 ﻿using Animalsy.BE.Services.ProductsAPI.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Animalsy.BE.Services.ProductsAPI.Utilities
-{
-    public static partial class AppExtensions
-    {
-        public static void ApplyPendingMigrations(this WebApplication app)
-        {
-            using var scope = app.Services.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+namespace Animalsy.BE.Services.ProductsAPI.Utilities;
 
-            if (dbContext.Database.GetPendingMigrations().Any()) dbContext.Database.Migrate();
-        }
+public static partial class AppExtensions
+{
+    public static void ApplyPendingMigrations(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        if (dbContext.Database.GetPendingMigrations().Any()) dbContext.Database.Migrate();
     }
 }

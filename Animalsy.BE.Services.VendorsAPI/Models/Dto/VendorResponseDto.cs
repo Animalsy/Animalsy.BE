@@ -1,16 +1,15 @@
-﻿namespace Animalsy.BE.Services.VendorsAPI.Models.Dto
+﻿namespace Animalsy.BE.Services.VendorsAPI.Models.Dto;
+
+public record VendorResponseDto
 {
-    public record VendorResponseDto
-    {
-        public Guid Id { get; set; } = Guid.Empty;
-        public string Name { get; set; } = string.Empty;
-        public string Nip { get; set; } = string.Empty;
-        public string City { get; set; } = string.Empty;
-        public string Street { get; set; } = string.Empty;
-        public string Building { get; set; } = string.Empty;
-        public string? Flat { get; set; }
-        public string PostalCode { get; set; } = string.Empty;
-        public string PhoneNumber { get; set; } = string.Empty;
-        public string EmailAddress { get; set; } = string.Empty;
-    }
+    public Guid Id { get; set; } = Guid.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Nip { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public string Street { get; set; } = string.Empty;
+    public string Building { get; set; } = string.Empty;
+    public string? Flat { get; set; }
+    public string PostalCode { get; set; } = string.Empty;
+    public string PhoneNumber { get; set; } = string.Empty;
+    public string EmailAddress { get; set; } = string.Empty;
 }
