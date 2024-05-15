@@ -7,7 +7,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Validators
         internal static string InvalidEmailAddressMessage = "Email address is not in correct format";
         public EmailValidator()
         {
-            RuleFor(x => x).NotEmpty().EmailAddress().WithMessage(InvalidEmailAddressMessage).Length(1, 50);
+            RuleFor(x => x).NotEmpty().EmailAddress().WithMessage(InvalidEmailAddressMessage).MaximumLength(50);
         }
     }
 }
