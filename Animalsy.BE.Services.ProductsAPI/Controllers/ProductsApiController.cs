@@ -83,7 +83,7 @@ public class ProductsApiController(IProductRepository productRepository, UniqueI
             : NotFound(ProductIdNotFoundMessage(productDto.Id));
     }
 
-    [HttpGet("Ids/{productId}")]
+    [HttpDelete("Ids/{productId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
