@@ -1,4 +1,5 @@
-﻿using Animalsy.BE.Services.CustomersAPI.Models.Dto;
+﻿using Animalsy.BE.Services.CustomersAPI.Models;
+using Animalsy.BE.Services.CustomersAPI.Models.Dto;
 using Animalsy.BE.Services.CustomersAPI.Repository;
 using Animalsy.BE.Services.CustomersAPI.Validators;
 using Microsoft.AspNetCore.Mvc;
@@ -35,7 +36,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Controllers
             var customer = await customerRepository.GetByIdAsync(customerId);
             return customer != null
                 ? Ok(customer)
-                : NotFound(CustomerIdNotFoundMessage(customerId));
+                : NotFound(CustomerNotFoundMessage("Id", customerId.ToString()));
         }
 
         [HttpGet("Emails/{email}")]
@@ -51,7 +52,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Controllers
             var customer = await customerRepository.GetByEmailAsync(email);
             return customer != null
                 ? Ok(customer)
-                : NotFound(CustomerEmailNotFoundMessage(email));
+                : NotFound(CustomerNotFoundMessage("Email", email));
         }
 
         [HttpPost]
@@ -65,7 +66,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Controllers
             if (!validationResult.IsValid) return BadRequest(validationResult);
 
             var existingCustomer = await customerRepository.GetByEmailAsync(customerDto.EmailAddress);
-            if(existingCustomer != null) return Conflict(CustomerEmailNotFoundMessage(customerDto.EmailAddress));
+            if(existingCustomer != null) return Conflict($"Customer with Email {customerDto.EmailAddress} already exists");
             
             var createdCustomerId = await customerRepository.CreateAsync(customerDto);
             return Ok(createdCustomerId);
@@ -83,8 +84,8 @@ namespace Animalsy.BE.Services.CustomersAPI.Controllers
 
             var updateSuccessful = await customerRepository.TryUpdateAsync(customerDto);
             return updateSuccessful
-                ? Ok("Customer has been updated successfully")
-                : NotFound(CustomerIdNotFoundMessage(customerDto.Id));
+            ? Ok("Customer has been updated successfully")
+                : NotFound(CustomerNotFoundMessage("Id", customerDto.Id.ToString()));
 
         }
 
@@ -101,10 +102,9 @@ namespace Animalsy.BE.Services.CustomersAPI.Controllers
             var deleteSuccessful = await customerRepository.TryDeleteAsync(customerId);
             return deleteSuccessful
                 ? Ok("Customer has been deleted successfully")
-                : NotFound(CustomerIdNotFoundMessage(customerId));
+                : NotFound(CustomerNotFoundMessage("Id", customerId.ToString()));
         }
 
-        private static string CustomerIdNotFoundMessage(Guid? id) => $"Customer with Id {id} has not been found";
-        private static string CustomerEmailNotFoundMessage(string email) => $"Customer with Email {email} has not been found";
+        private static string CustomerNotFoundMessage(string topic, string email) => $"Customer with {topic} {email} has not been found";
     }
 }
