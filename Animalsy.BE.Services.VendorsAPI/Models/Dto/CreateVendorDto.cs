@@ -1,9 +1,9 @@
-﻿namespace Animalsy.BE.Services.CustomersAPI.Models.Dto
+﻿namespace Animalsy.BE.Services.VendorsAPI.Models.Dto
 {
-    public record CreateCustomerDto
+    public record CreateVendorDto
     {
         public string Name { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
+        public string Nip { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public string Street { get; set; } = string.Empty;
         public string Building { get; set; } = string.Empty;

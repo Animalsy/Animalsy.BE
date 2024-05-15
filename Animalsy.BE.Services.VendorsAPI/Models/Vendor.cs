@@ -1,17 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Animalsy.BE.Services.CustomersAPI.Models
+namespace Animalsy.BE.Services.VendorsAPI.Models
 {
-    public class Customer
+    public class Vendor //TODO: Localization
     {
         [Key]
         public Guid Id { get; set; }
 
-        [Required, MaxLength(20)]
+        [Required, MaxLength(50)] 
         public string Name { get; set; } = string.Empty;
 
-        [Required, MaxLength(20)]
-        public string LastName { get; set; } = string.Empty;
+        [Required, MaxLength(10)]
+        public string Nip { get; set; } = string.Empty;
 
         [Required, MaxLength(20)]
         public string City { get; set; } = string.Empty;
@@ -31,7 +31,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Models
         [MaxLength(9)]
         public string PhoneNumber { get; set; } = string.Empty;
 
-        [Required, MaxLength(50)] 
+        [Required, MaxLength(50)]
         public string EmailAddress { get; set; } = string.Empty;
     }
 }
