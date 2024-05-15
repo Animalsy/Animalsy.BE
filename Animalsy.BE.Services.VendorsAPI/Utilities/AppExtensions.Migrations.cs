@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Animalsy.BE.Services.VendorsAPI.Utilities
 {
-    internal static class AppExtensions
+    internal static partial class AppExtensions
     {
         public static void ApplyPendingMigrations(this WebApplication app)
         {
