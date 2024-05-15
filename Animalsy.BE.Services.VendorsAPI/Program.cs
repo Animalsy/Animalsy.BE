@@ -1,5 +1,6 @@
 using Animalsy.BE.Services.VendorsAPI;
 using Animalsy.BE.Services.VendorsAPI.Data;
+using Animalsy.BE.Services.VendorsAPI.Repository;
 using Animalsy.BE.Services.VendorsAPI.Utilities;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,8 @@ builder.Services.AddDbContext<AppDbContext>(option =>
 
 builder.Services.AddSingleton(MappingConfig.RegisterMaps().CreateMapper());
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
