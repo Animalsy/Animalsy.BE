@@ -1,0 +1,6 @@
+@Animalsy.BE.Services.ProductsAPI_HostAddress = http://localhost:5070
+
+GET {{Animalsy.BE.Services.ProductsAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
