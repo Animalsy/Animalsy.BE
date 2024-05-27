@@ -2,7 +2,7 @@
 
 namespace Animalsy.BE.Services.VendorsAPI.Models;
 
-public class Vendor //TODO: Localization
+public class Vendor
 {
     [Key]
     public Guid Id { get; set; }
@@ -33,4 +33,10 @@ public class Vendor //TODO: Localization
 
     [Required, MaxLength(50)]
     public string EmailAddress { get; set; } = string.Empty;
+
+    [Required]
+    public TimeOnly OpeningHour { get; set; }
+
+    [Required]
+    public TimeOnly ClosingHour { get; set; }
 }

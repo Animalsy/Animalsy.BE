@@ -12,4 +12,6 @@ public record UpdateVendorDto
     public string PostalCode { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public string EmailAddress { get; set; } = string.Empty;
+    public TimeOnly OpeningHour { get; set; }
+    public TimeOnly ClosingHour { get; set; }
 }
