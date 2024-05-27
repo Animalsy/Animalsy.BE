@@ -7,7 +7,7 @@ namespace Animalsy.BE.Services.ContractorsAPI.Controllers;
 
 [Route("Api/Contractors")]
 [ApiController]
-public class ProductsApiController(IContractorRepository contractorRepository, UniqueIdValidator idValidator,
+public class ContractorsApiController(IContractorRepository contractorRepository, UniqueIdValidator idValidator,
     CreateContractorValidator createContractorValidator, UpdateContractorValidator updateContractorValidator) : ControllerBase
 {
     [HttpGet("Ids/{contractorId}")]
