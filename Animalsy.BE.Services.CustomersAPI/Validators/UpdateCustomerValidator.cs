@@ -1,7 +1,7 @@
-﻿using Animalsy.BE.Services.CustomersAPI.Models.Dto;
+﻿using Animalsy.BE.Services.CustomerAPI.Models.Dto;
 using FluentValidation;
 
-namespace Animalsy.BE.Services.CustomersAPI.Validators;
+namespace Animalsy.BE.Services.CustomerAPI.Validators;
 
 public class UpdateCustomerValidator : AbstractValidator<UpdateCustomerDto>
 {

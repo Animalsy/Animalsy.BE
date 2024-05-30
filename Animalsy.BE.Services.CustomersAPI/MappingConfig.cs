@@ -1,8 +1,8 @@
-﻿using Animalsy.BE.Services.CustomersAPI.Models;
-using Animalsy.BE.Services.CustomersAPI.Models.Dto;
+﻿using Animalsy.BE.Services.CustomerAPI.Models;
+using Animalsy.BE.Services.CustomerAPI.Models.Dto;
 using AutoMapper;
 
-namespace Animalsy.BE.Services.CustomersAPI;
+namespace Animalsy.BE.Services.CustomerAPI;
 
 public class MappingConfig
 {

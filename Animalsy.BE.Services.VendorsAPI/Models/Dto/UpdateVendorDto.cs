@@ -1,17 +1,17 @@
-﻿namespace Animalsy.BE.Services.VendorsAPI.Models.Dto;
+﻿namespace Animalsy.BE.Services.VendorAPI.Models.Dto;
 
 public record UpdateVendorDto
 {
-    public Guid Id { get; set; } = Guid.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string Nip { get; set; } = string.Empty;
-    public string City { get; set; } = string.Empty;
-    public string Street { get; set; } = string.Empty;
-    public string Building { get; set; } = string.Empty;
-    public string? Flat { get; set; }
-    public string PostalCode { get; set; } = string.Empty;
-    public string PhoneNumber { get; set; } = string.Empty;
-    public string EmailAddress { get; set; } = string.Empty;
-    public TimeOnly OpeningHour { get; set; }
-    public TimeOnly ClosingHour { get; set; }
+    public Guid Id { get; init; }
+    public string Name { get; init; }
+    public string Nip { get; init; }
+    public string City { get; init; }
+    public string Street { get; init; }
+    public string Building { get; init; }
+    public string Flat { get; init; }
+    public string PostalCode { get; init; }
+    public string PhoneNumber { get; init; }
+    public string EmailAddress { get; init; }
+    public TimeOnly OpeningHour { get; init; }
+    public TimeOnly ClosingHour { get; init; }
 }

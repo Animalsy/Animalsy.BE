@@ -1,7 +1,7 @@
-﻿using Animalsy.BE.Services.CustomersAPI.Models;
+﻿using Animalsy.BE.Services.CustomerAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Animalsy.BE.Services.CustomersAPI.Data;
+namespace Animalsy.BE.Services.CustomerAPI.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {

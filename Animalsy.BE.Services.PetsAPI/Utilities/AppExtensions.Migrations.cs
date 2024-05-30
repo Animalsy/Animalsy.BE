@@ -1,7 +1,7 @@
-﻿using Animalsy.BE.Services.PetsAPI.Data;
+﻿using Animalsy.BE.Services.PetAPI.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Animalsy.BE.Services.PetsAPI.Utilities;
+namespace Animalsy.BE.Services.PetAPI.Utilities;
 
 internal static partial class AppExtensions
 {

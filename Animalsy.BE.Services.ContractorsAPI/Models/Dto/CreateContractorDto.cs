@@ -1,10 +1,10 @@
-﻿namespace Animalsy.BE.Services.ContractorsAPI.Models.Dto;
+﻿namespace Animalsy.BE.Services.ContractorAPI.Models.Dto;
 
 public record CreateContractorDto
 {
-    public Guid VendorId { get; set; } = Guid.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string LastName { get; set; } = string.Empty;
-    public string Specialization { get; set; } = string.Empty;
-    public string? ImageUrl { get; set; }
+    public Guid VendorId { get; init; }
+    public string Name { get; init; }
+    public string LastName { get; init; }
+    public string Specialization { get; init; }
+    public string ImageUrl { get; init; }
 }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Animalsy.BE.Services.ProductsAPI.Migrations
+namespace Animalsy.BE.Services.ProductAPI.Migrations
 {
     /// <inheritdoc />
     public partial class initial : Migration
@@ -24,8 +24,7 @@ namespace Animalsy.BE.Services.ProductsAPI.Migrations
                     MinPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     MaxPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PromoPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Duration = table.Column<TimeSpan>(type: "time", nullable: false),
-                    Services = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Duration = table.Column<TimeSpan>(type: "time", nullable: false)
                 },
                 constraints: table =>
                 {

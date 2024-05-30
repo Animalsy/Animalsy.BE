@@ -1,13 +1,13 @@
-﻿using Animalsy.BE.Services.VendorsAPI.Models.Dto;
-using Animalsy.BE.Services.VendorsAPI.Repository;
-using Animalsy.BE.Services.VendorsAPI.Validators;
+﻿using Animalsy.BE.Services.VendorAPI.Models.Dto;
+using Animalsy.BE.Services.VendorAPI.Repository;
+using Animalsy.BE.Services.VendorAPI.Validators;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Animalsy.BE.Services.VendorsAPI.Controllers;
+namespace Animalsy.BE.Services.VendorAPI.Controllers;
 
-[Route("Api/Vendors")]
+[Route("Api/[controller]")]
 [ApiController]
-public class VendorsApiController(IVendorRepository vendorRepository, CreateVendorValidator createVendorValidator,
+public class VendorController(IVendorRepository vendorRepository, CreateVendorValidator createVendorValidator,
     UpdateVendorValidator updateVendorValidator, UniqueIdValidator idValidator, EmailValidator emailValidator) : Controller
 {
     [HttpGet]
@@ -22,7 +22,7 @@ public class VendorsApiController(IVendorRepository vendorRepository, CreateVend
             : NotFound("There are no vendors added yet");
     }
 
-    [HttpGet("Names/{name}")]
+    [HttpGet("Name/{name}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -34,7 +34,7 @@ public class VendorsApiController(IVendorRepository vendorRepository, CreateVend
             : NotFound("There are no vendors with provided name");
     }
 
-    [HttpGet("Ids/{vendorId}")]
+    [HttpGet("{vendorId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -50,7 +50,7 @@ public class VendorsApiController(IVendorRepository vendorRepository, CreateVend
             : NotFound(VendorNotFoundMessage("Id", vendorId.ToString()));
     }
 
-    [HttpGet("Emails/{email}")]
+    [HttpGet("Email/{email}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -100,7 +100,7 @@ public class VendorsApiController(IVendorRepository vendorRepository, CreateVend
 
     }
 
-    [HttpDelete("Ids/{customerId}")]
+    [HttpDelete("{customerId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

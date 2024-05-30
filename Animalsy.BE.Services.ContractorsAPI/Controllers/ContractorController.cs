@@ -1,16 +1,16 @@
-﻿using Animalsy.BE.Services.ContractorsAPI.Models.Dto;
-using Animalsy.BE.Services.ContractorsAPI.Repository;
-using Animalsy.BE.Services.ContractorsAPI.Validators;
+﻿using Animalsy.BE.Services.ContractorAPI.Models.Dto;
+using Animalsy.BE.Services.ContractorAPI.Repository;
+using Animalsy.BE.Services.ContractorAPI.Validators;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Animalsy.BE.Services.ContractorsAPI.Controllers;
+namespace Animalsy.BE.Services.ContractorAPI.Controllers;
 
-[Route("Api/Contractors")]
+[Route("Api/[controller]")]
 [ApiController]
-public class ContractorsApiController(IContractorRepository contractorRepository, UniqueIdValidator idValidator,
+public class ContractorController(IContractorRepository contractorRepository, UniqueIdValidator idValidator,
     CreateContractorValidator createContractorValidator, UpdateContractorValidator updateContractorValidator) : ControllerBase
 {
-    [HttpGet("Ids/{contractorId}")]
+    [HttpGet("{contractorId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -26,7 +26,7 @@ public class ContractorsApiController(IContractorRepository contractorRepository
             : NotFound(ContractorIdNotFoundMessage(contractorId));
     }
 
-    [HttpGet("Vendors/Ids/{vendorId}")]
+    [HttpGet("Vendor/{vendorId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -71,7 +71,7 @@ public class ContractorsApiController(IContractorRepository contractorRepository
             : NotFound(ContractorIdNotFoundMessage(contractorDto.Id));
     }
 
-    [HttpDelete("Ids/{contractorId}")]
+    [HttpDelete("{contractorId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

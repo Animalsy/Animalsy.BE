@@ -1,8 +1,8 @@
-﻿using Animalsy.BE.Services.PetsAPI.Models;
-using Animalsy.BE.Services.PetsAPI.Models.Dto;
+﻿using Animalsy.BE.Services.PetAPI.Models;
+using Animalsy.BE.Services.PetAPI.Models.Dto;
 using AutoMapper;
 
-namespace Animalsy.BE.Services.PetsAPI;
+namespace Animalsy.BE.Services.PetAPI;
 
 public class MappingConfig
 {

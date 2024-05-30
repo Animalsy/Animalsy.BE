@@ -1,38 +1,38 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Animalsy.BE.Services.VendorsAPI.Models;
+namespace Animalsy.BE.Services.VendorAPI.Models;
 
-public class Vendor
+public record Vendor
 {
     [Key]
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
 
     [Required, MaxLength(50)] 
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; }
 
     [Required, MaxLength(10)]
-    public string Nip { get; set; } = string.Empty;
+    public string Nip { get; set; }
 
     [Required, MaxLength(20)]
-    public string City { get; set; } = string.Empty;
+    public string City { get; set; }
 
     [MaxLength(40)]
-    public string Street { get; set; } = string.Empty;
+    public string Street { get; set; }
 
     [MaxLength(5)]
-    public string Building { get; set; } = string.Empty;
+    public string Building { get; set; }
 
     [MaxLength(5)]
-    public string? Flat { get; set; }
+    public string Flat { get; set; }
 
     [MaxLength(6)]
-    public string PostalCode { get; set; } = string.Empty;
+    public string PostalCode { get; set; }
 
     [MaxLength(9)]
-    public string PhoneNumber { get; set; } = string.Empty;
+    public string PhoneNumber { get; set; }
 
     [Required, MaxLength(50)]
-    public string EmailAddress { get; set; } = string.Empty;
+    public string EmailAddress { get; set; }
 
     [Required]
     public TimeOnly OpeningHour { get; set; }

@@ -1,7 +1,7 @@
-﻿using Animalsy.BE.Services.ProductsAPI.Data;
+﻿using Animalsy.BE.Services.ProductAPI.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Animalsy.BE.Services.ProductsAPI.Utilities;
+namespace Animalsy.BE.Services.ProductAPI.Utilities;
 
 public static partial class AppExtensions
 {

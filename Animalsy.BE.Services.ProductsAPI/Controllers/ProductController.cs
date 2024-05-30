@@ -1,13 +1,13 @@
-﻿using Animalsy.BE.Services.ProductsAPI.Models.Dto;
-using Animalsy.BE.Services.ProductsAPI.Repository;
-using Animalsy.BE.Services.ProductsAPI.Validators;
+﻿using Animalsy.BE.Services.ProductAPI.Models.Dto;
+using Animalsy.BE.Services.ProductAPI.Repository;
+using Animalsy.BE.Services.ProductAPI.Validators;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Animalsy.BE.Services.ProductsAPI.Controllers;
+namespace Animalsy.BE.Services.ProductAPI.Controllers;
 
-[Route("Api/Products")]
+[Route("Api/[controller]")]
 [ApiController]
-public class ProductsApiController(IProductRepository productRepository, UniqueIdValidator idValidator, 
+public class ProductController(IProductRepository productRepository, UniqueIdValidator idValidator, 
     CreateProductValidator createProductValidator, UpdateProductValidator updateProductValidator) : ControllerBase
 {
     [HttpGet]
@@ -22,7 +22,7 @@ public class ProductsApiController(IProductRepository productRepository, UniqueI
             : NotFound("There were no products added yet");
     }
 
-    [HttpGet("Vendors/Ids/{vendorId}")]
+    [HttpGet("Vendor/{vendorId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -38,7 +38,7 @@ public class ProductsApiController(IProductRepository productRepository, UniqueI
             : NotFound(VendorIdNotFoundMessage(vendorId));
     }
 
-    [HttpGet("Ids/{productId}")]
+    [HttpGet("{productId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -83,7 +83,7 @@ public class ProductsApiController(IProductRepository productRepository, UniqueI
             : NotFound(ProductIdNotFoundMessage(productDto.Id));
     }
 
-    [HttpDelete("Ids/{productId}")]
+    [HttpDelete("{productId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

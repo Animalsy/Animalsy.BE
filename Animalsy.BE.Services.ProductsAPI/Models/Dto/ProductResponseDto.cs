@@ -1,15 +1,15 @@
-﻿namespace Animalsy.BE.Services.ProductsAPI.Models.Dto;
+﻿namespace Animalsy.BE.Services.ProductAPI.Models.Dto;
 
 public record ProductResponseDto
 {
-    public Guid Id { get; set; }
-    public Guid VendorId { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public string Category { get; set; }
-    public string SubCategory { get; set; }
-    public decimal MinPrice { get; set; }
-    public decimal MaxPrice { get; set; }
-    public decimal PromoPrice { get; set; }
-    public TimeSpan Duration { get; set; }
+    public Guid Id { get; init; }
+    public Guid VendorId { get; init; }
+    public string Name { get; init; }
+    public string Description { get; init; }
+    public string Category { get; init; }
+    public string SubCategory { get; init; }
+    public decimal MinPrice { get; init; }
+    public decimal MaxPrice { get; init; }
+    public decimal PromoPrice { get; init; }
+    public TimeSpan Duration { get; init; }
 }

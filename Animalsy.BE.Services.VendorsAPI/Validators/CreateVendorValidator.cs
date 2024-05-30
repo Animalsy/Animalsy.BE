@@ -1,7 +1,7 @@
-﻿using Animalsy.BE.Services.VendorsAPI.Models.Dto;
+﻿using Animalsy.BE.Services.VendorAPI.Models.Dto;
 using FluentValidation;
 
-namespace Animalsy.BE.Services.VendorsAPI.Validators;
+namespace Animalsy.BE.Services.VendorAPI.Validators;
 
 public class CreateVendorValidator : AbstractValidator<CreateVendorDto>
 {

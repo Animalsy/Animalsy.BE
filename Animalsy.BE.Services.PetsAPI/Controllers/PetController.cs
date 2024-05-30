@@ -1,16 +1,16 @@
-﻿using Animalsy.BE.Services.PetsAPI.Models.Dto;
-using Animalsy.BE.Services.PetsAPI.Repository;
-using Animalsy.BE.Services.PetsAPI.Validators;
+﻿using Animalsy.BE.Services.PetAPI.Models.Dto;
+using Animalsy.BE.Services.PetAPI.Repository;
+using Animalsy.BE.Services.PetAPI.Validators;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Animalsy.BE.Services.PetsAPI.Controllers;
+namespace Animalsy.BE.Services.PetAPI.Controllers;
 
-[Route("Api/Pets")]
+[Route("Api/[controller]")]
 [ApiController]
-public class PetsApiController(IPetRepository petRepository, UniqueIdValidator idValidator, CreatePetValidator createPetValidator,
+public class PetController(IPetRepository petRepository, UniqueIdValidator idValidator, CreatePetValidator createPetValidator,
     UpdatePetValidator updatePetValidator) : ControllerBase
 {
-    [HttpGet("Customers/Ids/{customerId}")]
+    [HttpGet("Customer/{customerId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -27,7 +27,7 @@ public class PetsApiController(IPetRepository petRepository, UniqueIdValidator i
     }
 
     [HttpGet]
-    [Route("Ids/{petId}")]
+    [Route("{petId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -72,7 +72,7 @@ public class PetsApiController(IPetRepository petRepository, UniqueIdValidator i
             : NotFound(PetIdNotFoundMessage(petDto.Id));
     }
 
-    [HttpDelete("Ids/{petId}")]
+    [HttpDelete("{petId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -1,10 +1,10 @@
-﻿using Animalsy.BE.Services.PetsAPI.Data;
-using Animalsy.BE.Services.PetsAPI.Models;
-using Animalsy.BE.Services.PetsAPI.Models.Dto;
+﻿using Animalsy.BE.Services.PetAPI.Data;
+using Animalsy.BE.Services.PetAPI.Models;
+using Animalsy.BE.Services.PetAPI.Models.Dto;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
-namespace Animalsy.BE.Services.PetsAPI.Repository;
+namespace Animalsy.BE.Services.PetAPI.Repository;
 
 public class PetRepository(AppDbContext dbContext, IMapper mapper) : IPetRepository
 {
@@ -24,7 +24,7 @@ public class PetRepository(AppDbContext dbContext, IMapper mapper) : IPetReposit
         return mapper.Map<IEnumerable<PetResponseDto>>(results);
     }
 
-    public async Task<PetResponseDto?> GetByIdAsync(Guid petId)
+    public async Task<PetResponseDto> GetByIdAsync(Guid petId)
     {
         var pet = await dbContext.Pets.FirstOrDefaultAsync(p => p.Id == petId);
         return mapper.Map<PetResponseDto>(pet);

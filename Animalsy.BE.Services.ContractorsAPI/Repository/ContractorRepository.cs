@@ -1,14 +1,14 @@
-﻿using Animalsy.BE.Services.ContractorsAPI.Data;
-using Animalsy.BE.Services.ContractorsAPI.Models;
-using Animalsy.BE.Services.ContractorsAPI.Models.Dto;
+﻿using Animalsy.BE.Services.ContractorAPI.Data;
+using Animalsy.BE.Services.ContractorAPI.Models;
+using Animalsy.BE.Services.ContractorAPI.Models.Dto;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
-namespace Animalsy.BE.Services.ContractorsAPI.Repository;
+namespace Animalsy.BE.Services.ContractorAPI.Repository;
 
 public class ContractorRepository(AppDbContext dbContext, IMapper mapper) : IContractorRepository
 {
-    public async Task<ContractorResponseDto?> GetByIdAsync(Guid contractorId)
+    public async Task<ContractorResponseDto> GetByIdAsync(Guid contractorId)
     {
         var result = await dbContext.Contractors.FirstOrDefaultAsync(p => p.Id == contractorId);
         return mapper.Map<ContractorResponseDto>(result);

@@ -1,7 +1,7 @@
-﻿using Animalsy.BE.Services.ContractorsAPI.Validators;
+﻿using Animalsy.BE.Services.ContractorAPI.Validators;
 using FluentValidation;
 
-namespace Animalsy.BE.Services.ContractorsAPI.Utilities;
+namespace Animalsy.BE.Services.ContractorAPI.Utilities;
 
 public static partial class AppExtensions
 {

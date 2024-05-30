@@ -1,36 +1,36 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Animalsy.BE.Services.CustomersAPI.Models;
+namespace Animalsy.BE.Services.CustomerAPI.Models;
 
-public class Customer
+public record Customer
 {
-    [Key]
-    public Guid Id { get; set; }
+    [Key]    
+    public Guid Id { get; init; }
 
     [Required, MaxLength(20)]
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; }
 
     [Required, MaxLength(20)]
-    public string LastName { get; set; } = string.Empty;
+    public string LastName { get; set; }
 
     [Required, MaxLength(20)]
-    public string City { get; set; } = string.Empty;
+    public string City { get; set; }
 
     [MaxLength(40)]
-    public string Street { get; set; } = string.Empty;
+    public string Street { get; set; }
 
     [MaxLength(5)]
-    public string Building { get; set; } = string.Empty;
+    public string Building { get; set; }
 
     [MaxLength(5)]
-    public string? Flat { get; set; }
+    public string Flat { get; set; }
 
     [MaxLength(6)]
-    public string PostalCode { get; set; } = string.Empty;
+    public string PostalCode { get; set; }
 
     [MaxLength(9)]
-    public string PhoneNumber { get; set; } = string.Empty;
+    public string PhoneNumber { get; set; }
 
     [Required, MaxLength(50)] 
-    public string EmailAddress { get; set; } = string.Empty;
+    public string EmailAddress { get; set; }
 }

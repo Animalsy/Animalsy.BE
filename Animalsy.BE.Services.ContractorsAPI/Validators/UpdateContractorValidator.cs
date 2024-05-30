@@ -1,7 +1,7 @@
-﻿using Animalsy.BE.Services.ContractorsAPI.Models.Dto;
+﻿using Animalsy.BE.Services.ContractorAPI.Models.Dto;
 using FluentValidation;
 
-namespace Animalsy.BE.Services.ContractorsAPI.Validators;
+namespace Animalsy.BE.Services.ContractorAPI.Validators;
 
 public class UpdateContractorValidator : AbstractValidator<UpdateContractorDto>
 {

@@ -1,10 +1,10 @@
-﻿using Animalsy.BE.Services.VendorsAPI.Data;
-using Animalsy.BE.Services.VendorsAPI.Models;
-using Animalsy.BE.Services.VendorsAPI.Models.Dto;
+﻿using Animalsy.BE.Services.VendorAPI.Data;
+using Animalsy.BE.Services.VendorAPI.Models;
+using Animalsy.BE.Services.VendorAPI.Models.Dto;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
-namespace Animalsy.BE.Services.VendorsAPI.Repository;
+namespace Animalsy.BE.Services.VendorAPI.Repository;
 
 public class VendorRepository(AppDbContext dbContext, IMapper mapper) : IVendorRepository
 {
@@ -20,13 +20,13 @@ public class VendorRepository(AppDbContext dbContext, IMapper mapper) : IVendorR
         return mapper.Map<IEnumerable<VendorResponseDto>>(results);
     }
 
-    public async Task<VendorResponseDto?> GetByIdAsync(Guid customerId)
+    public async Task<VendorResponseDto> GetByIdAsync(Guid customerId)
     {
         var result = await dbContext.Vendors.FirstOrDefaultAsync(c => c.Id == customerId);
         return mapper.Map<VendorResponseDto>(result);
     }
 
-    public async Task<VendorResponseDto?> GetByEmailAsync(string email)
+    public async Task<VendorResponseDto> GetByEmailAsync(string email)
     {
         var result = await dbContext.Vendors.FirstOrDefaultAsync(c => c.EmailAddress == email);
         return mapper.Map<VendorResponseDto>(result);

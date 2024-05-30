@@ -1,7 +1,7 @@
-using Animalsy.BE.Services.PetsAPI;
-using Animalsy.BE.Services.PetsAPI.Data;
-using Animalsy.BE.Services.PetsAPI.Repository;
-using Animalsy.BE.Services.PetsAPI.Utilities;
+using Animalsy.BE.Services.PetAPI;
+using Animalsy.BE.Services.PetAPI.Data;
+using Animalsy.BE.Services.PetAPI.Repository;
+using Animalsy.BE.Services.PetAPI.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

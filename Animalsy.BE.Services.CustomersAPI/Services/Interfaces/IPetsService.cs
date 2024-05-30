@@ -1,6 +1,6 @@
-﻿using Animalsy.BE.Services.CustomersAPI.Models.Dto;
+﻿using Animalsy.BE.Services.CustomerAPI.Models.Dto;
 
-namespace Animalsy.BE.Services.CustomersAPI.Services.Interfaces
+namespace Animalsy.BE.Services.CustomerAPI.Services.Interfaces
 {
     public interface IPetsService
     {

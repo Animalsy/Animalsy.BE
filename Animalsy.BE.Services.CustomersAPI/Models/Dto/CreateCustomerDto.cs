@@ -1,14 +1,14 @@
-﻿namespace Animalsy.BE.Services.CustomersAPI.Models.Dto;
+﻿namespace Animalsy.BE.Services.CustomerAPI.Models.Dto;
 
 public record CreateCustomerDto
 {
-    public string Name { get; set; } = string.Empty;
-    public string LastName { get; set; } = string.Empty;
-    public string City { get; set; } = string.Empty;
-    public string Street { get; set; } = string.Empty;
-    public string Building { get; set; } = string.Empty;
-    public string? Flat { get; set; }
-    public string PostalCode { get; set; } = string.Empty;
-    public string PhoneNumber { get; set; } = string.Empty;
-    public string EmailAddress { get; set; } = string.Empty;
+    public string Name { get; init; }
+    public string LastName { get; init; }
+    public string City { get; init; }
+    public string Street { get; init; }
+    public string Building { get; init; }
+    public string Flat { get; init; }
+    public string PostalCode { get; init; }
+    public string PhoneNumber { get; init; }
+    public string EmailAddress { get; init; }
 }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Animalsy.BE.Services.ContractorsAPI.Migrations
+namespace Animalsy.BE.Services.PetAPI.Migrations
 {
     /// <inheritdoc />
     public partial class initial : Migration
@@ -12,19 +12,20 @@ namespace Animalsy.BE.Services.ContractorsAPI.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Contractors",
+                name: "Pets",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    VendorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Species = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Race = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Specialization = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Contractors", x => x.Id);
+                    table.PrimaryKey("PK_Pets", x => x.Id);
                 });
         }
 
@@ -32,7 +33,7 @@ namespace Animalsy.BE.Services.ContractorsAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Contractors");
+                name: "Pets");
         }
     }
 }

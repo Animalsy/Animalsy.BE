@@ -1,14 +1,14 @@
-﻿using Animalsy.BE.Services.CustomersAPI.Models.Dto;
-using Animalsy.BE.Services.CustomersAPI.Repository;
-using Animalsy.BE.Services.CustomersAPI.Services.Interfaces;
-using Animalsy.BE.Services.CustomersAPI.Validators;
+﻿using Animalsy.BE.Services.CustomerAPI.Models.Dto;
+using Animalsy.BE.Services.CustomerAPI.Repository;
+using Animalsy.BE.Services.CustomerAPI.Services.Interfaces;
+using Animalsy.BE.Services.CustomerAPI.Validators;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Animalsy.BE.Services.CustomersAPI.Controllers;
+namespace Animalsy.BE.Services.CustomerAPI.Controllers;
 
-[Route("Api/Customers")]
+[Route("Api/[controller]")]
 [ApiController]
-public class CustomersApiController(ICustomerRepository customerRepository, CreateCustomerValidator createCustomerValidator,
+public class CustomerController(ICustomerRepository customerRepository, CreateCustomerValidator createCustomerValidator,
     UpdateCustomerValidator updateCustomerValidator, UniqueIdValidator idValidator, EmailValidator emailValidator, IPetsService petsService) : Controller
 {
     [HttpGet]
@@ -23,7 +23,7 @@ public class CustomersApiController(ICustomerRepository customerRepository, Crea
             : NotFound("There are no customers added yet");
     }
 
-    [HttpGet("Ids/{customerId}")]
+    [HttpGet("{customerId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -39,7 +39,7 @@ public class CustomersApiController(ICustomerRepository customerRepository, Crea
             : NotFound(CustomerNotFoundMessage("Id", customerId.ToString()));
     }
 
-    [HttpGet("Emails/{email}")]
+    [HttpGet("Email/{email}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -89,7 +89,7 @@ public class CustomersApiController(ICustomerRepository customerRepository, Crea
 
     }
 
-    [HttpDelete("Ids/{customerId}")]
+    [HttpDelete("{customerId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
