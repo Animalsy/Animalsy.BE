@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Animalsy.BE.Services.CustomersAPI.Validators;
+namespace Animalsy.BE.Services.CustomerAPI.Validators;
 
 public class EmailValidator : AbstractValidator<string>
 {

@@ -1,7 +1,7 @@
-using Animalsy.BE.Services.VendorsAPI;
-using Animalsy.BE.Services.VendorsAPI.Data;
-using Animalsy.BE.Services.VendorsAPI.Repository;
-using Animalsy.BE.Services.VendorsAPI.Utilities;
+using Animalsy.BE.Services.VendorAPI;
+using Animalsy.BE.Services.VendorAPI.Data;
+using Animalsy.BE.Services.VendorAPI.Repository;
+using Animalsy.BE.Services.VendorAPI.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

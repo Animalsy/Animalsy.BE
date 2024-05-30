@@ -1,23 +1,23 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Animalsy.BE.Services.ContractorsAPI.Models;
+namespace Animalsy.BE.Services.ContractorAPI.Models;
 
-public class Contractor
+public record Contractor
 {
     [Key]
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
 
     [Required]
-    public Guid VendorId { get; set; }
+    public Guid VendorId { get; init; }
 
     [Required, MaxLength(20)]
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; }
 
     [Required, MaxLength(20)]
-    public string LastName { get; set; } = string.Empty;
+    public string LastName { get; set; }
 
     [Required, MaxLength(400)]
-    public string Specialization { get; set; } = string.Empty;
+    public string Specialization { get; set; }
 
     [MaxLength(500)]
     public string? ImageUrl { get; set; }

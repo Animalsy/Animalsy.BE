@@ -1,10 +1,10 @@
-﻿using Animalsy.BE.Services.ProductsAPI.Data;
-using Animalsy.BE.Services.ProductsAPI.Models;
-using Animalsy.BE.Services.ProductsAPI.Models.Dto;
+﻿using Animalsy.BE.Services.ProductAPI.Data;
+using Animalsy.BE.Services.ProductAPI.Models;
+using Animalsy.BE.Services.ProductAPI.Models.Dto;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
-namespace Animalsy.BE.Services.ProductsAPI.Repository;
+namespace Animalsy.BE.Services.ProductAPI.Repository;
 
 public class ProductRepository(AppDbContext dbContext, IMapper mapper) : IProductRepository
 {
@@ -30,7 +30,7 @@ public class ProductRepository(AppDbContext dbContext, IMapper mapper) : IProduc
         return product.Id;
     }
 
-    public async Task<ProductResponseDto?> GetByIdAsync(Guid productId)
+    public async Task<ProductResponseDto> GetByIdAsync(Guid productId)
     {
         var result = await dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
         return mapper.Map<ProductResponseDto>(result);

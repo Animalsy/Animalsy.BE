@@ -1,10 +1,10 @@
-﻿using Animalsy.BE.Services.CustomersAPI.Data;
-using Animalsy.BE.Services.CustomersAPI.Models;
-using Animalsy.BE.Services.CustomersAPI.Models.Dto;
+﻿using Animalsy.BE.Services.CustomerAPI.Data;
+using Animalsy.BE.Services.CustomerAPI.Models;
+using Animalsy.BE.Services.CustomerAPI.Models.Dto;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
-namespace Animalsy.BE.Services.CustomersAPI.Repository;
+namespace Animalsy.BE.Services.CustomerAPI.Repository;
 
 public class CustomerRepository(AppDbContext dbContext, IMapper mapper) : ICustomerRepository
 {
@@ -22,13 +22,13 @@ public class CustomerRepository(AppDbContext dbContext, IMapper mapper) : ICusto
         return mapper.Map<IEnumerable<CustomerResponseDto>>(results);
     }
 
-    public async Task<CustomerResponseDto?> GetByIdAsync(Guid customerId)
+    public async Task<CustomerResponseDto> GetByIdAsync(Guid customerId)
     {
         var result = await dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
         return mapper.Map<CustomerResponseDto>(result);
     }
 
-    public async Task<CustomerResponseDto?> GetByEmailAsync(string email)
+    public async Task<CustomerResponseDto> GetByEmailAsync(string email)
     {
         var result = await dbContext.Customers.FirstOrDefaultAsync(c => c.EmailAddress == email);
         return mapper.Map<CustomerResponseDto>(result);

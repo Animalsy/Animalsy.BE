@@ -1,6 +1,7 @@
-﻿using Animalsy.BE.Services.CustomersAPI.Validators;
+﻿using Animalsy.BE.Services.CustomerAPI.Validators;
 using FluentValidation;
-namespace Animalsy.BE.Services.CustomersAPI.Utilities;
+
+namespace Animalsy.BE.Services.CustomerAPI.Utilities;
 
 internal static partial class AppExtensions
 {

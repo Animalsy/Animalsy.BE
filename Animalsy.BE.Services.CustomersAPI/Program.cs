@@ -1,7 +1,9 @@
-using Animalsy.BE.Services.CustomersAPI;
-using Animalsy.BE.Services.CustomersAPI.Data;
-using Animalsy.BE.Services.CustomersAPI.Repository;
-using Animalsy.BE.Services.CustomersAPI.Utilities;
+using Animalsy.BE.Services.CustomerAPI;
+using Animalsy.BE.Services.CustomerAPI.Data;
+using Animalsy.BE.Services.CustomerAPI.Repository;
+using Animalsy.BE.Services.CustomerAPI.Services;
+using Animalsy.BE.Services.CustomerAPI.Services.Interfaces;
+using Animalsy.BE.Services.CustomerAPI.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,9 @@ builder.Services.AddDbContext<AppDbContext>(option =>
 
 builder.Services.AddSingleton(MappingConfig.RegisterMaps().CreateMapper());
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddHttpClient("PetApiClient", client => client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:PetAPI"]!));
+builder.Services.AddScoped<IPetsService, PetsService>();
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddValidators();

@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Animalsy.BE.Services.PetsAPI.Validators;
+namespace Animalsy.BE.Services.PetAPI.Validators;
 
 public class UniqueIdValidator : AbstractValidator<Guid>
 {

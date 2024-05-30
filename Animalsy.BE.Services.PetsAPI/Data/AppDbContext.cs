@@ -1,9 +1,10 @@
-﻿using Animalsy.BE.Services.PetsAPI.Models;
+﻿using Animalsy.BE.Services.PetAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Animalsy.BE.Services.PetsAPI.Data;
-
-public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+namespace Animalsy.BE.Services.PetAPI.Data
 {
-    public DbSet<Pet> Pets { get; set; }
+    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+    {
+        public DbSet<Pet> Pets { get; set; }
+    }
 }

@@ -1,0 +1,6 @@
+@Animalsy.BE.Services.VendorAPI_HostAddress = http://localhost:5082
+
+GET {{Animalsy.BE.Services.VendorAPI_HostAddress}}/Api/Vendor/
+Accept: application/json
+
+###

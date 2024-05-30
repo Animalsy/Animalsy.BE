@@ -1,11 +1,11 @@
-﻿namespace Animalsy.BE.Services.PetsAPI.Models.Dto;
+﻿namespace Animalsy.BE.Services.PetAPI.Models.Dto;
 
 public record UpdatePetDto
-{
-    public Guid Id { get; set; } = Guid.Empty;
-    public string Species { get; set; } = string.Empty;
-    public string Race { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public DateTime DateOfBirth { get; set; }
-    public string? ImageUrl { get; set; }
+{    
+    public Guid Id { get; init; }
+    public string Species { get; init; }
+    public string Race { get; init; }
+    public string Name { get; init; }
+    public DateTime DateOfBirth { get; init; }
+    public string ImageUrl { get; init; }
 }
