@@ -1,5 +1,6 @@
 ﻿using Animalsy.BE.Services.CustomersAPI.Models.Dto;
 using Animalsy.BE.Services.CustomersAPI.Repository;
+using Animalsy.BE.Services.CustomersAPI.Services.Interfaces;
 using Animalsy.BE.Services.CustomersAPI.Validators;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,7 @@ namespace Animalsy.BE.Services.CustomersAPI.Controllers;
 [Route("Api/Customers")]
 [ApiController]
 public class CustomersApiController(ICustomerRepository customerRepository, CreateCustomerValidator createCustomerValidator,
-    UpdateCustomerValidator updateCustomerValidator, UniqueIdValidator idValidator, EmailValidator emailValidator) : Controller
+    UpdateCustomerValidator updateCustomerValidator, UniqueIdValidator idValidator, EmailValidator emailValidator, IPetsService petsService) : Controller
 {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
