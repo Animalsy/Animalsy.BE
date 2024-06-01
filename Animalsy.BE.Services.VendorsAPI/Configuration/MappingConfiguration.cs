@@ -2,15 +2,15 @@
 using Animalsy.BE.Services.VendorAPI.Models.Dto;
 using AutoMapper;
 
-namespace Animalsy.BE.Services.VendorAPI;
+namespace Animalsy.BE.Services.VendorAPI.Configuration;
 
-public class MappingConfig
+public class MappingConfiguration
 {
     public static MapperConfiguration RegisterMaps()
     {
         return new MapperConfiguration(config =>
         {
-            config.CreateMap<Vendor, VendorResponseDto>();
+            config.CreateMap<Vendor, VendorDto>();
             config.CreateMap<CreateVendorDto, Vendor>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
         });

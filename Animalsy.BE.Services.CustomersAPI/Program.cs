@@ -1,8 +1,7 @@
-using Animalsy.BE.Services.CustomerAPI;
+using Animalsy.BE.Services.CustomerAPI.Configuration;
 using Animalsy.BE.Services.CustomerAPI.Data;
 using Animalsy.BE.Services.CustomerAPI.Repository;
 using Animalsy.BE.Services.CustomerAPI.Services;
-using Animalsy.BE.Services.CustomerAPI.Services.Interfaces;
 using Animalsy.BE.Services.CustomerAPI.Utilities;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,13 +12,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddSingleton(MappingConfig.RegisterMaps().CreateMapper());
+builder.Services.AddSingleton(MappingConfiguration.RegisterMaps().CreateMapper());
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddHttpClient("PetApiClient", client => client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:PetAPI"]!));
-builder.Services.AddScoped<IPetsService, PetsService>();
-
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IApiService, ApiService>();
+
+builder.Services.Configure<ServiceUrlConfiguration>(builder.Configuration.GetSection(nameof(ServiceUrlConfiguration))!);
+builder.Services.AddHttpClients();
+
 builder.Services.AddValidators();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

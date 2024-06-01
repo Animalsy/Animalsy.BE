@@ -4,7 +4,7 @@ namespace Animalsy.BE.Services.PetAPI.Validators;
 
 public class UniqueIdValidator : AbstractValidator<Guid>
 {
-    internal static string InvalidUniqueIdMessage = "Pet Id is not in valid format";
+    internal static string InvalidUniqueIdMessage = "Id should be non empty Guid";
     public UniqueIdValidator()
     {
         RuleFor(x => x).Must(x => x != Guid.Empty).WithMessage(InvalidUniqueIdMessage);

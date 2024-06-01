@@ -1,6 +1,6 @@
-﻿namespace Animalsy.BE.Services.CustomerAPI.Models.Dto;
+﻿namespace Animalsy.BE.Services.VendorAPI.Models.Dto;
 
-public record CustomerResponseDto
+public record CustomerDto
 {
     public Guid Id { get; init; }
     public string Name { get; init; }

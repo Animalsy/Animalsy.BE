@@ -8,7 +8,7 @@ public record VendorDto
     public string City { get; init; }
     public string Street { get; init; }
     public string Building { get; init; }
-    public string? Flat { get; init; }
+    public string Flat { get; init; }
     public string PostalCode { get; init; }
     public string PhoneNumber { get; init; }
     public string EmailAddress { get; init; }

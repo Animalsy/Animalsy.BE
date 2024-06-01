@@ -2,6 +2,6 @@
 {
     public interface IApiService
     {
-        Task<T> GetAsync<T>(string clientName, string path, Guid id);
+        Task<T> GetAsync<T>(string clientName, string path);
     }
 }

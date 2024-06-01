@@ -17,5 +17,7 @@ public class UpdateVendorValidator : AbstractValidator<UpdateVendorDto>
         RuleFor(x => x.Flat).MaximumLength(5).When(x => x.Flat is not null);
         RuleFor(x => x.EmailAddress).SetValidator(emailValidator);
         RuleFor(x => x.PhoneNumber).SetValidator(new NumberValidator("Phone", 9));
+        RuleFor(x => x.OpeningHour).NotEmpty();
+        RuleFor(x => x.ClosingHour).NotEmpty();
     }
 }

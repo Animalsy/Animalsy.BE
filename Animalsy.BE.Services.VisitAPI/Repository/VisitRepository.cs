@@ -1,35 +1,50 @@
 ﻿using Animalsy.BE.Services.VisitAPI.Data;
 using Animalsy.BE.Services.VisitAPI.Models;
 using Animalsy.BE.Services.VisitAPI.Models.Dto;
+using Animalsy.BE.Services.VisitAPI.Services;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Animalsy.BE.Services.VisitAPI.Repository
 {
-    public class VisitRepository(AppDbContext dbContext, IMapper mapper) : IVisitRepository
+    public class VisitRepository(AppDbContext dbContext, IApiService apiService, IMapper mapper) : IVisitRepository
     {
-        public async Task<VisitDto> GetByIdAsync(Guid visitId)
+        public async Task<VisitResponseDto> GetByIdAsync(Guid visitId)
         {
-            var result = await dbContext.Visits.FirstOrDefaultAsync(c => c.Id == visitId);
-            return mapper.Map<VisitDto>(result);
+            var visit = await dbContext.Visits.FirstOrDefaultAsync(c => c.Id == visitId);
+
+            return visit != null
+                ? await new VisitResponseBuilder(apiService, mapper.Map<VisitDto>(visit))
+                    .WithContractor()
+                    .WithCustomer()
+                    .WithPet()
+                    .WithProduct()
+                    .WithVendor()
+                    .BuildAsync()
+                : null;
         }
 
-        public async Task<IEnumerable<VisitDto>> GetByVendorIdAsync(Guid vendorId)
+        public async Task<IEnumerable<VisitResponseDto>> GetByVendorIdAsync(Guid vendorId)
         {
-            var results = await dbContext.Visits
+            var visits = await dbContext.Visits
                 .Where(v => v.VendorId == vendorId)
                 .ToListAsync();
 
-            return mapper.Map<IEnumerable<VisitDto>>(results);
+            if (!visits.IsNullOrEmpty()) return [];
+
+            return await BuildResultsAsync(visits).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<VisitDto>> GetByCustomerIdAsync(Guid customerId)
+        public async Task<IEnumerable<VisitResponseDto>> GetByCustomerIdAsync(Guid customerId)
         {
-            var results = await dbContext.Visits
+            var visits = await dbContext.Visits
                 .Where(v => v.CustomerId == customerId)
                 .ToListAsync();
 
-            return mapper.Map<IEnumerable<VisitDto>>(results);
+            if (!visits.IsNullOrEmpty()) return [];
+
+            return await BuildResultsAsync(visits).ConfigureAwait(false);
         }
 
         public async Task<Guid> CreateAsync(CreateVisitDto visitDto)
@@ -47,6 +62,7 @@ namespace Animalsy.BE.Services.VisitAPI.Repository
 
             existingVisit.Comment = visitDto.Comment;
             existingVisit.State = visitDto.State;
+            existingVisit.Date = visitDto.Date;
 
             await dbContext.SaveChangesAsync();
             return true;
@@ -60,6 +76,20 @@ namespace Animalsy.BE.Services.VisitAPI.Repository
             dbContext.Remove(existingVisit);
             await dbContext.SaveChangesAsync();
             return true;
+        }
+
+        private async Task<IEnumerable<VisitResponseDto>> BuildResultsAsync(IEnumerable<Visit> visits)
+        {
+            var tasks = visits.Select(visit =>
+                new VisitResponseBuilder(apiService, mapper.Map<VisitDto>(visit))
+                    .WithContractor()
+                    .WithCustomer()
+                    .WithPet()
+                    .WithProduct()
+                    .WithVendor()
+                    .BuildAsync());
+
+            return await Task.WhenAll(tasks);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Animalsy.BE.Services.CustomerAPI.Models.Dto;
 using Animalsy.BE.Services.CustomerAPI.Repository;
-using Animalsy.BE.Services.CustomerAPI.Services.Interfaces;
 using Animalsy.BE.Services.CustomerAPI.Validators;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +8,7 @@ namespace Animalsy.BE.Services.CustomerAPI.Controllers;
 [Route("Api/[controller]")]
 [ApiController]
 public class CustomerController(ICustomerRepository customerRepository, CreateCustomerValidator createCustomerValidator,
-    UpdateCustomerValidator updateCustomerValidator, UniqueIdValidator idValidator, EmailValidator emailValidator, IPetsService petsService) : Controller
+    UpdateCustomerValidator updateCustomerValidator, UniqueIdValidator idValidator, EmailValidator emailValidator) : Controller
 {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -53,6 +52,22 @@ public class CustomerController(ICustomerRepository customerRepository, CreateCu
         return customer != null
             ? Ok(customer)
             : NotFound(CustomerNotFoundMessage("Email", email));
+    }
+
+    [HttpGet("Profile/{customerId:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetCustomerProfileAsync(Guid customerId)
+    {
+        var validationResult = await idValidator.ValidateAsync(customerId);
+        if (!validationResult.IsValid) return BadRequest(validationResult);
+
+        var customer = await customerRepository.GetCustomerProfileAsync(customerId);
+        return customer != null
+            ? Ok(customer)
+            : NotFound(CustomerNotFoundMessage("Id", customerId.ToString()));
     }
 
     [HttpPost]

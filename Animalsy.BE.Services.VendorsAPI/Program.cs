@@ -1,6 +1,7 @@
-using Animalsy.BE.Services.VendorAPI;
+using Animalsy.BE.Services.VendorAPI.Configuration;
 using Animalsy.BE.Services.VendorAPI.Data;
 using Animalsy.BE.Services.VendorAPI.Repository;
+using Animalsy.BE.Services.VendorAPI.Services;
 using Animalsy.BE.Services.VendorAPI.Utilities;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +12,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddSingleton(MappingConfig.RegisterMaps().CreateMapper());
+builder.Services.AddSingleton(MappingConfiguration.RegisterMaps().CreateMapper());
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
+builder.Services.AddScoped<IApiService, ApiService>();
+
+builder.Services.Configure<ServiceUrlConfiguration>(builder.Configuration.GetSection(nameof(ServiceUrlConfiguration))!);
+builder.Services.AddHttpClients();
 
 builder.Services.AddValidators();
 builder.Services.AddControllers();
