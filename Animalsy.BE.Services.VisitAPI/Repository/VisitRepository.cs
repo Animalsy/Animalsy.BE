@@ -1,37 +1,65 @@
-﻿using Animalsy.BE.Services.VisitAPI.Models.Dto;
+﻿using Animalsy.BE.Services.VisitAPI.Data;
+using Animalsy.BE.Services.VisitAPI.Models;
+using Animalsy.BE.Services.VisitAPI.Models.Dto;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Animalsy.BE.Services.VisitAPI.Repository
 {
-    public class VisitRepository : IVisitRepository
+    public class VisitRepository(AppDbContext dbContext, IMapper mapper) : IVisitRepository
     {
-        public Task<VisitResponseDto> GetByIdAsync(Guid visitId)
+        public async Task<VisitDto> GetByIdAsync(Guid visitId)
         {
-            throw new NotImplementedException();
+            var result = await dbContext.Visits.FirstOrDefaultAsync(c => c.Id == visitId);
+            return mapper.Map<VisitDto>(result);
         }
 
-        public Task<IEnumerable<VisitResponseDto>> GetByVendorIdAsync(Guid vendorId)
+        public async Task<IEnumerable<VisitDto>> GetByVendorIdAsync(Guid vendorId)
         {
-            throw new NotImplementedException();
+            var results = await dbContext.Visits
+                .Where(v => v.VendorId == vendorId)
+                .ToListAsync();
+
+            return mapper.Map<IEnumerable<VisitDto>>(results);
         }
 
-        public Task<IEnumerable<VisitResponseDto>> GetByCustomerIdAsync(Guid customerId)
+        public async Task<IEnumerable<VisitDto>> GetByCustomerIdAsync(Guid customerId)
         {
-            throw new NotImplementedException();
+            var results = await dbContext.Visits
+                .Where(v => v.CustomerId == customerId)
+                .ToListAsync();
+
+            return mapper.Map<IEnumerable<VisitDto>>(results);
         }
 
-        public Task<Guid> CreateAsync(CreateVisitDto visitDto)
+        public async Task<Guid> CreateAsync(CreateVisitDto visitDto)
         {
-            throw new NotImplementedException();
+            var visit = mapper.Map<Visit>(visitDto);
+            await dbContext.AddAsync(visit);
+            await dbContext.SaveChangesAsync();
+            return visit.Id;
         }
 
-        public Task<bool> TryUpdateAsync(UpdateVisitDto visitDto)
+        public async Task<bool> TryUpdateAsync(UpdateVisitDto visitDto)
         {
-            throw new NotImplementedException();
+            var existingVisit = await dbContext.Visits.FirstOrDefaultAsync(v => v.Id == visitDto.Id);
+            if (existingVisit == null) return false;
+
+            existingVisit.Comment = visitDto.Comment;
+            existingVisit.State = visitDto.State;
+
+            await dbContext.SaveChangesAsync();
+            return true;
         }
 
-        public Task<bool> TryDeleteAsync(Guid visitId)
+        public async Task<bool> TryDeleteAsync(Guid visitId)
         {
-            throw new NotImplementedException();
+            var existingVisit = await dbContext.Visits.FirstOrDefaultAsync(v => v.Id == visitId);
+            if (existingVisit == null) return false;
+
+            dbContext.Remove(existingVisit);
+            await dbContext.SaveChangesAsync();
+            return true;
         }
     }
 }
