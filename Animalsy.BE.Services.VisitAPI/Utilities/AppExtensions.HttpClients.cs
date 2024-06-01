@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 
 namespace Animalsy.BE.Services.VisitAPI.Utilities;
 
-internal static partial class AppExtensions
+public static partial class AppExtensions
 {
     public static void AddHttpClients(this IServiceCollection serviceCollection)
     {

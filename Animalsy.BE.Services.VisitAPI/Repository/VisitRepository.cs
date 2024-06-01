@@ -22,7 +22,7 @@ namespace Animalsy.BE.Services.VisitAPI.Repository
                     .WithProduct()
                     .WithVendor()
                     .BuildAsync()
-                : new VisitResponseDto();
+                : null;
         }
 
         public async Task<IEnumerable<VisitResponseDto>> GetByVendorIdAsync(Guid vendorId)

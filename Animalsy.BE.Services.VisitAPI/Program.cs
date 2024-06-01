@@ -14,12 +14,13 @@ builder.Services.AddDbContext<AppDbContext>(option =>
 
 builder.Services.AddSingleton(MappingConfiguration.RegisterMaps().CreateMapper());
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
 builder.Services.AddScoped<IVisitRepository, VisitRepository>();
 builder.Services.AddScoped<IApiService, ApiService>();
-builder.Services.Configure<ServiceUrlConfiguration>(builder.Configuration.GetSection("ServiceUrlConfiguration")!);
 
-builder.Services.AddHttpClients(); //Todo: correct DI
+builder.Services.Configure<ServiceUrlConfiguration>(builder.Configuration.GetSection("ServiceUrlConfiguration")!);
+builder.Services.AddHttpClients();
+
+builder.Services.AddValidators();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
