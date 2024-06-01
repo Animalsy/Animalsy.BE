@@ -66,6 +66,22 @@ public class VendorController(IVendorRepository vendorRepository, CreateVendorVa
             : NotFound(VendorNotFoundMessage("Email", email));
     }
 
+    [HttpGet("Profile/{vendorId:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetVendorProfileAsync(Guid vendorId)
+    {
+        var validationResult = await idValidator.ValidateAsync(vendorId);
+        if (!validationResult.IsValid) return BadRequest(validationResult);
+
+        var vendor = await vendorRepository.GetVendorProfileAsync(vendorId);
+        return vendor != null
+            ? Ok(vendor)
+            : NotFound(VendorNotFoundMessage("Id", vendorId.ToString()));
+    }
+
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
