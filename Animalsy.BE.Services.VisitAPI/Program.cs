@@ -1,11 +1,9 @@
-using Animalsy.BE.Services.VisitAPI;
 using Animalsy.BE.Services.VisitAPI.Configuration;
 using Animalsy.BE.Services.VisitAPI.Data;
 using Animalsy.BE.Services.VisitAPI.Repository;
 using Animalsy.BE.Services.VisitAPI.Services;
 using Animalsy.BE.Services.VisitAPI.Utilities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +19,7 @@ builder.Services.AddScoped<IVisitRepository, VisitRepository>();
 builder.Services.AddScoped<IApiService, ApiService>();
 builder.Services.Configure<ServiceUrlConfiguration>(builder.Configuration.GetSection("ServiceUrlConfiguration")!);
 
-builder.Services.AddHttpClients();
+builder.Services.AddHttpClients(); //Todo: correct DI
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
