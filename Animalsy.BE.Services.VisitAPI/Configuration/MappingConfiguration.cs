@@ -2,9 +2,9 @@
 using Animalsy.BE.Services.VisitAPI.Models.Dto;
 using AutoMapper;
 
-namespace Animalsy.BE.Services.VisitAPI;
+namespace Animalsy.BE.Services.VisitAPI.Configuration;
 
-public class MappingConfig
+public class MappingConfiguration
 {
     public static MapperConfiguration RegisterMaps()
     {
