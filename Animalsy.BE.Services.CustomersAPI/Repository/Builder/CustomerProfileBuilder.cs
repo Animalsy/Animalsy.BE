@@ -3,13 +3,13 @@ using Animalsy.BE.Services.CustomerAPI.Services;
 
 namespace Animalsy.BE.Services.CustomerAPI.Repository.Builder;
 
-public class CustomerResponseBuilder(IApiService apiService, CustomerDto customer) : ICustomerResponseBuilder
+public class CustomerProfileBuilder(IApiService apiService, CustomerDto customer) : ICustomerProfileBuilder
 {
     private readonly Queue<Task> _builderQueue = new();
     private IEnumerable<PetDto> _pets;
     private IEnumerable<VisitDto> _visits;
 
-    public ICustomerResponseBuilder WithContractors()
+    public ICustomerProfileBuilder WithPets()
     {
         _builderQueue.Enqueue(Task.Run(async () =>
         {
@@ -19,7 +19,7 @@ public class CustomerResponseBuilder(IApiService apiService, CustomerDto custome
         return this;
     }
 
-    public ICustomerResponseBuilder WithVisits()
+    public ICustomerProfileBuilder WithVisits()
     {
         _builderQueue.Enqueue(Task.Run(async () =>
         {
@@ -28,7 +28,7 @@ public class CustomerResponseBuilder(IApiService apiService, CustomerDto custome
         return this;
     }
 
-    public async Task<CustomerResponseDto> BuildAsync()
+    public async Task<CustomerProfileDto> BuildAsync()
     {
 
         while (_builderQueue.TryDequeue(out var currentTask))
@@ -36,7 +36,7 @@ public class CustomerResponseBuilder(IApiService apiService, CustomerDto custome
             await currentTask.ConfigureAwait(false);
         }
 
-        return new CustomerResponseDto()
+        return new CustomerProfileDto
         {
             Id = customer.Id,
             Name = customer.Name,

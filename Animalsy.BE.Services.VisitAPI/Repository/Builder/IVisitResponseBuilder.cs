@@ -1,6 +1,6 @@
 ﻿using Animalsy.BE.Services.VisitAPI.Models.Dto;
 
-namespace Animalsy.BE.Services.VisitAPI.Services;
+namespace Animalsy.BE.Services.VisitAPI.Repository.Builder;
 
 public interface IVisitResponseBuilder
 {

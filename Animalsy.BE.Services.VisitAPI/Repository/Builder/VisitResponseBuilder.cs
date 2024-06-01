@@ -1,6 +1,7 @@
 ﻿using Animalsy.BE.Services.VisitAPI.Models.Dto;
+using Animalsy.BE.Services.VisitAPI.Services;
 
-namespace Animalsy.BE.Services.VisitAPI.Services;
+namespace Animalsy.BE.Services.VisitAPI.Repository.Builder;
 
 public class VisitResponseBuilder(IApiService apiService, VisitDto visit) : IVisitResponseBuilder
 {
@@ -22,7 +23,7 @@ public class VisitResponseBuilder(IApiService apiService, VisitDto visit) : IVis
 
     public IVisitResponseBuilder WithContractor()
     {
-        _builderQueue.Enqueue(Task.Run(async() =>
+        _builderQueue.Enqueue(Task.Run(async () =>
         {
             _contractor = await apiService.GetAsync<ContractorDto>("ContractorApiClient", $"Api/Contractor/{visit.ContractorId}");
         }));

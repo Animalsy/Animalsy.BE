@@ -5,9 +5,10 @@ namespace Animalsy.BE.Services.CustomerAPI.Repository;
 public interface ICustomerRepository
 {
     Task<Guid> CreateAsync(CreateCustomerDto customerDto);
-    Task<IEnumerable<CustomerResponseDto>> GetAllAsync();
-    Task<CustomerResponseDto> GetByIdAsync(Guid customerId);
-    Task<CustomerResponseDto> GetByEmailAsync (string email);
+    Task<IEnumerable<CustomerDto>> GetAllAsync();
+    Task<CustomerDto> GetByIdAsync(Guid customerId);
+    Task<CustomerDto> GetByEmailAsync(string email);
+    Task<CustomerProfileDto> GetCustomerProfileAsync(Guid customerId);
     Task<bool> TryUpdateAsync(UpdateCustomerDto customerDto);
     Task<bool> TryDeleteAsync(Guid customerId);
 }

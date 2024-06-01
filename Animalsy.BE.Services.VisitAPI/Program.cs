@@ -17,7 +17,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IVisitRepository, VisitRepository>();
 builder.Services.AddScoped<IApiService, ApiService>();
 
-builder.Services.Configure<ServiceUrlConfiguration>(builder.Configuration.GetSection("ServiceUrlConfiguration")!);
+builder.Services.Configure<ServiceUrlConfiguration>(builder.Configuration.GetSection(nameof(ServiceUrlConfiguration))!);
 builder.Services.AddHttpClients();
 
 builder.Services.AddValidators();

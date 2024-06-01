@@ -8,7 +8,7 @@ public interface IVendorRepository
     Task<IEnumerable<VendorDto>> GetByNameAsync(string name);
     Task<VendorDto> GetByIdAsync(Guid vendorId);
     Task<VendorDto> GetByEmailAsync (string email);
-    Task<VendorResponseDto> GetVendorProfileAsync(Guid vendorId);
+    Task<VendorProfileDto> GetVendorProfileAsync(Guid vendorId);
     Task<Guid> CreateAsync(CreateVendorDto vendorDto);
     Task<bool> TryUpdateAsync(UpdateVendorDto vendorDto);
     Task<bool> TryDeleteAsync(Guid vendorId);

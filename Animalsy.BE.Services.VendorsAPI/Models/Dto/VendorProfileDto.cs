@@ -1,6 +1,6 @@
 ﻿namespace Animalsy.BE.Services.VendorAPI.Models.Dto;
 
-public record VendorResponseDto
+public record VendorProfileDto
 {
     public Guid Id { get; init; }
     public string Name { get; init; }

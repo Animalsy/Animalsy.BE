@@ -3,13 +3,13 @@ using Animalsy.BE.Services.VendorAPI.Services;
 
 namespace Animalsy.BE.Services.VendorAPI.Repository.Builder;
 
-public class VendorResponseBuilder(IApiService apiService, VendorDto vendor) : IVendorResponseBuilder
+public class VendorProfileBuilder(IApiService apiService, VendorDto vendor) : IVendorProfileBuilder
 {
     private readonly Queue<Task> _builderQueue = new();
     private IEnumerable<ContractorDto> _contractors;
     private IEnumerable<VisitDto> _visits;
 
-    public IVendorResponseBuilder WithContractors()
+    public IVendorProfileBuilder WithContractors()
     {
         _builderQueue.Enqueue(Task.Run(async () =>
         {
@@ -19,7 +19,7 @@ public class VendorResponseBuilder(IApiService apiService, VendorDto vendor) : I
         return this;
     }
 
-    public IVendorResponseBuilder WithVisits()
+    public IVendorProfileBuilder WithVisits()
     {
         _builderQueue.Enqueue(Task.Run(async () =>
         {
@@ -29,7 +29,7 @@ public class VendorResponseBuilder(IApiService apiService, VendorDto vendor) : I
     }
 
 
-    public async Task<VendorResponseDto> BuildAsync()
+    public async Task<VendorProfileDto> BuildAsync()
     {
 
         while (_builderQueue.TryDequeue(out var currentTask))
@@ -37,7 +37,7 @@ public class VendorResponseBuilder(IApiService apiService, VendorDto vendor) : I
             await currentTask.ConfigureAwait(false);
         }
 
-        return new VendorResponseDto
+        return new VendorProfileDto
         {
             Id = vendor.Id,
             Name = vendor.Name,

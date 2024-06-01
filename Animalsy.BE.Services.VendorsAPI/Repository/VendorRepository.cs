@@ -34,12 +34,12 @@ public class VendorRepository(AppDbContext dbContext, IApiService apiService, IM
         return mapper.Map<VendorDto>(result);
     }
 
-    public async Task<VendorResponseDto> GetVendorProfileAsync(Guid vendorId)
+    public async Task<VendorProfileDto> GetVendorProfileAsync(Guid vendorId)
     {
         var vendor = await dbContext.Vendors.FirstOrDefaultAsync(c => c.Id == vendorId);
 
         return vendor != null
-            ? await new VendorResponseBuilder(apiService, mapper.Map<VendorDto>(vendor))
+            ? await new VendorProfileBuilder(apiService, mapper.Map<VendorDto>(vendor))
                 .WithContractors()
                 .WithVisits()
                 .BuildAsync()
