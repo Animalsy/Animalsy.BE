@@ -1,6 +1,6 @@
 ﻿namespace Animalsy.BE.Services.CustomerAPI.Models.Dto;
 
-public record CustomerResponseDto
+public record CustomerDto
 {
     public Guid Id { get; init; }
     public string Name { get; init; }
@@ -12,6 +12,4 @@ public record CustomerResponseDto
     public string PostalCode { get; init; }
     public string PhoneNumber { get; init; }
     public string EmailAddress { get; init; }
-    public IEnumerable<PetDto> Pets { get; init; }
-    public IEnumerable<VisitDto> Visits { get; init; }
 }
