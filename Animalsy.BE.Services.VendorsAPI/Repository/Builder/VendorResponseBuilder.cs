@@ -3,7 +3,7 @@ using Animalsy.BE.Services.VendorAPI.Services;
 
 namespace Animalsy.BE.Services.VendorAPI.Repository.Builder;
 
-public class VisitResponseBuilder(IApiService apiService, VendorDto vendor) : IVendorResponseBuilder
+public class VendorResponseBuilder(IApiService apiService, VendorDto vendor) : IVendorResponseBuilder
 {
     private readonly Queue<Task> _builderQueue = new();
     private IEnumerable<ContractorDto> _contractors;

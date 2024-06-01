@@ -2,9 +2,9 @@
 using Animalsy.BE.Services.VendorAPI.Models.Dto;
 using AutoMapper;
 
-namespace Animalsy.BE.Services.VendorAPI;
+namespace Animalsy.BE.Services.VendorAPI.Configuration;
 
-public class MappingConfig
+public class MappingConfiguration
 {
     public static MapperConfiguration RegisterMaps()
     {

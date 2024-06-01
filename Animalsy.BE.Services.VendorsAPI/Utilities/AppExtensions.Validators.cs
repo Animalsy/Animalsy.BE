@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Animalsy.BE.Services.VendorAPI.Utilities;
 
-internal static partial class AppExtensions
+public static partial class AppExtensions
 {
     public static void AddValidators(this IServiceCollection serviceCollection)
     {
