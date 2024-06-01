@@ -1,6 +1,7 @@
 using Animalsy.BE.Services.VendorAPI;
 using Animalsy.BE.Services.VendorAPI.Data;
 using Animalsy.BE.Services.VendorAPI.Repository;
+using Animalsy.BE.Services.VendorAPI.Repository.Builder;
 using Animalsy.BE.Services.VendorAPI.Utilities;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ builder.Services.AddSingleton(MappingConfig.RegisterMaps().CreateMapper());
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
+builder.Services.AddScoped<IVendorResponseBuilder, VendorResponseBuilder>();
 
 builder.Services.AddValidators();
 builder.Services.AddControllers();

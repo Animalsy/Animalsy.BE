@@ -1,4 +1,4 @@
-﻿namespace Animalsy.BE.Services.VisitAPI.Models.Dto;
+﻿namespace Animalsy.BE.Services.VendorAPI.Models.Dto;
 
 public record VendorDto
 {
