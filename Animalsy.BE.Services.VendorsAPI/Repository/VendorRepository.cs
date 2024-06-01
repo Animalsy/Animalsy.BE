@@ -1,35 +1,49 @@
 ﻿using Animalsy.BE.Services.VendorAPI.Data;
 using Animalsy.BE.Services.VendorAPI.Models;
 using Animalsy.BE.Services.VendorAPI.Models.Dto;
+using Animalsy.BE.Services.VendorAPI.Repository.Builder;
+using Animalsy.BE.Services.VendorAPI.Services;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Animalsy.BE.Services.VendorAPI.Repository;
 
-public class VendorRepository(AppDbContext dbContext, IMapper mapper) : IVendorRepository
+public class VendorRepository(AppDbContext dbContext, IApiService apiService, IMapper mapper) : IVendorRepository
 {
-    public async Task<IEnumerable<VendorResponseDto>> GetAllAsync()
+    public async Task<IEnumerable<VendorDto>> GetAllAsync()
     {
         var results = await dbContext.Vendors.ToListAsync();
-        return mapper.Map<IEnumerable<VendorResponseDto>>(results);
+        return mapper.Map<IEnumerable<VendorDto>>(results);
     }
 
-    public async Task<IEnumerable<VendorResponseDto>> GetByNameAsync(string name)
+    public async Task<IEnumerable<VendorDto>> GetByNameAsync(string name)
     {
         var results = await dbContext.Vendors.ToListAsync();
-        return mapper.Map<IEnumerable<VendorResponseDto>>(results);
+        return mapper.Map<IEnumerable<VendorDto>>(results);
     }
 
-    public async Task<VendorResponseDto> GetByIdAsync(Guid customerId)
+    public async Task<VendorDto> GetByIdAsync(Guid vendorId)
     {
-        var result = await dbContext.Vendors.FirstOrDefaultAsync(c => c.Id == customerId);
-        return mapper.Map<VendorResponseDto>(result);
+        var result = await dbContext.Vendors.FirstOrDefaultAsync(c => c.Id == vendorId);
+        return mapper.Map<VendorDto>(result);
     }
 
-    public async Task<VendorResponseDto> GetByEmailAsync(string email)
+    public async Task<VendorDto> GetByEmailAsync(string email)
     {
         var result = await dbContext.Vendors.FirstOrDefaultAsync(c => c.EmailAddress == email);
-        return mapper.Map<VendorResponseDto>(result);
+        return mapper.Map<VendorDto>(result);
+    }
+
+    public async Task<VendorResponseDto> GetVendorProfileAsync(Guid vendorId)
+    {
+        var vendor = await dbContext.Vendors.FirstOrDefaultAsync(c => c.Id == vendorId);
+
+        return vendor != null
+            ? await new VendorResponseBuilder(apiService, mapper.Map<VendorDto>(vendor))
+                .WithContractors()
+                .WithVisits()
+                .BuildAsync()
+            : null;
     }
 
     public async Task<Guid> CreateAsync(CreateVendorDto vendorDto)

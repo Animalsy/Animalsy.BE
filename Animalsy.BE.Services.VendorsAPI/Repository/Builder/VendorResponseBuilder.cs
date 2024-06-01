@@ -49,6 +49,8 @@ public class VendorResponseBuilder(IApiService apiService, VendorDto vendor) : I
             PostalCode = vendor.PostalCode,
             PhoneNumber = vendor.PhoneNumber,
             EmailAddress = vendor.EmailAddress,
+            OpeningHour = vendor.OpeningHour,
+            ClosingHour = vendor.ClosingHour,
             Contractors = _contractors,
             Visits = _visits,
         };
