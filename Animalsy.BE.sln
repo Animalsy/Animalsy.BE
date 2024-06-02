@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Animalsy.BE.Services.Contra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Animalsy.BE.Services.VendorAPI", "Animalsy.BE.Services.VendorsAPI\Animalsy.BE.Services.VendorAPI.csproj", "{BF2B1080-411B-4F1F-9A18-9769531D3640}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Animalsy.BE.Services.VisitAPI", "Animalsy.BE.Services.VisitAPI\Animalsy.BE.Services.VisitAPI.csproj", "{8011A405-6A22-470E-BDEE-0D797C87C904}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Animalsy.BE.Services.VisitAPI", "Animalsy.BE.Services.VisitAPI\Animalsy.BE.Services.VisitAPI.csproj", "{8011A405-6A22-470E-BDEE-0D797C87C904}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

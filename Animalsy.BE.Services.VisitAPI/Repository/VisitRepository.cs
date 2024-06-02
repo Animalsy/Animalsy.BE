@@ -1,6 +1,7 @@
 ﻿using Animalsy.BE.Services.VisitAPI.Data;
 using Animalsy.BE.Services.VisitAPI.Models;
 using Animalsy.BE.Services.VisitAPI.Models.Dto;
+using Animalsy.BE.Services.VisitAPI.Repository.Builder;
 using Animalsy.BE.Services.VisitAPI.Services;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
