@@ -1,4 +1,5 @@
 using Animalsy.BE.Services.AuthAPI.Data;
+using Animalsy.BE.Services.AuthAPI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,10 @@ builder.Services.AddDbContext<AppDbContext>(option =>
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddHttpClient("CustomerApi", client =>
+    client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:CustomerApi"]!));
+builder.Services.AddScoped<ICustomerService,  CustomerService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
