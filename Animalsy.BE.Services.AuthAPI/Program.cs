@@ -16,7 +16,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 
 builder.Services.AddHttpClient("CustomerApi", client =>
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:CustomerApi"]!));
-builder.Services.AddScoped<ICustomerService,  CustomerService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
