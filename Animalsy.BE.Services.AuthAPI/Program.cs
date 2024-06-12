@@ -1,4 +1,5 @@
 using Animalsy.BE.Services.AuthAPI.Data;
+using Animalsy.BE.Services.AuthAPI.Models;
 using Animalsy.BE.Services.AuthAPI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,12 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddHttpClient("CustomerApi", client =>
-    client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:CustomerApi"]!));
+    client.BaseAddress = new Uri(builder.Configuration["ServiceUrlConfiguration:CustomerApi"]!));
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 builder.Services.AddControllers();

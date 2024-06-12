@@ -1,4 +1,4 @@
-﻿namespace Animalsy.BE.Services.AuthAPI.Models;
+﻿namespace Animalsy.BE.Services.AuthAPI.Models.Dto;
 
 public record ResponseDto
 {
