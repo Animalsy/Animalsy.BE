@@ -17,7 +17,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Animalsy.BE.Services.Vendor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Animalsy.BE.Services.VisitAPI", "Animalsy.BE.Services.VisitAPI\Animalsy.BE.Services.VisitAPI.csproj", "{8011A405-6A22-470E-BDEE-0D797C87C904}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Animalsy.BE.Services.AuthAPI", "Animalsy.BE.Services.AuthAPI\Animalsy.BE.Services.AuthAPI.csproj", "{896F93E8-E80C-49A6-85F2-945F51467A2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Animalsy.BE.Services.AuthAPI", "Animalsy.BE.Services.AuthAPI\Animalsy.BE.Services.AuthAPI.csproj", "{896F93E8-E80C-49A6-85F2-945F51467A2B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2FDEBC88-1284-4903-8420-BCB5283B06A2}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

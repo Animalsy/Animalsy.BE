@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using Animalsy.BE.Services.AuthAPI.Models;
+using Animalsy.BE.Services.AuthAPI.Models.Dto;
 using Newtonsoft.Json;
 
 namespace Animalsy.BE.Services.AuthAPI.Services;

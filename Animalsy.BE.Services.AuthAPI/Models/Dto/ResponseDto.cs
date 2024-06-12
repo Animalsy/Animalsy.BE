@@ -3,6 +3,6 @@
 public record ResponseDto
 {
     public bool IsSuccess { get; init; }
-    public string Result { get; init; }
+    public object Result { get; init; }
     public string Message { get; init; }
 }
