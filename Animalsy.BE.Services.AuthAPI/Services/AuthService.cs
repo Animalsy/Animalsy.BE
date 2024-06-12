@@ -61,7 +61,7 @@ public class AuthService : IAuthService
         try
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(user =>
-                user.UserName.Equals(loginUserDto.Email, StringComparison.OrdinalIgnoreCase)).ConfigureAwait(false);
+                user.Email.Equals(loginUserDto.Email, StringComparison.OrdinalIgnoreCase)).ConfigureAwait(false);
 
             return user != null && await _userManager.CheckPasswordAsync(user, loginUserDto.Password)
                 ? new ResponseDto
