@@ -1,6 +1,7 @@
-﻿namespace Animalsy.BE.Services.AuthAPI.Models.Dto
+﻿namespace Animalsy.BE.Services.AuthAPI.Models.Dto;
+
+public record LoginUserDto
 {
-    public class LoginUserDto
-    {
-    }
+    public string Email { get; set; }
+    public string Password { get; set; }
 }

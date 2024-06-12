@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Animalsy.BE.Services.AuthAPI.Models
+namespace Animalsy.BE.Services.AuthAPI.Models;
+
+public class ApplicationUser : IdentityUser<Guid>
 {
-    public class ApplicationUser : IdentityUser<Guid>
-    {
-    }
 }
