@@ -1,13 +1,15 @@
-﻿using Animalsy.BE.Services.AuthAPI.Models;
+﻿using Animalsy.BE.Services.AuthAPI.Models.Dto;
 using FluentValidation;
 
 namespace Animalsy.BE.Services.AuthAPI.Validators;
 
-public class CreateCustomerValidator : AbstractValidator<CreateCustomerDto>
+public class RegisterUserValidator : AbstractValidator<RegisterUserDto>
 {
-    public CreateCustomerValidator(EmailValidator emailValidator, PhoneNumberValidator phoneNumberValidator)
+    public RegisterUserValidator(EmailValidator emailValidator, PhoneNumberValidator phoneNumberValidator)
     {
         RuleFor(x => x.Name).NotEmpty().MaximumLength(20);
+        RuleFor(x => x.Password).NotEmpty().MaximumLength(50);
+        RuleFor(x => x.Role).NotEmpty().MaximumLength(20);
         RuleFor(x => x.LastName).NotEmpty().MaximumLength(20);
         RuleFor(x => x.City).NotEmpty().MaximumLength(20);
         RuleFor(x => x.Street).NotEmpty().MaximumLength(40);

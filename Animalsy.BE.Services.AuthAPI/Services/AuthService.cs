@@ -1,6 +1,7 @@
 ﻿using Animalsy.BE.Services.AuthAPI.Data;
 using Animalsy.BE.Services.AuthAPI.Models;
 using Animalsy.BE.Services.AuthAPI.Models.Dto;
+using Animalsy.BE.Services.AuthAPI.Validators;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ public class AuthService : IAuthService
     private readonly ICustomerService _customerService;
     private readonly IMapper _mapper;
     private readonly IJwtTokenGenerator _tokenGenerator;
+    private readonly RegisterUserValidator _createCustomerValidator;
 
     public AuthService(AppDbContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager,
         ICustomerService customerService, IMapper mapper, IJwtTokenGenerator tokenGenerator)
