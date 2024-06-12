@@ -4,8 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Animalsy.BE.Services.AuthAPI.Data;
 
-public class AppDbContext(DbContextOptions options) : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
+public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
 {
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -21,8 +23,9 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<Applicat
         });
 
         builder.Entity<ApplicationRole>().HasData(
-            new ApplicationRole("Admin"),
-            new ApplicationRole("Customer"),
-            new ApplicationRole("Vendor"));
+            new ApplicationRole { Id = Guid.NewGuid(), Name = "Admin", NormalizedName = "ADMIN" },
+            new ApplicationRole { Id = Guid.NewGuid(), Name = "Customer", NormalizedName = "CUSTOMER" },
+            new ApplicationRole { Id = Guid.NewGuid(), Name = "Vendor", NormalizedName = "VENDOR" }
+        );
     }
 }
