@@ -12,18 +12,15 @@ public class AuthService : IAuthService
 {
     private readonly AppDbContext _dbContext;
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly ICustomerService _customerService;
     private readonly IMapper _mapper;
     private readonly IJwtTokenGenerator _tokenGenerator;
     private readonly RegisterUserValidator _createCustomerValidator;
 
-    public AuthService(AppDbContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager,
-        ICustomerService customerService, IMapper mapper, IJwtTokenGenerator tokenGenerator)
+    public AuthService(AppDbContext dbContext, UserManager<ApplicationUser> userManager, ICustomerService customerService, IMapper mapper, IJwtTokenGenerator tokenGenerator)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-        _roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
         _customerService = customerService ?? throw new ArgumentNullException(nameof(customerService));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _tokenGenerator = tokenGenerator ?? throw new ArgumentNullException(nameof(tokenGenerator));
@@ -91,8 +88,29 @@ public class AuthService : IAuthService
         
     }
 
-    public Task<ResponseDto> AssignRoleAsync(string email, string roleName)
+    public async Task<ResponseDto> AssignRoleAsync(AssignRoleDto assignRoleDto)
     {
-        throw new NotImplementedException();
+        var user = _dbContext.Users.FirstOrDefault(user => user.Email.Equals(assignRoleDto.Email, StringComparison.OrdinalIgnoreCase));
+        if (user == null)
+            return new ResponseDto
+            {
+                IsSuccess = false,
+                Message = "User not found"
+            };
+
+        var result = await _userManager.AddToRoleAsync(user, assignRoleDto.RoleName);
+        return result.Succeeded
+            ? new ResponseDto
+            {
+                IsSuccess = true,
+                Result = result,
+                Message = "User assigned to role successfully"
+            }
+            : new ResponseDto
+            {
+                IsSuccess = false,
+                Result = result
+            };
+
     }
 }

@@ -6,5 +6,5 @@ public interface IAuthService
 {
     Task<ResponseDto> RegisterAsync(RegisterUserDto registerUserDto);
     Task<ResponseDto> LoginAsync(LoginUserDto loginUserDto);
-    Task<ResponseDto> AssignRoleAsync(string email, string roleName);
+    Task<ResponseDto> AssignRoleAsync(AssignRoleDto assignRoleDto);
 }

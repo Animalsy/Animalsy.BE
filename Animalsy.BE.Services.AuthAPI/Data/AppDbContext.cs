@@ -19,5 +19,10 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<Applicat
         {
             b.Property(u => u.Id).HasDefaultValueSql("newsequentialid()");
         });
+
+        builder.Entity<ApplicationRole>().HasData(
+            new ApplicationRole("Admin"),
+            new ApplicationRole("Customer"),
+            new ApplicationRole("Vendor"));
     }
 }
