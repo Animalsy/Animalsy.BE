@@ -2,7 +2,7 @@
 using Animalsy.BE.Services.ContractorAPI.Models.Dto;
 using AutoMapper;
 
-namespace Animalsy.BE.Services.ContractorAPI;
+namespace Animalsy.BE.Services.ContractorAPI.Configuration;
 
 public class MappingConfig
 {

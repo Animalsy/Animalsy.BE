@@ -3,17 +3,25 @@ using Animalsy.BE.Services.CustomerAPI.Services;
 
 namespace Animalsy.BE.Services.CustomerAPI.Repository.Builder;
 
-public class CustomerProfileBuilder(IApiService apiService, CustomerDto customer) : ICustomerProfileBuilder
+public class CustomerProfileBuilder : ICustomerProfileBuilder
 {
     private readonly Queue<Task> _builderQueue = new();
     private IEnumerable<PetDto> _pets;
     private IEnumerable<VisitDto> _visits;
+    private readonly IApiService _apiService;
+    private readonly CustomerDto _customer;
+
+    public CustomerProfileBuilder(IApiService apiService, CustomerDto customer)
+    {
+        _apiService = apiService;
+        _customer = customer;
+    }
 
     public ICustomerProfileBuilder WithPets()
     {
         _builderQueue.Enqueue(Task.Run(async () =>
         {
-            _pets = await apiService.GetAsync<IEnumerable<PetDto>>("PetApiClient", $"Api/Pet/Customer/{customer.Id}");
+            _pets = await _apiService.GetAsync<IEnumerable<PetDto>>("PetApiClient", $"Api/Pet/Customer/{_customer.Id}");
         }));
 
         return this;
@@ -23,7 +31,7 @@ public class CustomerProfileBuilder(IApiService apiService, CustomerDto customer
     {
         _builderQueue.Enqueue(Task.Run(async () =>
         {
-            _visits = await apiService.GetAsync<IEnumerable<VisitDto>>("VisitApiClient", $"Api/Visit/Customer/{customer.Id}");
+            _visits = await _apiService.GetAsync<IEnumerable<VisitDto>>("VisitApiClient", $"Api/Visit/Customer/{_customer.Id}");
         }));
         return this;
     }
@@ -38,15 +46,7 @@ public class CustomerProfileBuilder(IApiService apiService, CustomerDto customer
 
         return new CustomerProfileDto
         {
-            Id = customer.Id,
-            Name = customer.Name,
-            City = customer.City,
-            Street = customer.Street,
-            Building = customer.Building,
-            Flat = customer.Flat,
-            PostalCode = customer.PostalCode,
-            PhoneNumber = customer.PhoneNumber,
-            EmailAddress = customer.EmailAddress,
+            Customer = _customer,
             Pets = _pets,
             Visits = _visits,
         };

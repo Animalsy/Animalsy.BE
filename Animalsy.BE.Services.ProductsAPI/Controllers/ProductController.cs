@@ -7,16 +7,29 @@ namespace Animalsy.BE.Services.ProductAPI.Controllers;
 
 [Route("Api/[controller]")]
 [ApiController]
-public class ProductController(IProductRepository productRepository, UniqueIdValidator idValidator, 
-    CreateProductValidator createProductValidator, UpdateProductValidator updateProductValidator) : ControllerBase
+public class ProductController : ControllerBase
 {
+    private readonly IProductRepository _productRepository;
+    private readonly UniqueIdValidator _uniqueIdValidator;
+    private readonly CreateProductValidator _createProductValidator;
+    private readonly UpdateProductValidator _updateProductValidator;
+
+    public ProductController(IProductRepository productRepository, UniqueIdValidator uniqueIdValidator, 
+        CreateProductValidator createProductValidator, UpdateProductValidator updateProductValidator)
+    {
+        _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
+        _uniqueIdValidator = uniqueIdValidator ?? throw new ArgumentNullException(nameof(uniqueIdValidator));
+        _createProductValidator = createProductValidator ?? throw new ArgumentNullException(nameof(createProductValidator));
+        _updateProductValidator = updateProductValidator ?? throw new ArgumentNullException(nameof(updateProductValidator));
+    }
+
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAllAsync()
     {
-        var products = await productRepository.GetAllAsync();
+        var products = await _productRepository.GetAllAsync();
         return products.Any()
             ? Ok(products)
             : NotFound("There were no products added yet");
@@ -29,10 +42,10 @@ public class ProductController(IProductRepository productRepository, UniqueIdVal
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByVendorAsync([FromRoute] Guid vendorId)
     {
-        var validationResult = await idValidator.ValidateAsync(vendorId);
+        var validationResult = await _uniqueIdValidator.ValidateAsync(vendorId);
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var products = await productRepository.GetByVendorAsync(vendorId);
+        var products = await _productRepository.GetByVendorAsync(vendorId);
         return products.Any()
             ? Ok(products)
             : NotFound(VendorIdNotFoundMessage(vendorId));
@@ -45,10 +58,10 @@ public class ProductController(IProductRepository productRepository, UniqueIdVal
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByIdAsync([FromRoute] Guid productId)
     {
-        var validationResult = await idValidator.ValidateAsync(productId);
+        var validationResult = await _uniqueIdValidator.ValidateAsync(productId);
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var product = await productRepository.GetByIdAsync(productId);
+        var product = await _productRepository.GetByIdAsync(productId);
         return product != null
             ? Ok(product)
             : NotFound(ProductIdNotFoundMessage(productId));
@@ -60,10 +73,10 @@ public class ProductController(IProductRepository productRepository, UniqueIdVal
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateProductDto productDto)
     {
-        var validationResult = await createProductValidator.ValidateAsync(productDto);
+        var validationResult = await _createProductValidator.ValidateAsync(productDto);
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var createdProductId = await productRepository.CreateAsync(productDto);
+        var createdProductId = await _productRepository.CreateAsync(productDto);
         return Ok(createdProductId);
     }
 
@@ -74,10 +87,10 @@ public class ProductController(IProductRepository productRepository, UniqueIdVal
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateProductDto productDto)
     {
-        var validationResult = await updateProductValidator.ValidateAsync(productDto);
+        var validationResult = await _updateProductValidator.ValidateAsync(productDto);
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var updateResult = await productRepository.TryUpdateAsync(productDto);
+        var updateResult = await _productRepository.TryUpdateAsync(productDto);
         return updateResult
             ? Ok("Product has been updated successfully")
             : NotFound(ProductIdNotFoundMessage(productDto.Id));
@@ -90,10 +103,10 @@ public class ProductController(IProductRepository productRepository, UniqueIdVal
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid productId)
     {
-        var validationResult = await idValidator.ValidateAsync(productId);
+        var validationResult = await _uniqueIdValidator.ValidateAsync(productId);
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var deleteResult = await productRepository.TryDeleteAsync(productId);
+        var deleteResult = await _productRepository.TryDeleteAsync(productId);
         return deleteResult
             ? Ok("Product has been deleted successfully")
             : NotFound(ProductIdNotFoundMessage(productId));

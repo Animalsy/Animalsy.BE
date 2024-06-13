@@ -3,17 +3,25 @@ using Animalsy.BE.Services.VendorAPI.Services;
 
 namespace Animalsy.BE.Services.VendorAPI.Repository.Builder;
 
-public class VendorProfileBuilder(IApiService apiService, VendorDto vendor) : IVendorProfileBuilder
+public class VendorProfileBuilder : IVendorProfileBuilder
 {
     private readonly Queue<Task> _builderQueue = new();
     private IEnumerable<ContractorDto> _contractors;
     private IEnumerable<VisitDto> _visits;
+    private readonly IApiService _apiService;
+    private readonly VendorDto _vendor;
+
+    public VendorProfileBuilder(IApiService apiService, VendorDto vendor)
+    {
+        _apiService = apiService ?? throw new ArgumentNullException(nameof(apiService));
+        _vendor = vendor ?? throw new ArgumentNullException(nameof(vendor));
+    }
 
     public IVendorProfileBuilder WithContractors()
     {
         _builderQueue.Enqueue(Task.Run(async () =>
         {
-            _contractors = await apiService.GetAsync<IEnumerable<ContractorDto>>("ContractorApiClient", $"Api/Contractor/Vendor/{vendor.Id}");
+            _contractors = await _apiService.GetAsync<IEnumerable<ContractorDto>>("ContractorApiClient", $"Api/Contractor/Vendor/{_vendor.Id}");
         }));
 
         return this;
@@ -23,11 +31,10 @@ public class VendorProfileBuilder(IApiService apiService, VendorDto vendor) : IV
     {
         _builderQueue.Enqueue(Task.Run(async () =>
         {
-            _visits = await apiService.GetAsync<IEnumerable<VisitDto>>("VisitApiClient", $"Api/Visit/Vendor/{vendor.Id}");
+            _visits = await _apiService.GetAsync<IEnumerable<VisitDto>>("VisitApiClient", $"Api/Visit/Vendor/{_vendor.Id}");
         }));
         return this;
     }
-
 
     public async Task<VendorProfileDto> BuildAsync()
     {
@@ -39,18 +46,7 @@ public class VendorProfileBuilder(IApiService apiService, VendorDto vendor) : IV
 
         return new VendorProfileDto
         {
-            Id = vendor.Id,
-            Name = vendor.Name,
-            Nip = vendor.Nip,
-            City = vendor.City,
-            Street = vendor.Street,
-            Building = vendor.Building,
-            Flat = vendor.Flat,
-            PostalCode = vendor.PostalCode,
-            PhoneNumber = vendor.PhoneNumber,
-            EmailAddress = vendor.EmailAddress,
-            OpeningHour = vendor.OpeningHour,
-            ClosingHour = vendor.ClosingHour,
+            Vendor = _vendor,
             Contractors = _contractors,
             Visits = _visits,
         };

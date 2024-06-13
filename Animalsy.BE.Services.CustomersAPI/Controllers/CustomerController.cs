@@ -7,16 +7,31 @@ namespace Animalsy.BE.Services.CustomerAPI.Controllers;
 
 [Route("Api/[controller]")]
 [ApiController]
-public class CustomerController(ICustomerRepository customerRepository, CreateCustomerValidator createCustomerValidator,
-    UpdateCustomerValidator updateCustomerValidator, UniqueIdValidator idValidator, EmailValidator emailValidator) : Controller
+public class CustomerController: Controller
 {
+    private readonly ICustomerRepository _customerRepository;
+    private readonly CreateCustomerValidator _createCustomerValidator;
+    private readonly UpdateCustomerValidator _updateCustomerValidator;
+    private readonly UniqueIdValidator _uniqueIdValidator;
+    private readonly EmailValidator _emailValidator;
+
+    public CustomerController(EmailValidator emailValidator, UpdateCustomerValidator updateCustomerValidator, CreateCustomerValidator createCustomerValidator,
+        ICustomerRepository customerRepository, UniqueIdValidator uniqueIdValidator)
+    {
+        _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
+        _createCustomerValidator = createCustomerValidator ?? throw new ArgumentNullException(nameof(createCustomerValidator));
+        _updateCustomerValidator = updateCustomerValidator ?? throw new ArgumentNullException(nameof(updateCustomerValidator));
+        _uniqueIdValidator = uniqueIdValidator ?? throw new ArgumentNullException(nameof(uniqueIdValidator));
+        _emailValidator = emailValidator ?? throw new ArgumentNullException(nameof(emailValidator));
+    }
+
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAllAsync()
     {
-        var customers = await customerRepository.GetAllAsync();
+        var customers = await _customerRepository.GetAllAsync();
         return customers.Any() 
             ? Ok(customers) 
             : NotFound("There are no customers added yet");
@@ -29,10 +44,10 @@ public class CustomerController(ICustomerRepository customerRepository, CreateCu
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByIdAsync(Guid customerId)
     {
-        var validationResult = await idValidator.ValidateAsync(customerId);
+        var validationResult = await _uniqueIdValidator.ValidateAsync(customerId);
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var customer = await customerRepository.GetByIdAsync(customerId);
+        var customer = await _customerRepository.GetByIdAsync(customerId);
         return customer != null
             ? Ok(customer)
             : NotFound(CustomerNotFoundMessage("Id", customerId.ToString()));
@@ -45,10 +60,10 @@ public class CustomerController(ICustomerRepository customerRepository, CreateCu
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByEmailAsync([FromRoute] string email)
     {
-        var validationRequest = await emailValidator.ValidateAsync(email);
+        var validationRequest = await _emailValidator.ValidateAsync(email);
         if (!validationRequest.IsValid) return BadRequest(validationRequest);
             
-        var customer = await customerRepository.GetByEmailAsync(email);
+        var customer = await _customerRepository.GetByEmailAsync(email);
         return customer != null
             ? Ok(customer)
             : NotFound(CustomerNotFoundMessage("Email", email));
@@ -61,10 +76,10 @@ public class CustomerController(ICustomerRepository customerRepository, CreateCu
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetCustomerProfileAsync(Guid customerId)
     {
-        var validationResult = await idValidator.ValidateAsync(customerId);
+        var validationResult = await _uniqueIdValidator.ValidateAsync(customerId);
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var customer = await customerRepository.GetCustomerProfileAsync(customerId);
+        var customer = await _customerRepository.GetCustomerProfileAsync(customerId);
         return customer != null
             ? Ok(customer)
             : NotFound(CustomerNotFoundMessage("Id", customerId.ToString()));
@@ -77,13 +92,13 @@ public class CustomerController(ICustomerRepository customerRepository, CreateCu
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateCustomerDto customerDto)
     {
-        var validationResult = await createCustomerValidator.ValidateAsync(customerDto);
+        var validationResult = await _createCustomerValidator.ValidateAsync(customerDto);
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var existingCustomer = await customerRepository.GetByEmailAsync(customerDto.EmailAddress);
+        var existingCustomer = await _customerRepository.GetByEmailAsync(customerDto.EmailAddress);
         if(existingCustomer != null) return Conflict($"Customer with Email {customerDto.EmailAddress} already exists");
             
-        var createdCustomerId = await customerRepository.CreateAsync(customerDto);
+        var createdCustomerId = await _customerRepository.CreateAsync(customerDto);
         return Ok(createdCustomerId);
     }
 
@@ -94,10 +109,10 @@ public class CustomerController(ICustomerRepository customerRepository, CreateCu
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateCustomerDto customerDto)
     {
-        var validationResult = await updateCustomerValidator.ValidateAsync(customerDto);
+        var validationResult = await _updateCustomerValidator.ValidateAsync(customerDto);
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var updateSuccessful = await customerRepository.TryUpdateAsync(customerDto);
+        var updateSuccessful = await _customerRepository.TryUpdateAsync(customerDto);
         return updateSuccessful
             ? Ok("Customer has been updated successfully")
             : NotFound(CustomerNotFoundMessage("Id", customerDto.Id.ToString()));
@@ -111,10 +126,10 @@ public class CustomerController(ICustomerRepository customerRepository, CreateCu
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid customerId)
     {
-        var validationResult = await idValidator.ValidateAsync(customerId);
+        var validationResult = await _uniqueIdValidator.ValidateAsync(customerId);
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var deleteSuccessful = await customerRepository.TryDeleteAsync(customerId);
+        var deleteSuccessful = await _customerRepository.TryDeleteAsync(customerId);
         return deleteSuccessful
             ? Ok("Customer has been deleted successfully")
             : NotFound(CustomerNotFoundMessage("Id", customerId.ToString()));

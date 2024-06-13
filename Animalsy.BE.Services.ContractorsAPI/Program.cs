@@ -1,4 +1,4 @@
-using Animalsy.BE.Services.ContractorAPI;
+using Animalsy.BE.Services.ContractorAPI.Configuration;
 using Animalsy.BE.Services.ContractorAPI.Data;
 using Animalsy.BE.Services.ContractorAPI.Repository;
 using Animalsy.BE.Services.ContractorAPI.Utilities;

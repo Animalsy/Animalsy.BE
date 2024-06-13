@@ -3,7 +3,7 @@ using Animalsy.BE.Services.VisitAPI.Services;
 
 namespace Animalsy.BE.Services.VisitAPI.Repository.Builder;
 
-public class VisitResponseBuilder(IApiService apiService, VisitDto visit) : IVisitResponseBuilder
+public class VisitResponseBuilder : IVisitResponseBuilder
 {
     private readonly Queue<Task> _builderQueue = new();
     private ContractorDto _contractor;
@@ -11,12 +11,20 @@ public class VisitResponseBuilder(IApiService apiService, VisitDto visit) : IVis
     private PetDto _pet;
     private ProductDto _product;
     private VendorDto _vendor;
+    private readonly IApiService _apiService;
+    private readonly VisitDto _visit;
+
+    public VisitResponseBuilder(IApiService apiService, VisitDto visit)
+    {
+        _apiService = apiService;
+        _visit = visit;
+    }
 
     public IVisitResponseBuilder WithCustomer()
     {
         _builderQueue.Enqueue(Task.Run(async () =>
         {
-            _customer = await apiService.GetAsync<CustomerDto>("CustomerApiClient", $"Api/Customer/{visit.CustomerId}");
+            _customer = await _apiService.GetAsync<CustomerDto>("CustomerApiClient", $"Api/Customer/{_visit.CustomerId}");
         }));
         return this;
     }
@@ -25,7 +33,7 @@ public class VisitResponseBuilder(IApiService apiService, VisitDto visit) : IVis
     {
         _builderQueue.Enqueue(Task.Run(async () =>
         {
-            _contractor = await apiService.GetAsync<ContractorDto>("ContractorApiClient", $"Api/Contractor/{visit.ContractorId}");
+            _contractor = await _apiService.GetAsync<ContractorDto>("ContractorApiClient", $"Api/Contractor/{_visit.ContractorId}");
         }));
 
         return this;
@@ -35,7 +43,7 @@ public class VisitResponseBuilder(IApiService apiService, VisitDto visit) : IVis
     {
         _builderQueue.Enqueue(Task.Run(async () =>
         {
-            _pet = await apiService.GetAsync<PetDto>("PetApiClient", $"Api/Pet/{visit.PetId}");
+            _pet = await _apiService.GetAsync<PetDto>("PetApiClient", $"Api/Pet/{_visit.PetId}");
         }));
 
         return this;
@@ -45,7 +53,7 @@ public class VisitResponseBuilder(IApiService apiService, VisitDto visit) : IVis
     {
         _builderQueue.Enqueue(Task.Run(async () =>
         {
-            _product = await apiService.GetAsync<ProductDto>("ProductApiClient", $"Api/Product/{visit.ProductId}");
+            _product = await _apiService.GetAsync<ProductDto>("ProductApiClient", $"Api/Product/{_visit.ProductId}");
         }));
 
         return this;
@@ -55,7 +63,7 @@ public class VisitResponseBuilder(IApiService apiService, VisitDto visit) : IVis
     {
         _builderQueue.Enqueue(Task.Run(async () =>
         {
-            _vendor = await apiService.GetAsync<VendorDto>("VendorApiClient", $"Api/Vendor/{visit.VendorId}");
+            _vendor = await _apiService.GetAsync<VendorDto>("VendorApiClient", $"Api/Vendor/{_visit.VendorId}");
         }));
 
         return this;
@@ -71,10 +79,10 @@ public class VisitResponseBuilder(IApiService apiService, VisitDto visit) : IVis
 
         return new VisitResponseDto
         {
-            Id = visit.Id,
-            Comment = visit.Comment,
-            Date = visit.Date,
-            State = visit.State,
+            Id = _visit.Id,
+            Comment = _visit.Comment,
+            Date = _visit.Date,
+            State = _visit.State,
             Contractor = _contractor,
             Customer = _customer,
             Pet = _pet,

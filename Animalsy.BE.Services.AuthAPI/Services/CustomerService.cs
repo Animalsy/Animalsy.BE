@@ -4,13 +4,20 @@ using Newtonsoft.Json;
 
 namespace Animalsy.BE.Services.AuthAPI.Services;
 
-public class CustomerService(IHttpClientFactory httpClientFactory) : ICustomerService
+public class CustomerService : ICustomerService
 {
+    private readonly IHttpClientFactory _httpClientFactory;
+
+    public CustomerService(IHttpClientFactory httpClientFactory)
+    {
+        _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+    }
+
     public async Task<ResponseDto> CreateCustomerAsync(CreateCustomerDto customerDto)
     {
         try
         {
-            using var client = httpClientFactory.CreateClient("CustomerApi");
+            using var client = _httpClientFactory.CreateClient("CustomerApi");
             using var content = new StringContent(JsonConvert.SerializeObject(customerDto), Encoding.UTF8, "application/json");
             using var response = await client.PostAsync(new Uri("Api/Customer"), content);
             return new ResponseDto
