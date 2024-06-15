@@ -1,6 +1,7 @@
 using Animalsy.BE.Services.CustomerAPI.Configuration;
 using Animalsy.BE.Services.CustomerAPI.Data;
 using Animalsy.BE.Services.CustomerAPI.Repository;
+using Animalsy.BE.Services.CustomerAPI.Repository.ResponseHandler;
 using Animalsy.BE.Services.CustomerAPI.Services;
 using Animalsy.BE.Services.CustomerAPI.Utilities;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,8 @@ builder.Services.AddSingleton(MappingConfiguration.RegisterMaps().CreateMapper()
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-builder.Services.AddScoped<IApiService, ApiService>();
+builder.Services.AddTransient<IApiService, ApiService>();
+builder.Services.AddTransient<IResponseHandler, ResponseHandler>();
 
 builder.Services.Configure<ServiceUrlConfiguration>(builder.Configuration.GetSection(nameof(ServiceUrlConfiguration))!);
 builder.Services.AddHttpClients();

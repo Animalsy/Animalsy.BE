@@ -2,5 +2,5 @@
 
 public interface IApiService
 {
-    Task<T> GetAsync<T>(string clientName, string path);
+    Task<HttpResponseMessage> GetAsync(string clientName, string path);
 }
