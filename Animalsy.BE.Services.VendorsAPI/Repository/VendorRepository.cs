@@ -2,6 +2,7 @@
 using Animalsy.BE.Services.VendorAPI.Models;
 using Animalsy.BE.Services.VendorAPI.Models.Dto;
 using Animalsy.BE.Services.VendorAPI.Repository.Builder;
+using Animalsy.BE.Services.VendorAPI.Repository.ResponseHandler;
 using Animalsy.BE.Services.VendorAPI.Services;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -12,12 +13,14 @@ public class VendorRepository : IVendorRepository
 {
     private readonly AppDbContext _dbContext;
     private readonly IApiService _apiService;
+    private readonly IResponseHandler _responseHandler;
     private readonly IMapper _mapper;
 
-    public VendorRepository(AppDbContext dbContext, IApiService apiService, IMapper mapper)
+    public VendorRepository(AppDbContext dbContext, IApiService apiService, IResponseHandler responseHandler, IMapper mapper)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _apiService = apiService ?? throw new ArgumentNullException(nameof(apiService));
+        _responseHandler = responseHandler ?? throw new ArgumentNullException(nameof(responseHandler));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
@@ -50,7 +53,7 @@ public class VendorRepository : IVendorRepository
         var vendor = await _dbContext.Vendors.FirstOrDefaultAsync(c => c.Id == vendorId);
 
         return vendor != null
-            ? await new VendorProfileBuilder(_apiService, _mapper.Map<VendorDto>(vendor))
+            ? await new VendorProfileBuilder(_apiService, _responseHandler, _mapper.Map<VendorDto>(vendor))
                 .WithContractors()
                 .WithVisits()
                 .BuildAsync()
