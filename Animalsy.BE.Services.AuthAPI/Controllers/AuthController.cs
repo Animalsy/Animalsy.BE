@@ -24,47 +24,41 @@ namespace Animalsy.BE.Services.AuthAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> RegisterAsync([FromBody] RegisterUserDto registerUserDto)
+        public Task<IActionResult> RegisterAsync([FromBody] RegisterUserDto registerUserDto)
         {
-            var validationResult = await _validatorFactory.GetValidator<RegisterUserDto>()
-                .ValidateAsync(registerUserDto)
-                .ConfigureAwait(false);
-
-            if (!validationResult.IsValid) return BadRequest(validationResult);
-
-            var result = await _authService.RegisterAsync(registerUserDto).ConfigureAwait(false);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
+            return HandleRequest(registerUserDto, () => _authService.RegisterAsync(registerUserDto));
         }
 
         [HttpPost("Login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> LoginAsync([FromBody] LoginUserDto loginDto)
+        public Task<IActionResult> LoginAsync([FromBody] LoginUserDto loginDto)
         {
-            var validationResult = await _validatorFactory.GetValidator<LoginUserDto>()
-                .ValidateAsync(loginDto)
-                .ConfigureAwait(false);
-
-            if (!validationResult.IsValid) return BadRequest(validationResult);
-
-            var result = await _authService.LoginAsync(loginDto);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
+            return HandleRequest(loginDto, () => _authService.LoginAsync(loginDto));
         }
 
         [HttpPost("AssignRole")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AssignRoleAsync([FromBody] AssignRoleDto assignRoleDto)
+        public Task<IActionResult> AssignRoleAsync([FromBody] AssignRoleDto assignRoleDto)
         {
-            var validationResult = await _validatorFactory.GetValidator<AssignRoleDto>()
-                .ValidateAsync(assignRoleDto)
-                .ConfigureAwait(false);
+            return HandleRequest(assignRoleDto, () => _authService.AssignRoleAsync(assignRoleDto));
+        }
 
-            if (!validationResult.IsValid) return BadRequest(validationResult);
 
-            var result = await _authService.AssignRoleAsync(assignRoleDto);
+        private async Task<IActionResult> HandleRequest<TDto>(TDto dto, Func<Task<ResponseDto>> requestFunc)
+        {
+            var validator = _validatorFactory.GetValidator<TDto>();
+            if (validator != null)
+            {
+                var validationResult = await validator.ValidateAsync(dto).ConfigureAwait(false);
+                if (!validationResult.IsValid) return BadRequest(validationResult);
+            }
+
+            var result = await requestFunc().ConfigureAwait(false);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }

@@ -1,5 +1,6 @@
 using Animalsy.BE.Services.AuthAPI.Configuration;
 using Animalsy.BE.Services.AuthAPI.Data;
+using Animalsy.BE.Services.AuthAPI.Middleware;
 using Animalsy.BE.Services.AuthAPI.Models;
 using Animalsy.BE.Services.AuthAPI.Services;
 using Animalsy.BE.Services.AuthAPI.Utilities;
@@ -27,13 +28,17 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSett
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IValidatorFactory, ValidatorFactory>();
 builder.Services.AddValidators();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddLogging(cfg =>
+{
+    cfg.AddConsole();
+});
 
 var app = builder.Build();
 
@@ -43,6 +48,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

@@ -50,8 +50,7 @@ public class VendorController : Controller
     public async Task<IActionResult> GetByIdAsync(Guid vendorId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(vendorId)
-            .ConfigureAwait(false);
+            .ValidateAsync(vendorId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -69,8 +68,7 @@ public class VendorController : Controller
     public async Task<IActionResult> GetVendorProfileAsync(Guid vendorId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(vendorId)
-            .ConfigureAwait(false);
+            .ValidateAsync(vendorId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -87,8 +85,7 @@ public class VendorController : Controller
     public async Task<IActionResult> CreateAsync([FromBody] CreateVendorDto vendorDto)
     {
         var validationResult = await _validatorFactory.GetValidator<CreateVendorDto>()
-            .ValidateAsync(vendorDto)
-            .ConfigureAwait(false);
+            .ValidateAsync(vendorDto);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
             
@@ -104,8 +101,7 @@ public class VendorController : Controller
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateVendorDto vendorDto)
     {
         var validationResult = await _validatorFactory.GetValidator<UpdateVendorDto>()
-            .ValidateAsync(vendorDto)
-            .ConfigureAwait(false);
+            .ValidateAsync(vendorDto);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -123,8 +119,7 @@ public class VendorController : Controller
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid customerId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(customerId)
-            .ConfigureAwait(false);
+            .ValidateAsync(customerId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 

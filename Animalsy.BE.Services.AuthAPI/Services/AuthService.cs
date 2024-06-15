@@ -4,6 +4,7 @@ using Animalsy.BE.Services.AuthAPI.Models.Dto;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Animalsy.BE.Services.AuthAPI.Services;
 
@@ -13,84 +14,98 @@ public class AuthService : IAuthService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ICustomerService _customerService;
     private readonly IMapper _mapper;
-    private readonly IJwtTokenGenerator _tokenGenerator;
+    private readonly IJwtTokenService _tokenService;
+    private readonly ILogger<AuthService> _logger;
 
-    public AuthService(AppDbContext dbContext, UserManager<ApplicationUser> userManager, ICustomerService customerService,
-        IMapper mapper, IJwtTokenGenerator tokenGenerator)
+    public AuthService(
+        AppDbContext dbContext,
+        UserManager<ApplicationUser> userManager,
+        ICustomerService customerService,
+        IMapper mapper,
+        IJwtTokenService tokenGenerator, ILogger<AuthService> logger)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         _customerService = customerService ?? throw new ArgumentNullException(nameof(customerService));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        _tokenGenerator = tokenGenerator ?? throw new ArgumentNullException(nameof(tokenGenerator));
+        _tokenService = tokenGenerator ?? throw new ArgumentNullException(nameof(tokenGenerator));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public async Task<ResponseDto> RegisterAsync(RegisterUserDto registerUserDto)
     {
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync().ConfigureAwait(false);
+
         try
         {
-            var result = await _userManager.CreateAsync(
-                _mapper.Map<ApplicationUser>(registerUserDto), registerUserDto.Password).ConfigureAwait(false);
+            var user = _mapper.Map<ApplicationUser>(registerUserDto);
+            var userManagerCreationResult = await _userManager.CreateAsync(user, registerUserDto.Password).ConfigureAwait(false);
 
-            if (!result.Succeeded) return new ResponseDto
+            if (!userManagerCreationResult.Succeeded)
             {
-                IsSuccess = false,
-                Result = result
-            };
+                await transaction.RollbackAsync().ConfigureAwait(false);
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Result = userManagerCreationResult
+                };
+            }
 
-            var user = await _dbContext.Users.SingleAsync(user => 
-                    user.Email.Equals(registerUserDto.EmailAddress, StringComparison.OrdinalIgnoreCase))
-                .ConfigureAwait(false);
+            var createdUser = await _dbContext.Users.SingleAsync(u =>
+                u.Email.Equals(registerUserDto.EmailAddress, StringComparison.OrdinalIgnoreCase)).ConfigureAwait(false);
 
             var createCustomerDto = _mapper.Map<CreateCustomerDto>(registerUserDto);
-                createCustomerDto.UserId = user.Id;
+            createCustomerDto.UserId = createdUser.Id;
 
-            return await _customerService.CreateCustomerAsync(createCustomerDto)
-                .ConfigureAwait(false);
+            var creationResult = await _customerService.CreateCustomerAsync(createCustomerDto).ConfigureAwait(false);
+            await transaction.CommitAsync().ConfigureAwait(false);
+
+            return new ResponseDto
+            {
+                IsSuccess = true,
+                Result = new RegisterUserResponseDto
+                {
+                    UserId = createdUser.Id,
+                    CustomerId = JsonConvert.DeserializeObject<Guid>(creationResult.Result.ToString()!)
+                },
+                Message = "User registered successfully"
+            };
         }
         catch (Exception ex)
         {
+            await transaction.RollbackAsync().ConfigureAwait(false);
+            _logger.LogError(ex, message: "Error occurred during user registration");
             return new ResponseDto
             {
                 IsSuccess = false,
-                Message = ex.Message
+                Result = ex,
+                Message = "Error encountered"
             };
         }
     }
 
     public async Task<ResponseDto> LoginAsync(LoginUserDto loginUserDto)
     {
-        try
-        {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(user =>
-                user.Email.Equals(loginUserDto.Email, StringComparison.OrdinalIgnoreCase)).ConfigureAwait(false);
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u =>
+            u.Email.Equals(loginUserDto.Email, StringComparison.OrdinalIgnoreCase)).ConfigureAwait(false);
 
-            return user != null && await _userManager.CheckPasswordAsync(user, loginUserDto.Password)
-                ? new ResponseDto
-                {
-                    IsSuccess = true,
-                    Result = new LoginUserResponseDto
-                    {
-                        UserId = user.Id,
-                        Token = _tokenGenerator.GenerateToken(user)
-                    },
-                    Message = "User logged in"
-                }
-                : new ResponseDto
-                {
-                    IsSuccess = false,
-                    Message = "Invalid username or password"
-                };
-        }
-        catch (Exception ex)
+        if (user == null || !await _userManager.CheckPasswordAsync(user, loginUserDto.Password).ConfigureAwait(false))
         {
-            return new ResponseDto
-            {
-                IsSuccess = false,
-                Message = ex.Message
-            };
+            throw new UnauthorizedAccessException("Invalid username or password");
         }
-        
+
+        var userRoles = _userManager.GetRolesAsync(user).ConfigureAwait(false);
+
+        return new ResponseDto
+        {
+            IsSuccess = true,
+            Result = new LoginUserResponseDto
+            {
+                UserId = user.Id,
+                Token = _tokenService.GenerateToken(user, userRoles)
+            },
+            Message = "User logged in"
+        };
     }
 
     public async Task<ResponseDto> AssignRoleAsync(AssignRoleDto assignRoleDto)
@@ -116,6 +131,5 @@ public class AuthService : IAuthService
                 IsSuccess = false,
                 Result = result
             };
-
     }
 }

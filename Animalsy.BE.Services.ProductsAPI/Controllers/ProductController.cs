@@ -38,8 +38,7 @@ public class ProductController : ControllerBase
     public async Task<IActionResult> GetByVendorAsync([FromRoute] Guid vendorId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(vendorId)
-            .ConfigureAwait(false);
+            .ValidateAsync(vendorId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -57,8 +56,7 @@ public class ProductController : ControllerBase
     public async Task<IActionResult> GetByIdAsync([FromRoute] Guid productId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(productId)
-            .ConfigureAwait(false);
+            .ValidateAsync(productId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -75,8 +73,7 @@ public class ProductController : ControllerBase
     public async Task<IActionResult> CreateAsync([FromBody] CreateProductDto productDto)
     {
         var validationResult = await _validatorFactory.GetValidator<CreateProductDto>()
-            .ValidateAsync(productDto)
-            .ConfigureAwait(false);
+            .ValidateAsync(productDto);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -92,8 +89,7 @@ public class ProductController : ControllerBase
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateProductDto productDto)
     {
         var validationResult = await _validatorFactory.GetValidator<UpdateProductDto>()
-            .ValidateAsync(productDto)
-            .ConfigureAwait(false);
+            .ValidateAsync(productDto);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -111,8 +107,7 @@ public class ProductController : ControllerBase
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid productId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(productId)
-            .ConfigureAwait(false);
+            .ValidateAsync(productId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 

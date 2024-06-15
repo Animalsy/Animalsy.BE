@@ -7,7 +7,7 @@ namespace Animalsy.BE.Services.CustomerAPI.Repository.Builder;
 
 public class CustomerProfileBuilder : ICustomerProfileBuilder
 {
-    private readonly Queue<Task> _builderQueue = new();
+    private readonly List<Task> _tasks = new();
     private readonly ConcurrentDictionary<string, string> _responseDetails = new();
     private IEnumerable<PetDto> _pets;
     private IEnumerable<VisitDto> _visits;
@@ -24,12 +24,10 @@ public class CustomerProfileBuilder : ICustomerProfileBuilder
 
     public ICustomerProfileBuilder WithPets()
     {
-        _builderQueue.Enqueue(Task.Run(async () =>
+        _tasks.Add(Task.Run(async () =>
         {
             _pets = await _responseHandler.EvaluateResponse <IEnumerable<PetDto>>(nameof(_pets), _responseDetails,
-                async () =>
-                    await _apiService.GetAsync("PetApiClient", $"Api/Pet/Customer/{_customer.Id}")
-                        .ConfigureAwait(false)); ;
+                () => _apiService.GetAsync("PetApiClient", $"Api/Pet/Customer/{_customer.Id}"));
         }));
 
         return this;
@@ -37,23 +35,17 @@ public class CustomerProfileBuilder : ICustomerProfileBuilder
 
     public ICustomerProfileBuilder WithVisits()
     {
-        _builderQueue.Enqueue(Task.Run(async () =>
+        _tasks.Add(Task.Run(async () =>
         {
             _visits = await _responseHandler.EvaluateResponse<IEnumerable<VisitDto>>(nameof(_visits), _responseDetails,
-                async () =>
-                    await _apiService.GetAsync("VisitApiClient", $"Api/Visit/Customer/{_customer.Id}")
-                        .ConfigureAwait(false)); ;
+                () => _apiService.GetAsync("VisitApiClient", $"Api/Visit/Customer/{_customer.Id}"));
         }));
         return this;
     }
 
     public async Task<CustomerProfileDto> BuildAsync()
     {
-
-        while (_builderQueue.TryDequeue(out var currentTask))
-        {
-            await currentTask.ConfigureAwait(false);
-        }
+        await Task.WhenAll(_tasks).ConfigureAwait(false);
 
         return new CustomerProfileDto
         {

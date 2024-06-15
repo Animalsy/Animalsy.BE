@@ -7,7 +7,7 @@ namespace Animalsy.BE.Services.VendorAPI.Repository.Builder;
 
 public class VendorProfileBuilder : IVendorProfileBuilder
 {
-    private readonly Queue<Task> _builderQueue = new();
+    private readonly List<Task> _tasks = new();
     private readonly ConcurrentDictionary<string, string> _responseDetails = new();
     private IEnumerable<ContractorDto> _contractors;
     private IEnumerable<VisitDto> _visits;
@@ -24,12 +24,10 @@ public class VendorProfileBuilder : IVendorProfileBuilder
 
     public IVendorProfileBuilder WithContractors()
     {
-        _builderQueue.Enqueue(Task.Run(async () =>
+        _tasks.Add(Task.Run(async () =>
         {
             _contractors = await _responseHandler.EvaluateResponse<IEnumerable<ContractorDto>>(nameof(_contractors), _responseDetails,
-                async () => 
-                    await _apiService.GetAsync("ContractorApiClient", $"Api/Contractor/Vendor/{_vendor.Id}")
-                        .ConfigureAwait(false));
+                () => _apiService.GetAsync("ContractorApiClient", $"Api/Contractor/Vendor/{_vendor.Id}"));
         }));
 
         return this;
@@ -37,12 +35,10 @@ public class VendorProfileBuilder : IVendorProfileBuilder
 
     public IVendorProfileBuilder WithVisits()
     {
-        _builderQueue.Enqueue(Task.Run(async () =>
+        _tasks.Add(Task.Run(async () =>
         {
             _visits = await _responseHandler.EvaluateResponse<IEnumerable<VisitDto>>(nameof(_visits), _responseDetails,
-                async () =>
-                    await _apiService.GetAsync("VisitApiClient", $"Api/Visit/Vendor/{_vendor.Id}")
-                        .ConfigureAwait(false));
+                 () => _apiService.GetAsync("VisitApiClient", $"Api/Visit/Vendor/{_vendor.Id}"));
         }));
         return this;
     }
@@ -50,10 +46,7 @@ public class VendorProfileBuilder : IVendorProfileBuilder
     public async Task<VendorProfileDto> BuildAsync()
     {
 
-        while (_builderQueue.TryDequeue(out var currentTask))
-        {
-            await currentTask.ConfigureAwait(false);
-        }
+        await Task.WhenAll(_tasks).ConfigureAwait(false);
 
         return new VendorProfileDto
         {

@@ -7,7 +7,7 @@ namespace Animalsy.BE.Services.VisitAPI.Repository.Builder;
 
 public class VisitResponseBuilder : IVisitResponseBuilder
 {
-    private readonly Queue<Task> _builderQueue = new();
+    private readonly List<Task> _tasks = new();
     private readonly ConcurrentDictionary<string, string> _responseDetails = new();
     private ContractorDto _contractor;
     private CustomerDto _customer;
@@ -27,7 +27,7 @@ public class VisitResponseBuilder : IVisitResponseBuilder
 
     public IVisitResponseBuilder WithCustomer()
     {
-        _builderQueue.Enqueue(Task.Run(async () =>
+        _tasks.Add(Task.Run(async () =>
         {
             _customer = await _responseHandler.EvaluateResponse<CustomerDto>(nameof(_customer), _responseDetails,
                 async () =>
@@ -39,7 +39,7 @@ public class VisitResponseBuilder : IVisitResponseBuilder
 
     public IVisitResponseBuilder WithContractor()
     {
-        _builderQueue.Enqueue(Task.Run(async () =>
+        _tasks.Add(Task.Run(async () =>
         {
             _contractor = await _responseHandler.EvaluateResponse<ContractorDto>(nameof(_contractor), _responseDetails,
                 async () =>
@@ -52,12 +52,10 @@ public class VisitResponseBuilder : IVisitResponseBuilder
 
     public IVisitResponseBuilder WithPet()
     {
-        _builderQueue.Enqueue(Task.Run(async () =>
+        _tasks.Add(Task.Run(async () =>
         {
             _pet = await _responseHandler.EvaluateResponse<PetDto>(nameof(_pet), _responseDetails,
-                async () =>
-                    await _apiService.GetAsync("PetApiClient", $"Api/Pet/{_visit.PetId}")
-                        .ConfigureAwait(false));
+                () => _apiService.GetAsync("PetApiClient", $"Api/Pet/{_visit.PetId}"));
         }));
 
         return this;
@@ -65,12 +63,10 @@ public class VisitResponseBuilder : IVisitResponseBuilder
 
     public IVisitResponseBuilder WithProduct()
     {
-        _builderQueue.Enqueue(Task.Run(async () =>
+        _tasks.Add(Task.Run(async () =>
         {
             _product = await _responseHandler.EvaluateResponse<ProductDto>(nameof(_product), _responseDetails,
-                async () =>
-                    await _apiService.GetAsync("ProductApiClient", $"Api/Product/{_visit.ProductId}")
-                        .ConfigureAwait(false));
+                () => _apiService.GetAsync("ProductApiClient", $"Api/Product/{_visit.ProductId}"));
         }));
 
         return this;
@@ -78,12 +74,10 @@ public class VisitResponseBuilder : IVisitResponseBuilder
 
     public IVisitResponseBuilder WithVendor()
     {
-        _builderQueue.Enqueue(Task.Run(async () =>
+        _tasks.Add(Task.Run(async () =>
         {
             _vendor = await _responseHandler.EvaluateResponse<VendorDto>(nameof(_vendor), _responseDetails,
-                async () =>
-                    await _apiService.GetAsync("VendorApiClient", $"Api/Vendor/{_visit.VendorId}")
-                        .ConfigureAwait(false));
+                () => _apiService.GetAsync("VendorApiClient", $"Api/Vendor/{_visit.VendorId}"));
         }));
 
         return this;
@@ -91,10 +85,7 @@ public class VisitResponseBuilder : IVisitResponseBuilder
 
     public async Task<VisitResponseDto> BuildAsync()
     {
-        while (_builderQueue.TryDequeue(out var currentTask))
-        {
-            await currentTask.ConfigureAwait(false);
-        }
+        await Task.WhenAll(_tasks).ConfigureAwait(false);
 
         return new VisitResponseDto
         {

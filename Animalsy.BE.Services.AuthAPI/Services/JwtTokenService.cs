@@ -8,16 +8,16 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Animalsy.BE.Services.AuthAPI.Services;
 
-public class JwtTokenGenerator : IJwtTokenGenerator
+public class JwtTokenService : IJwtTokenService
 {
     private readonly IOptionsSnapshot<JwtOptions> _jwtOptions;
 
-    public JwtTokenGenerator(IOptionsSnapshot<JwtOptions> jwtOptions)
+    public JwtTokenService(IOptionsSnapshot<JwtOptions> jwtOptions)
     {
         _jwtOptions = jwtOptions;
     }
 
-    public string GenerateToken(ApplicationUser applicationUser)
+    public string GenerateToken(ApplicationUser applicationUser, IList<string> userRoles)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -29,12 +29,14 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             new(JwtRegisteredClaimNames.Sub, applicationUser.Id.ToString()),
         };
 
+        claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
+
         var descriptor = new SecurityTokenDescriptor
         {
             Audience = _jwtOptions.Value.Audience,
             Issuer = _jwtOptions.Value.Issuer,
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.Now.AddHours(10),
+            Expires = DateTime.Now.Add(_jwtOptions.Value.ExpirationTime),
             SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };

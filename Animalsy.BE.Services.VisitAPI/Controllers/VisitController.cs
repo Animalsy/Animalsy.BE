@@ -26,8 +26,7 @@ public class VisitController : Controller
     public async Task<IActionResult> GetByIdAsync(Guid visitId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(visitId)
-            .ConfigureAwait(false);
+            .ValidateAsync(visitId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -45,8 +44,7 @@ public class VisitController : Controller
     public async Task<IActionResult> GetByVendorIdAsync(Guid vendorId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(vendorId)
-            .ConfigureAwait(false);
+            .ValidateAsync(vendorId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -64,8 +62,7 @@ public class VisitController : Controller
     public async Task<IActionResult> GetByCustomerIdAsync(Guid customerId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(customerId)
-            .ConfigureAwait(false);
+            .ValidateAsync(customerId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -82,8 +79,7 @@ public class VisitController : Controller
     public async Task<IActionResult> CreateAsync([FromBody] CreateVisitDto visitDto)
     {
         var validationResult = await _validatorFactory.GetValidator<CreateVisitDto>()
-            .ValidateAsync(visitDto)
-            .ConfigureAwait(false);
+            .ValidateAsync(visitDto);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -99,8 +95,7 @@ public class VisitController : Controller
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateVisitDto visitDto)
     {
         var validationResult = await _validatorFactory.GetValidator<UpdateVisitDto>()
-            .ValidateAsync(visitDto)
-            .ConfigureAwait(false);
+            .ValidateAsync(visitDto);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -119,8 +114,7 @@ public class VisitController : Controller
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid visitId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(visitId)
-            .ConfigureAwait(false);
+            .ValidateAsync(visitId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 

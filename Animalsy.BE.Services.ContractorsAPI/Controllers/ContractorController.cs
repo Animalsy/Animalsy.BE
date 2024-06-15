@@ -26,7 +26,9 @@ public class ContractorController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByIdAsync([FromRoute] Guid contractorId)
     {
-        var validationResult = await _validatorFactory.GetValidator<Guid>().ValidateAsync(contractorId);
+        var validationResult = await _validatorFactory.GetValidator<Guid>()
+            .ValidateAsync(contractorId);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var contractor = await _contractorRepository.GetByIdAsync(contractorId);
@@ -43,8 +45,7 @@ public class ContractorController : ControllerBase
     public async Task<IActionResult> GetByVendorAsync([FromRoute] Guid vendorId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(vendorId)
-            .ConfigureAwait(false);
+            .ValidateAsync(vendorId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -61,8 +62,7 @@ public class ContractorController : ControllerBase
     public async Task<IActionResult> CreateAsync([FromBody] CreateContractorDto contractorDto)
     {
         var validationResult = await _validatorFactory.GetValidator<CreateContractorDto>()
-            .ValidateAsync(contractorDto)
-            .ConfigureAwait(false);
+            .ValidateAsync(contractorDto);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -78,8 +78,7 @@ public class ContractorController : ControllerBase
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateContractorDto contractorDto)
     {
         var validationResult = await _validatorFactory.GetValidator<UpdateContractorDto>()
-            .ValidateAsync(contractorDto)
-            .ConfigureAwait(false);
+            .ValidateAsync(contractorDto);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -97,8 +96,7 @@ public class ContractorController : ControllerBase
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid contractorId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(contractorId)
-            .ConfigureAwait(false);
+            .ValidateAsync(contractorId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 

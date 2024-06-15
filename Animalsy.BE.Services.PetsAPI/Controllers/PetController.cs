@@ -27,8 +27,7 @@ public class PetController: ControllerBase
     public async Task<IActionResult> GetByCustomerAsync([FromRoute] Guid customerId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(customerId)
-            .ConfigureAwait(false);
+            .ValidateAsync(customerId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -47,8 +46,7 @@ public class PetController: ControllerBase
     public async Task<IActionResult> GetByIdAsync([FromRoute] Guid petId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(petId)
-            .ConfigureAwait(false);
+            .ValidateAsync(petId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -65,8 +63,7 @@ public class PetController: ControllerBase
     public async Task<IActionResult> CreateAsync([FromBody] CreatePetDto petDto)
     {
         var validationResult = await _validatorFactory.GetValidator<CreatePetDto>()
-            .ValidateAsync(petDto)
-            .ConfigureAwait(false);
+            .ValidateAsync(petDto);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -82,8 +79,7 @@ public class PetController: ControllerBase
     public async Task<IActionResult> UpdateAsync([FromBody] UpdatePetDto petDto)
     {
         var validationResult = await _validatorFactory.GetValidator<UpdatePetDto>()
-            .ValidateAsync(petDto)
-            .ConfigureAwait(false);
+            .ValidateAsync(petDto);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
@@ -101,8 +97,7 @@ public class PetController: ControllerBase
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid petId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(petId)
-            .ConfigureAwait(false);
+            .ValidateAsync(petId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
