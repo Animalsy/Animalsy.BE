@@ -1,6 +1,7 @@
 using Animalsy.BE.Services.CustomerAPI.Configuration;
 using Animalsy.BE.Services.CustomerAPI.Data;
 using Animalsy.BE.Services.CustomerAPI.Repository;
+using Animalsy.BE.Services.CustomerAPI.Repository.Builder.Factory;
 using Animalsy.BE.Services.CustomerAPI.Repository.ResponseHandler;
 using Animalsy.BE.Services.CustomerAPI.Services;
 using Animalsy.BE.Services.CustomerAPI.Utilities;
@@ -17,6 +18,7 @@ builder.Services.AddSingleton(MappingConfiguration.RegisterMaps().CreateMapper()
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<ICustomerProfileBuilderFactory, CustomerProfileBuilderFactory>();
 builder.Services.AddTransient<IApiService, ApiService>();
 builder.Services.AddTransient<IResponseHandler, ResponseHandler>();
 

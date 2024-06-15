@@ -1,6 +1,7 @@
 using Animalsy.BE.Services.VisitAPI.Configuration;
 using Animalsy.BE.Services.VisitAPI.Data;
 using Animalsy.BE.Services.VisitAPI.Repository;
+using Animalsy.BE.Services.VisitAPI.Repository.Builder.Factory;
 using Animalsy.BE.Services.VisitAPI.Repository.ResponseHandler;
 using Animalsy.BE.Services.VisitAPI.Services;
 using Animalsy.BE.Services.VisitAPI.Utilities;
@@ -16,6 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(option =>
 builder.Services.AddSingleton(MappingConfiguration.RegisterMaps().CreateMapper());
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IVisitRepository, VisitRepository>();
+builder.Services.AddScoped<IVisitResponseBuilderFactory, VisitResponseBuilderFactory>();
 builder.Services.AddTransient<IApiService, ApiService>();
 builder.Services.AddTransient<IResponseHandler, ResponseHandler>();
 

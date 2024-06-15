@@ -1,6 +1,7 @@
 using Animalsy.BE.Services.VendorAPI.Configuration;
 using Animalsy.BE.Services.VendorAPI.Data;
 using Animalsy.BE.Services.VendorAPI.Repository;
+using Animalsy.BE.Services.VendorAPI.Repository.Builder.Factory;
 using Animalsy.BE.Services.VendorAPI.Repository.ResponseHandler;
 using Animalsy.BE.Services.VendorAPI.Services;
 using Animalsy.BE.Services.VendorAPI.Utilities;
@@ -17,6 +18,7 @@ builder.Services.AddSingleton(MappingConfiguration.RegisterMaps().CreateMapper()
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
+builder.Services.AddScoped<IVendorProfileBuilderFactory, VendorProfileBuilderFactory>();
 builder.Services.AddTransient<IApiService, ApiService>();
 builder.Services.AddTransient<IResponseHandler, ResponseHandler>();
 

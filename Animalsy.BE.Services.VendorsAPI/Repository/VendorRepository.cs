@@ -1,9 +1,7 @@
 ﻿using Animalsy.BE.Services.VendorAPI.Data;
 using Animalsy.BE.Services.VendorAPI.Models;
 using Animalsy.BE.Services.VendorAPI.Models.Dto;
-using Animalsy.BE.Services.VendorAPI.Repository.Builder;
-using Animalsy.BE.Services.VendorAPI.Repository.ResponseHandler;
-using Animalsy.BE.Services.VendorAPI.Services;
+using Animalsy.BE.Services.VendorAPI.Repository.Builder.Factory;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,15 +10,13 @@ namespace Animalsy.BE.Services.VendorAPI.Repository;
 public class VendorRepository : IVendorRepository
 {
     private readonly AppDbContext _dbContext;
-    private readonly IApiService _apiService;
-    private readonly IResponseHandler _responseHandler;
+    private readonly IVendorProfileBuilderFactory _vendorProfileBuilderFactory;
     private readonly IMapper _mapper;
 
-    public VendorRepository(AppDbContext dbContext, IApiService apiService, IResponseHandler responseHandler, IMapper mapper)
+    public VendorRepository(AppDbContext dbContext, IVendorProfileBuilderFactory vendorProfileBuilderFactory, IMapper mapper)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-        _apiService = apiService ?? throw new ArgumentNullException(nameof(apiService));
-        _responseHandler = responseHandler ?? throw new ArgumentNullException(nameof(responseHandler));
+        _vendorProfileBuilderFactory = vendorProfileBuilderFactory ?? throw new ArgumentNullException(nameof(vendorProfileBuilderFactory));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
@@ -53,7 +49,7 @@ public class VendorRepository : IVendorRepository
         var vendor = await _dbContext.Vendors.FirstOrDefaultAsync(c => c.Id == vendorId);
 
         return vendor != null
-            ? await new VendorProfileBuilder(_apiService, _responseHandler, _mapper.Map<VendorDto>(vendor))
+            ? await _vendorProfileBuilderFactory.Create(_mapper.Map<VendorDto>(vendor))
                 .WithContractors()
                 .WithVisits()
                 .BuildAsync()

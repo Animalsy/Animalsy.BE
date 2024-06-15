@@ -1,9 +1,7 @@
 ﻿using Animalsy.BE.Services.CustomerAPI.Data;
 using Animalsy.BE.Services.CustomerAPI.Models;
 using Animalsy.BE.Services.CustomerAPI.Models.Dto;
-using Animalsy.BE.Services.CustomerAPI.Repository.Builder;
-using Animalsy.BE.Services.CustomerAPI.Repository.ResponseHandler;
-using Animalsy.BE.Services.CustomerAPI.Services;
+using Animalsy.BE.Services.CustomerAPI.Repository.Builder.Factory;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,15 +10,13 @@ namespace Animalsy.BE.Services.CustomerAPI.Repository;
 public class CustomerRepository : ICustomerRepository
 {
     private readonly AppDbContext _dbContext;
-    private readonly IApiService _apiService;
-    private readonly IResponseHandler _responseHandler;
+    private readonly ICustomerProfileBuilderFactory _customerProfileBuilderFactory;
     private readonly IMapper _mapper;
 
-    public CustomerRepository(AppDbContext dbContext, IApiService apiService, IResponseHandler responseHandler, IMapper mapper)
+    public CustomerRepository(AppDbContext dbContext, ICustomerProfileBuilderFactory customerProfileBuilderFactory, IMapper mapper)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-        _apiService = apiService ?? throw new ArgumentNullException(nameof(apiService));
-        _responseHandler = responseHandler ?? throw new ArgumentNullException(nameof(responseHandler));
+        _customerProfileBuilderFactory = customerProfileBuilderFactory ?? throw new ArgumentNullException(nameof(customerProfileBuilderFactory));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
@@ -49,11 +45,12 @@ public class CustomerRepository : ICustomerRepository
         var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.EmailAddress == email);
         return _mapper.Map<CustomerDto>(customer);
     }
+
     public async Task<CustomerProfileDto> GetCustomerProfileAsync(Guid customerId)
     {
         var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
         return customer != null
-            ? await new CustomerProfileBuilder(_apiService, _responseHandler, _mapper.Map<CustomerDto>(customer))
+            ? await _customerProfileBuilderFactory.Create(_mapper.Map<CustomerDto>(customer))
                 .WithPets()
                 .WithVisits()
                 .BuildAsync()
