@@ -1,5 +1,6 @@
 using Animalsy.BE.Services.ContractorAPI.Configuration;
 using Animalsy.BE.Services.ContractorAPI.Data;
+using Animalsy.BE.Services.ContractorAPI.Middleware;
 using Animalsy.BE.Services.ContractorAPI.Repository;
 using Animalsy.BE.Services.ContractorAPI.Utilities;
 using Animalsy.BE.Services.ContractorAPI.Validators.Factory;
@@ -22,6 +23,11 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddLogging(cfg =>
+{
+    cfg.AddConsole(opt =>
+        opt.LogToStandardErrorThreshold = LogLevel.Error);
+});
 
 var app = builder.Build();
 
@@ -31,6 +37,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

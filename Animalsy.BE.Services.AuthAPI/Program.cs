@@ -37,7 +37,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddLogging(cfg =>
 {
-    cfg.AddConsole();
+    cfg.AddConsole(opt =>
+        opt.LogToStandardErrorThreshold = LogLevel.Error);
 });
 
 var app = builder.Build();

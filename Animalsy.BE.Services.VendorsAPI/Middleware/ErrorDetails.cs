@@ -1,4 +1,4 @@
-﻿namespace Animalsy.BE.Services.AuthAPI.Middleware;
+﻿namespace Animalsy.BE.Services.VendorAPI.Middleware;
 
 public class ErrorDetails
 {

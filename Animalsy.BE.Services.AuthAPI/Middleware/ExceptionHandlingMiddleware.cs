@@ -6,11 +6,14 @@ public class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+    private readonly IWebHostEnvironment _environment;
 
-    public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
+    public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger,
+        IWebHostEnvironment environment)
     {
-        _next = next;
-        _logger = logger;
+        _next = next ?? throw new ArgumentNullException(nameof(next));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _environment = environment ?? throw new ArgumentNullException(nameof(environment));
     }
 
     public async Task InvokeAsync(HttpContext httpContext)
@@ -26,25 +29,30 @@ public class ExceptionHandlingMiddleware
         }
     }
 
-    private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";
+
+        var errorDetails = new ErrorDetails();
 
         if (exception is UnauthorizedAccessException)
         {
             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-            return context.Response.WriteAsync(new ErrorDetails
+            errorDetails.StatusCode = context.Response.StatusCode;
+            errorDetails.Message = "Unauthorized";
+        }
+        else
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            errorDetails.StatusCode = context.Response.StatusCode;
+            errorDetails.Message = "Internal Server Error";
+
+            if (_environment.IsDevelopment())
             {
-                StatusCode = context.Response.StatusCode,
-                Message = "Unauthorized"
-            }.ToString());
+                errorDetails.StackTrace = exception.StackTrace;
+            }
         }
 
-        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-        return context.Response.WriteAsync(new ErrorDetails
-        {
-            StatusCode = context.Response.StatusCode,
-            Message = "Internal Server Error"
-        }.ToString());
+        return context.Response.WriteAsJsonAsync(errorDetails);
     }
 }

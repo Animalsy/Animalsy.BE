@@ -94,7 +94,7 @@ public class AuthService : IAuthService
             throw new UnauthorizedAccessException("Invalid username or password");
         }
 
-        var userRoles = _userManager.GetRolesAsync(user).ConfigureAwait(false);
+        var userRoles = _userManager.GetRolesAsync(user).GetAwaiter().GetResult();
 
         return new ResponseDto
         {
