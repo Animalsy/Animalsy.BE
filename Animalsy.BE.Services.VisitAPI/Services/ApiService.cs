@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Animalsy.BE.Services.VisitAPI.Services
+﻿namespace Animalsy.BE.Services.VisitAPI.Services
 {
     public class ApiService : IApiService
     {
@@ -11,12 +9,10 @@ namespace Animalsy.BE.Services.VisitAPI.Services
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         }
 
-        public async Task<T> GetAsync<T>(string clientName, string path)
+        public async Task<HttpResponseMessage> GetAsync(string clientName, string path)
         {
             using var client = _httpClientFactory.CreateClient(clientName);
-            using var response = await client.GetAsync(new Uri(path)).ConfigureAwait(false);
-            var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<T>(content);
+            return await client.GetAsync(new Uri(path)).ConfigureAwait(false);
         }
     }
 }

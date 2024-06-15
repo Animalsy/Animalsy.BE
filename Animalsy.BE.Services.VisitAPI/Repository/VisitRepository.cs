@@ -2,6 +2,7 @@
 using Animalsy.BE.Services.VisitAPI.Models;
 using Animalsy.BE.Services.VisitAPI.Models.Dto;
 using Animalsy.BE.Services.VisitAPI.Repository.Builder;
+using Animalsy.BE.Services.VisitAPI.Repository.ResponseHandler;
 using Animalsy.BE.Services.VisitAPI.Services;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -13,12 +14,14 @@ namespace Animalsy.BE.Services.VisitAPI.Repository
     {
         private readonly AppDbContext _dbContext;
         private readonly IApiService _apiService;
+        private readonly IResponseHandler _responseHandler;
         private readonly IMapper _mapper;
 
-        public VisitRepository(AppDbContext dbContext, IApiService apiService, IMapper mapper)
+        public VisitRepository(AppDbContext dbContext, IApiService apiService, IResponseHandler responseHandler, IMapper mapper)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _apiService = apiService ?? throw new ArgumentNullException(nameof(apiService));
+            _responseHandler = responseHandler ?? throw new ArgumentNullException(nameof(responseHandler));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -27,7 +30,7 @@ namespace Animalsy.BE.Services.VisitAPI.Repository
             var visit = await _dbContext.Visits.FirstOrDefaultAsync(c => c.Id == visitId);
 
             return visit != null
-                ? await new VisitResponseBuilder(_apiService, _mapper.Map<VisitDto>(visit))
+                ? await new VisitResponseBuilder(_apiService, _responseHandler, _mapper.Map<VisitDto>(visit))
                     .WithContractor()
                     .WithCustomer()
                     .WithPet()
@@ -93,7 +96,7 @@ namespace Animalsy.BE.Services.VisitAPI.Repository
         private async Task<IEnumerable<VisitResponseDto>> BuildResultsAsync(IEnumerable<Visit> visits)
         {
             var tasks = visits.Select(visit =>
-                new VisitResponseBuilder(_apiService, _mapper.Map<VisitDto>(visit))
+                new VisitResponseBuilder(_apiService, _responseHandler, _mapper.Map<VisitDto>(visit))
                     .WithContractor()
                     .WithCustomer()
                     .WithPet()
