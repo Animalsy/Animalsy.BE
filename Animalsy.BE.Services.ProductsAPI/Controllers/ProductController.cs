@@ -1,6 +1,6 @@
 ﻿using Animalsy.BE.Services.ProductAPI.Models.Dto;
 using Animalsy.BE.Services.ProductAPI.Repository;
-using Animalsy.BE.Services.ProductAPI.Validators;
+using Animalsy.BE.Services.ProductAPI.Validators.Factory;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Animalsy.BE.Services.ProductAPI.Controllers;
@@ -10,17 +10,12 @@ namespace Animalsy.BE.Services.ProductAPI.Controllers;
 public class ProductController : ControllerBase
 {
     private readonly IProductRepository _productRepository;
-    private readonly UniqueIdValidator _uniqueIdValidator;
-    private readonly CreateProductValidator _createProductValidator;
-    private readonly UpdateProductValidator _updateProductValidator;
+    private readonly IValidatorFactory _validatorFactory;
 
-    public ProductController(IProductRepository productRepository, UniqueIdValidator uniqueIdValidator, 
-        CreateProductValidator createProductValidator, UpdateProductValidator updateProductValidator)
+    public ProductController(IProductRepository productRepository, IValidatorFactory validatorFactory)
     {
         _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
-        _uniqueIdValidator = uniqueIdValidator ?? throw new ArgumentNullException(nameof(uniqueIdValidator));
-        _createProductValidator = createProductValidator ?? throw new ArgumentNullException(nameof(createProductValidator));
-        _updateProductValidator = updateProductValidator ?? throw new ArgumentNullException(nameof(updateProductValidator));
+        _validatorFactory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
     }
 
     [HttpGet]
@@ -42,7 +37,10 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByVendorAsync([FromRoute] Guid vendorId)
     {
-        var validationResult = await _uniqueIdValidator.ValidateAsync(vendorId);
+        var validationResult = await _validatorFactory.GetValidator<Guid>()
+            .ValidateAsync(vendorId)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var products = await _productRepository.GetByVendorAsync(vendorId);
@@ -58,7 +56,10 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByIdAsync([FromRoute] Guid productId)
     {
-        var validationResult = await _uniqueIdValidator.ValidateAsync(productId);
+        var validationResult = await _validatorFactory.GetValidator<Guid>()
+            .ValidateAsync(productId)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var product = await _productRepository.GetByIdAsync(productId);
@@ -73,7 +74,10 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateProductDto productDto)
     {
-        var validationResult = await _createProductValidator.ValidateAsync(productDto);
+        var validationResult = await _validatorFactory.GetValidator<CreateProductDto>()
+            .ValidateAsync(productDto)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var createdProductId = await _productRepository.CreateAsync(productDto);
@@ -87,7 +91,10 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateProductDto productDto)
     {
-        var validationResult = await _updateProductValidator.ValidateAsync(productDto);
+        var validationResult = await _validatorFactory.GetValidator<UpdateProductDto>()
+            .ValidateAsync(productDto)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var updateResult = await _productRepository.TryUpdateAsync(productDto);
@@ -103,7 +110,10 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid productId)
     {
-        var validationResult = await _uniqueIdValidator.ValidateAsync(productId);
+        var validationResult = await _validatorFactory.GetValidator<Guid>()
+            .ValidateAsync(productId)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var deleteResult = await _productRepository.TryDeleteAsync(productId);
@@ -113,5 +123,5 @@ public class ProductController : ControllerBase
     }
 
     private static string ProductIdNotFoundMessage(Guid? id) => $"Product with Id {id} has not been found";
-    private static string VendorIdNotFoundMessage(Guid? id) => $"Vendor with Id {id} has not been found";
+    private static string VendorIdNotFoundMessage(Guid? id) => $"Products for Vendor with Id {id} have not been found";
 }

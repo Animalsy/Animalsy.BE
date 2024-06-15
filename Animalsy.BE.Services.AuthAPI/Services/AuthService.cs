@@ -1,7 +1,6 @@
 ﻿using Animalsy.BE.Services.AuthAPI.Data;
 using Animalsy.BE.Services.AuthAPI.Models;
 using Animalsy.BE.Services.AuthAPI.Models.Dto;
-using Animalsy.BE.Services.AuthAPI.Validators;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +14,9 @@ public class AuthService : IAuthService
     private readonly ICustomerService _customerService;
     private readonly IMapper _mapper;
     private readonly IJwtTokenGenerator _tokenGenerator;
-    private readonly RegisterUserValidator _createCustomerValidator;
 
-    public AuthService(AppDbContext dbContext, UserManager<ApplicationUser> userManager, ICustomerService customerService, IMapper mapper, IJwtTokenGenerator tokenGenerator)
+    public AuthService(AppDbContext dbContext, UserManager<ApplicationUser> userManager, ICustomerService customerService,
+        IMapper mapper, IJwtTokenGenerator tokenGenerator)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
@@ -33,15 +32,21 @@ public class AuthService : IAuthService
             var result = await _userManager.CreateAsync(
                 _mapper.Map<ApplicationUser>(registerUserDto), registerUserDto.Password).ConfigureAwait(false);
 
-            return result.Succeeded
-                ? await _customerService.CreateCustomerAsync(_mapper.Map<CreateCustomerDto>(registerUserDto))
-                    .ConfigureAwait(false)
-                : new ResponseDto
-                {
-                    IsSuccess = false,
-                    Result = result
-                };
+            if (!result.Succeeded) return new ResponseDto
+            {
+                IsSuccess = false,
+                Result = result
+            };
 
+            var user = await _dbContext.Users.SingleAsync(user => 
+                    user.Email.Equals(registerUserDto.EmailAddress, StringComparison.OrdinalIgnoreCase))
+                .ConfigureAwait(false);
+
+            var createCustomerDto = _mapper.Map<CreateCustomerDto>(registerUserDto);
+                createCustomerDto.UserId = user.Id;
+
+            return await _customerService.CreateCustomerAsync(createCustomerDto)
+                .ConfigureAwait(false);
         }
         catch (Exception ex)
         {

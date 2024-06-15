@@ -3,6 +3,7 @@ using Animalsy.BE.Services.AuthAPI.Data;
 using Animalsy.BE.Services.AuthAPI.Models;
 using Animalsy.BE.Services.AuthAPI.Services;
 using Animalsy.BE.Services.AuthAPI.Utilities;
+using Animalsy.BE.Services.AuthAPI.Validators.Factory;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +28,7 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSett
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+builder.Services.AddScoped<IValidatorFactory, ValidatorFactory>();
 builder.Services.AddValidators();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -1,6 +1,6 @@
 ﻿using Animalsy.BE.Services.VisitAPI.Models.Dto;
 using Animalsy.BE.Services.VisitAPI.Repository;
-using Animalsy.BE.Services.VisitAPI.Validators;
+using Animalsy.BE.Services.VisitAPI.Validators.Factory;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -11,19 +11,12 @@ namespace Animalsy.BE.Services.VisitAPI.Controllers;
 public class VisitController : Controller
 {
     private readonly IVisitRepository _visitRepository;
-    private readonly CreateVisitValidator _createVisitValidator;
-    private readonly UpdateVisitValidator _updateVisitValidator;
-    private readonly UniqueIdValidator _uniqueIdValidator;
+    private readonly IValidatorFactory _validatorFactory;
 
-    public VisitController(IVisitRepository visitRepository,
-        CreateVisitValidator createVisitValidator,
-        UpdateVisitValidator updateVisitValidator,
-        UniqueIdValidator uniqueIdValidator)
+    public VisitController(IVisitRepository visitRepository, IValidatorFactory validatorFactory)
     {
         _visitRepository = visitRepository ?? throw new ArgumentNullException(nameof(visitRepository));
-        _createVisitValidator = createVisitValidator ?? throw new ArgumentNullException(nameof(createVisitValidator));
-        _updateVisitValidator = updateVisitValidator ?? throw new ArgumentNullException(nameof(updateVisitValidator));
-        _uniqueIdValidator = uniqueIdValidator ?? throw new ArgumentNullException(nameof(uniqueIdValidator));
+        _validatorFactory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
     }
 
     [HttpGet("{visitId:guid}")]
@@ -32,7 +25,10 @@ public class VisitController : Controller
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByIdAsync(Guid visitId)
     {
-        var validationResult = await _uniqueIdValidator.ValidateAsync(visitId);
+        var validationResult = await _validatorFactory.GetValidator<Guid>()
+            .ValidateAsync(visitId)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var visits = await _visitRepository.GetByIdAsync(visitId);
@@ -48,7 +44,10 @@ public class VisitController : Controller
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByVendorIdAsync(Guid vendorId)
     {
-        var validationResult = await _uniqueIdValidator.ValidateAsync(vendorId);
+        var validationResult = await _validatorFactory.GetValidator<Guid>()
+            .ValidateAsync(vendorId)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var results = await _visitRepository.GetByVendorIdAsync(vendorId);
@@ -64,7 +63,10 @@ public class VisitController : Controller
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByCustomerIdAsync(Guid customerId)
     {
-        var validationResult = await _uniqueIdValidator.ValidateAsync(customerId);
+        var validationResult = await _validatorFactory.GetValidator<Guid>()
+            .ValidateAsync(customerId)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var visit = await _visitRepository.GetByCustomerIdAsync(customerId);
@@ -79,7 +81,10 @@ public class VisitController : Controller
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateVisitDto visitDto)
     {
-        var validationResult = await _createVisitValidator.ValidateAsync(visitDto);
+        var validationResult = await _validatorFactory.GetValidator<CreateVisitDto>()
+            .ValidateAsync(visitDto)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var createdVisitId = await _visitRepository.CreateAsync(visitDto);
@@ -93,7 +98,10 @@ public class VisitController : Controller
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateVisitDto visitDto)
     {
-        var validationResult = await _updateVisitValidator.ValidateAsync(visitDto);
+        var validationResult = await _validatorFactory.GetValidator<UpdateVisitDto>()
+            .ValidateAsync(visitDto)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var updateSuccessful = await _visitRepository.TryUpdateAsync(visitDto);
@@ -103,20 +111,23 @@ public class VisitController : Controller
 
     }
 
-    [HttpDelete("{customerId:guid}")]
+    [HttpDelete("{visitId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> DeleteAsync([FromRoute] Guid customerId)
+    public async Task<IActionResult> DeleteAsync([FromRoute] Guid visitId)
     {
-        var validationResult = await _uniqueIdValidator.ValidateAsync(customerId);
+        var validationResult = await _validatorFactory.GetValidator<Guid>()
+            .ValidateAsync(visitId)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var deleteSuccessful = await _visitRepository.TryDeleteAsync(customerId);
+        var deleteSuccessful = await _visitRepository.TryDeleteAsync(visitId);
         return deleteSuccessful
             ? Ok("Visit has been deleted successfully")
-            : NotFound(VisitNotFoundMessage("Id", customerId.ToString()));
+            : NotFound(VisitNotFoundMessage("Id", visitId.ToString()));
     }
 
     private static string VisitNotFoundMessage(string topic, string value) =>

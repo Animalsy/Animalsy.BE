@@ -1,6 +1,6 @@
 ﻿using Animalsy.BE.Services.PetAPI.Models.Dto;
 using Animalsy.BE.Services.PetAPI.Repository;
-using Animalsy.BE.Services.PetAPI.Validators;
+using Animalsy.BE.Services.PetAPI.Validators.Factory;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Animalsy.BE.Services.PetAPI.Controllers;
@@ -10,17 +10,12 @@ namespace Animalsy.BE.Services.PetAPI.Controllers;
 public class PetController: ControllerBase
 {
     private readonly IPetRepository _petRepository;
-    private readonly UniqueIdValidator _uniqueIdValidator;
-    private readonly CreatePetValidator _createPetValidator;
-    private readonly UpdatePetValidator _updatePetValidator;
+    private readonly IValidatorFactory _validatorFactory;
 
-    public PetController(IPetRepository petRepository, UniqueIdValidator idValidator, CreatePetValidator createPetValidator,
-        UpdatePetValidator updatePetValidator)
+    public PetController(IPetRepository petRepository, IValidatorFactory validatorFactory)
     {
         _petRepository = petRepository ?? throw new ArgumentNullException(nameof(petRepository));
-        _uniqueIdValidator = idValidator ?? throw new ArgumentNullException(nameof(idValidator));
-        _createPetValidator = createPetValidator ?? throw new ArgumentNullException(nameof(createPetValidator));
-        _updatePetValidator = updatePetValidator ?? throw new ArgumentNullException(nameof(updatePetValidator));
+        _validatorFactory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
     }
 
 
@@ -31,7 +26,10 @@ public class PetController: ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByCustomerAsync([FromRoute] Guid customerId)
     {
-        var validationResult = await _uniqueIdValidator.ValidateAsync(customerId);
+        var validationResult = await _validatorFactory.GetValidator<Guid>()
+            .ValidateAsync(customerId)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var pets = await _petRepository.GetByCustomerAsync(customerId);
@@ -48,7 +46,10 @@ public class PetController: ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByIdAsync([FromRoute] Guid petId)
     {
-        var validationResult = await _uniqueIdValidator.ValidateAsync(petId);
+        var validationResult = await _validatorFactory.GetValidator<Guid>()
+            .ValidateAsync(petId)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var pet = await _petRepository.GetByIdAsync(petId);
@@ -63,7 +64,10 @@ public class PetController: ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreatePetDto petDto)
     {
-        var validationResult = await _createPetValidator.ValidateAsync(petDto);
+        var validationResult = await _validatorFactory.GetValidator<CreatePetDto>()
+            .ValidateAsync(petDto)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var createdPetId = await _petRepository.CreateAsync(petDto);
@@ -77,7 +81,10 @@ public class PetController: ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateAsync([FromBody] UpdatePetDto petDto)
     {
-        var validationResult = await _updatePetValidator.ValidateAsync(petDto);
+        var validationResult = await _validatorFactory.GetValidator<UpdatePetDto>()
+            .ValidateAsync(petDto)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var updateResult = await _petRepository.TryUpdateAsync(petDto);
@@ -93,7 +100,10 @@ public class PetController: ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid petId)
     {
-        var validationResult = await _uniqueIdValidator.ValidateAsync(petId);
+        var validationResult = await _validatorFactory.GetValidator<Guid>()
+            .ValidateAsync(petId)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var deleteResult = await _petRepository.TryDeleteAsync(petId);

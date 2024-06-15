@@ -33,6 +33,7 @@ namespace Animalsy.BE.Services.VisitAPI.Repository
                     .WithProduct()
                     .WithVendor()
                     .BuildAsync()
+                    .ConfigureAwait(false)
                 : null;
         }
 
@@ -44,7 +45,7 @@ namespace Animalsy.BE.Services.VisitAPI.Repository
 
             if (!visits.IsNullOrEmpty()) return [];
 
-            return await BuildResultsAsync(visits).ConfigureAwait(false);
+            return await BuildResultsAsync(visits);
         }
 
         public async Task<IEnumerable<VisitResponseDto>> GetByCustomerIdAsync(Guid customerId)
@@ -55,7 +56,7 @@ namespace Animalsy.BE.Services.VisitAPI.Repository
 
             if (!visits.IsNullOrEmpty()) return [];
 
-            return await BuildResultsAsync(visits).ConfigureAwait(false);
+            return await BuildResultsAsync(visits);
         }
 
         public async Task<Guid> CreateAsync(CreateVisitDto visitDto)

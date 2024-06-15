@@ -1,6 +1,6 @@
 ﻿using Animalsy.BE.Services.ContractorAPI.Models.Dto;
 using Animalsy.BE.Services.ContractorAPI.Repository;
-using Animalsy.BE.Services.ContractorAPI.Validators;
+using Animalsy.BE.Services.ContractorAPI.Validators.Factory;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Animalsy.BE.Services.ContractorAPI.Controllers;
@@ -10,17 +10,12 @@ namespace Animalsy.BE.Services.ContractorAPI.Controllers;
 public class ContractorController : ControllerBase
 {
     private readonly IContractorRepository _contractorRepository;
-    private readonly UniqueIdValidator _idValidator;
-    private readonly CreateContractorValidator _createContractorValidator;
-    private readonly UpdateContractorValidator _updateContractorValidator;
+    private readonly IValidatorFactory _validatorFactory;
 
-    public ContractorController(IContractorRepository contractorRepository, UniqueIdValidator idValidator,
-        CreateContractorValidator createContractorValidator, UpdateContractorValidator updateContractorValidator)
+    public ContractorController(IContractorRepository contractorRepository, IValidatorFactory validatorFactory)
     {
         _contractorRepository = contractorRepository ?? throw new ArgumentNullException(nameof(contractorRepository));
-        _idValidator = idValidator ?? throw new ArgumentNullException(nameof(idValidator));
-        _createContractorValidator = createContractorValidator ?? throw new ArgumentNullException(nameof(createContractorValidator));
-        _updateContractorValidator = updateContractorValidator ?? throw new ArgumentNullException(nameof(updateContractorValidator));
+        _validatorFactory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
     }
 
 
@@ -31,7 +26,7 @@ public class ContractorController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByIdAsync([FromRoute] Guid contractorId)
     {
-        var validationResult = await _idValidator.ValidateAsync(contractorId);
+        var validationResult = await _validatorFactory.GetValidator<Guid>().ValidateAsync(contractorId);
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var contractor = await _contractorRepository.GetByIdAsync(contractorId);
@@ -47,7 +42,10 @@ public class ContractorController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByVendorAsync([FromRoute] Guid vendorId)
     {
-        var validationResult = await _idValidator.ValidateAsync(vendorId);
+        var validationResult = await _validatorFactory.GetValidator<Guid>()
+            .ValidateAsync(vendorId)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var contractors = await _contractorRepository.GetByVendorAsync(vendorId);
@@ -62,7 +60,10 @@ public class ContractorController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateContractorDto contractorDto)
     {
-        var validationResult = await _createContractorValidator.ValidateAsync(contractorDto);
+        var validationResult = await _validatorFactory.GetValidator<CreateContractorDto>()
+            .ValidateAsync(contractorDto)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var createdContractorId = await _contractorRepository.CreateAsync(contractorDto);
@@ -76,7 +77,10 @@ public class ContractorController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateContractorDto contractorDto)
     {
-        var validationResult = await _updateContractorValidator.ValidateAsync(contractorDto);
+        var validationResult = await _validatorFactory.GetValidator<UpdateContractorDto>()
+            .ValidateAsync(contractorDto)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var updateResult = await _contractorRepository.TryUpdateAsync(contractorDto);
@@ -92,7 +96,10 @@ public class ContractorController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid contractorId)
     {
-        var validationResult = await _idValidator.ValidateAsync(contractorId);
+        var validationResult = await _validatorFactory.GetValidator<Guid>()
+            .ValidateAsync(contractorId)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var deleteResult = await _contractorRepository.TryDeleteAsync(contractorId);

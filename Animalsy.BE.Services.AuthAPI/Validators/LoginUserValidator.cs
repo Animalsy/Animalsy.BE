@@ -5,9 +5,10 @@ namespace Animalsy.BE.Services.AuthAPI.Validators;
 
 public class LoginUserValidator : AbstractValidator<LoginUserDto>
 {
-    public LoginUserValidator(EmailValidator emailValidator)
+    internal static string InvalidEmailAddressMessage = "Email address is not in correct format";
+    public LoginUserValidator()
     {
-        RuleFor(x => x.Email).SetValidator(emailValidator);
+        RuleFor(x => x.Email).NotEmpty().EmailAddress().WithMessage(InvalidEmailAddressMessage).MaximumLength(50);
         RuleFor(x => x.Password).NotEmpty().MaximumLength(50);
     }
 }

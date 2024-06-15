@@ -2,7 +2,7 @@ using Animalsy.BE.Services.ContractorAPI.Configuration;
 using Animalsy.BE.Services.ContractorAPI.Data;
 using Animalsy.BE.Services.ContractorAPI.Repository;
 using Animalsy.BE.Services.ContractorAPI.Utilities;
-using Microsoft.AspNetCore.Identity;
+using Animalsy.BE.Services.ContractorAPI.Validators.Factory;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +16,7 @@ builder.Services.AddSingleton(MappingConfig.RegisterMaps().CreateMapper());
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<IContractorRepository, ContractorRepository>();
-
+builder.Services.AddScoped<IValidatorFactory, ValidatorFactory>();
 builder.Services.AddValidators();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

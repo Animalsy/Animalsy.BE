@@ -1,6 +1,6 @@
 ﻿using Animalsy.BE.Services.VendorAPI.Models.Dto;
 using Animalsy.BE.Services.VendorAPI.Repository;
-using Animalsy.BE.Services.VendorAPI.Validators;
+using Animalsy.BE.Services.VendorAPI.Validators.Factory;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Animalsy.BE.Services.VendorAPI.Controllers;
@@ -10,19 +10,12 @@ namespace Animalsy.BE.Services.VendorAPI.Controllers;
 public class VendorController : Controller
 {
     private readonly IVendorRepository _vendorRepository;
-    private readonly CreateVendorValidator _createVendorValidator;
-    private readonly UpdateVendorValidator _updateVendorValidator;
-    private readonly UniqueIdValidator _uniqueIdValidator;
-    private readonly EmailValidator _emailValidator;
+    private readonly IValidatorFactory _validatorFactory;
 
-    public VendorController(IVendorRepository vendorRepository, CreateVendorValidator createVendorValidator,
-        UpdateVendorValidator updateVendorValidator, UniqueIdValidator uniqueIdValidator, EmailValidator emailValidator)
+    public VendorController(IVendorRepository vendorRepository, IValidatorFactory validatorFactory)
     {
         _vendorRepository = vendorRepository ?? throw new ArgumentNullException(nameof(vendorRepository));
-        _createVendorValidator = createVendorValidator ?? throw new ArgumentNullException(nameof(createVendorValidator));
-        _updateVendorValidator = updateVendorValidator ?? throw new ArgumentNullException(nameof(updateVendorValidator));
-        _uniqueIdValidator = uniqueIdValidator ?? throw new ArgumentNullException(nameof(uniqueIdValidator));
-        _emailValidator = emailValidator ?? throw new ArgumentNullException(nameof(emailValidator));
+        _validatorFactory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
     }
 
     [HttpGet]
@@ -56,29 +49,16 @@ public class VendorController : Controller
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByIdAsync(Guid vendorId)
     {
-        var validationResult = await _uniqueIdValidator.ValidateAsync(vendorId);
+        var validationResult = await _validatorFactory.GetValidator<Guid>()
+            .ValidateAsync(vendorId)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var vendor = await _vendorRepository.GetByIdAsync(vendorId);
         return vendor != null
             ? Ok(vendor)
             : NotFound(VendorNotFoundMessage("Id", vendorId.ToString()));
-    }
-
-    [HttpGet("Email/{email}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByEmailAsync([FromRoute] string email)
-    {
-        var validationRequest = await _emailValidator.ValidateAsync(email);
-        if (!validationRequest.IsValid) return BadRequest(validationRequest);
-            
-        var vendor = await _vendorRepository.GetByEmailAsync(email);
-        return vendor != null
-            ? Ok(vendor)
-            : NotFound(VendorNotFoundMessage("Email", email));
     }
 
     [HttpGet("Profile/{vendorId:guid}")]
@@ -88,7 +68,10 @@ public class VendorController : Controller
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetVendorProfileAsync(Guid vendorId)
     {
-        var validationResult = await _uniqueIdValidator.ValidateAsync(vendorId);
+        var validationResult = await _validatorFactory.GetValidator<Guid>()
+            .ValidateAsync(vendorId)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var vendor = await _vendorRepository.GetVendorProfileAsync(vendorId);
@@ -100,15 +83,14 @@ public class VendorController : Controller
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateVendorDto vendorDto)
     {
-        var validationResult = await _createVendorValidator.ValidateAsync(vendorDto);
-        if (!validationResult.IsValid) return BadRequest(validationResult);
+        var validationResult = await _validatorFactory.GetValidator<CreateVendorDto>()
+            .ValidateAsync(vendorDto)
+            .ConfigureAwait(false);
 
-        var existingVendor = await _vendorRepository.GetByEmailAsync(vendorDto.EmailAddress);
-        if(existingVendor != null) return Conflict($"Vendor with Email '{vendorDto.EmailAddress}' already exists");
+        if (!validationResult.IsValid) return BadRequest(validationResult);
             
         var createdVendorId = await _vendorRepository.CreateAsync(vendorDto);
         return Ok(createdVendorId);
@@ -121,14 +103,16 @@ public class VendorController : Controller
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateVendorDto vendorDto)
     {
-        var validationResult = await _updateVendorValidator.ValidateAsync(vendorDto);
+        var validationResult = await _validatorFactory.GetValidator<UpdateVendorDto>()
+            .ValidateAsync(vendorDto)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var updateSuccessful = await _vendorRepository.TryUpdateAsync(vendorDto);
         return updateSuccessful
             ? Ok("Vendor has been updated successfully")
             : NotFound(VendorNotFoundMessage("Id",vendorDto.Id.ToString()));
-
     }
 
     [HttpDelete("{customerId:guid}")]
@@ -138,7 +122,10 @@ public class VendorController : Controller
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid customerId)
     {
-        var validationResult = await _uniqueIdValidator.ValidateAsync(customerId);
+        var validationResult = await _validatorFactory.GetValidator<Guid>()
+            .ValidateAsync(customerId)
+            .ConfigureAwait(false);
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var deleteSuccessful = await _vendorRepository.TryDeleteAsync(customerId);

@@ -1,6 +1,6 @@
 ﻿using Animalsy.BE.Services.AuthAPI.Models.Dto;
 using Animalsy.BE.Services.AuthAPI.Services;
-using Animalsy.BE.Services.AuthAPI.Validators;
+using Animalsy.BE.Services.AuthAPI.Validators.Factory;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Animalsy.BE.Services.AuthAPI.Controllers
@@ -11,16 +11,12 @@ namespace Animalsy.BE.Services.AuthAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-        private readonly RegisterUserValidator _registerUserValidator;
-        private readonly LoginUserValidator _loginUserValidator;
-        private readonly AssignRoleValidator _assignRoleValidator;
+        private readonly IValidatorFactory _validatorFactory;
 
-        public AuthController(IAuthService authService, RegisterUserValidator registerUserValidator, LoginUserValidator loginUserValidator, AssignRoleValidator assignRoleValidator)
+        public AuthController(IAuthService authService, IValidatorFactory validatorFactory)
         {
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
-            _registerUserValidator = registerUserValidator ?? throw new ArgumentNullException(nameof(registerUserValidator));
-            _loginUserValidator = loginUserValidator ?? throw new ArgumentNullException(nameof(loginUserValidator));
-            _assignRoleValidator = assignRoleValidator ?? throw new ArgumentNullException(nameof(assignRoleValidator));
+            _validatorFactory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
         }
 
         [HttpPost("Register")]
@@ -30,7 +26,10 @@ namespace Animalsy.BE.Services.AuthAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RegisterAsync([FromBody] RegisterUserDto registerUserDto)
         {
-            var validationResult = await _registerUserValidator.ValidateAsync(registerUserDto).ConfigureAwait(false);
+            var validationResult = await _validatorFactory.GetValidator<RegisterUserDto>()
+                .ValidateAsync(registerUserDto)
+                .ConfigureAwait(false);
+
             if (!validationResult.IsValid) return BadRequest(validationResult);
 
             var result = await _authService.RegisterAsync(registerUserDto).ConfigureAwait(false);
@@ -43,7 +42,10 @@ namespace Animalsy.BE.Services.AuthAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> LoginAsync([FromBody] LoginUserDto loginDto)
         {
-            var validationResult = await _loginUserValidator.ValidateAsync(loginDto).ConfigureAwait(false);
+            var validationResult = await _validatorFactory.GetValidator<LoginUserDto>()
+                .ValidateAsync(loginDto)
+                .ConfigureAwait(false);
+
             if (!validationResult.IsValid) return BadRequest(validationResult);
 
             var result = await _authService.LoginAsync(loginDto);
@@ -56,7 +58,10 @@ namespace Animalsy.BE.Services.AuthAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AssignRoleAsync([FromBody] AssignRoleDto assignRoleDto)
         {
-            var validationResult = await _assignRoleValidator.ValidateAsync(assignRoleDto).ConfigureAwait(false);
+            var validationResult = await _validatorFactory.GetValidator<AssignRoleDto>()
+                .ValidateAsync(assignRoleDto)
+                .ConfigureAwait(false);
+
             if (!validationResult.IsValid) return BadRequest(validationResult);
 
             var result = await _authService.AssignRoleAsync(assignRoleDto);

@@ -1,12 +1,16 @@
 ﻿using Animalsy.BE.Services.VisitAPI.Models.Dto;
 using FluentValidation;
+using IValidatorFactory = Animalsy.BE.Services.VisitAPI.Validators.Factory.IValidatorFactory;
 
 namespace Animalsy.BE.Services.VisitAPI.Validators
 {
     public class CreateVisitValidator : AbstractValidator<CreateVisitDto>
     {
-        public CreateVisitValidator(UniqueIdValidator idValidator)
+        public CreateVisitValidator(IValidatorFactory validatorFactory)
         {
+            var factory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
+            var idValidator = factory.GetValidator<Guid>();
+
             RuleFor(x => x.Id).SetValidator(idValidator);
             RuleFor(x => x.ContractorId).SetValidator(idValidator);
             RuleFor(x => x.CustomerId).SetValidator(idValidator);

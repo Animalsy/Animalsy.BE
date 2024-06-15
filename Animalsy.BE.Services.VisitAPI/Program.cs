@@ -5,6 +5,7 @@ using Animalsy.BE.Services.VisitAPI.Repository.Builder.Factory;
 using Animalsy.BE.Services.VisitAPI.Repository.ResponseHandler;
 using Animalsy.BE.Services.VisitAPI.Services;
 using Animalsy.BE.Services.VisitAPI.Utilities;
+using Animalsy.BE.Services.VisitAPI.Validators.Factory;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,11 +21,12 @@ builder.Services.AddScoped<IVisitRepository, VisitRepository>();
 builder.Services.AddScoped<IVisitResponseBuilderFactory, VisitResponseBuilderFactory>();
 builder.Services.AddTransient<IApiService, ApiService>();
 builder.Services.AddTransient<IResponseHandler, ResponseHandler>();
+builder.Services.AddScoped<IValidatorFactory, ValidatorFactory>();
+builder.Services.AddValidators();
 
 builder.Services.Configure<ServiceUrlConfiguration>(builder.Configuration.GetSection(nameof(ServiceUrlConfiguration))!);
 builder.Services.AddHttpClients();
 
-builder.Services.AddValidators();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

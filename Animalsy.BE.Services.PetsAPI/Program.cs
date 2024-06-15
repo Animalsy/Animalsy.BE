@@ -2,6 +2,7 @@ using Animalsy.BE.Services.PetAPI;
 using Animalsy.BE.Services.PetAPI.Data;
 using Animalsy.BE.Services.PetAPI.Repository;
 using Animalsy.BE.Services.PetAPI.Utilities;
+using Animalsy.BE.Services.PetAPI.Validators.Factory;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +16,7 @@ builder.Services.AddSingleton(MappingConfig.RegisterMaps().CreateMapper());
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<IPetRepository, PetRepository>();
-
+builder.Services.AddScoped<IValidatorFactory, ValidatorFactory>();
 builder.Services.AddValidators();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

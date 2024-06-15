@@ -10,10 +10,9 @@ public static partial class AppExtensions
         DisableValidationTranslation();
 
         serviceCollection
-            .AddScoped<EmailValidator>()
-            .AddScoped<PhoneNumberValidator>()
-            .AddScoped<RegisterUserValidator>()
-            .AddScoped<LoginUserValidator>();
+            .AddScoped<AssignRoleValidator>()
+            .AddScoped<LoginUserValidator>()
+            .AddScoped<RegisterUserValidator>();
     }
 
     private static void DisableValidationTranslation()

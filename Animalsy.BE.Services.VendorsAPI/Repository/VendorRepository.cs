@@ -38,12 +38,6 @@ public class VendorRepository : IVendorRepository
         return _mapper.Map<VendorDto>(result);
     }
 
-    public async Task<VendorDto> GetByEmailAsync(string email)
-    {
-        var result = await _dbContext.Vendors.FirstOrDefaultAsync(c => c.EmailAddress == email);
-        return _mapper.Map<VendorDto>(result);
-    }
-
     public async Task<VendorProfileDto> GetVendorProfileAsync(Guid vendorId)
     {
         var vendor = await _dbContext.Vendors.FirstOrDefaultAsync(c => c.Id == vendorId);
@@ -53,6 +47,7 @@ public class VendorRepository : IVendorRepository
                 .WithContractors()
                 .WithVisits()
                 .BuildAsync()
+                .ConfigureAwait(false)
             : null;
     }
 

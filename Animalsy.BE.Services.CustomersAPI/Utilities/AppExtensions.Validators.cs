@@ -11,8 +11,6 @@ public static partial class AppExtensions
 
         serviceCollection
             .AddScoped<UniqueIdValidator>()
-            .AddScoped<EmailValidator>()
-            .AddScoped<PhoneNumberValidator>()
             .AddScoped<CreateCustomerValidator>()
             .AddScoped<UpdateCustomerValidator>();
     }
