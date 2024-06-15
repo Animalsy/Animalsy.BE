@@ -7,6 +7,9 @@ public record Customer
     [Key]    
     public Guid Id { get; init; }
 
+    [Required]
+    public Guid UserId { get; init; }
+
     [Required, MaxLength(20)]
     public string Name { get; set; }
 

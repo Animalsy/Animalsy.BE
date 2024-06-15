@@ -1,5 +1,6 @@
 ﻿using Animalsy.BE.Services.VendorAPI.Models.Dto;
 using FluentValidation;
+using IValidatorFactory = Animalsy.BE.Services.VendorAPI.Validators.Factory.IValidatorFactory;
 
 namespace Animalsy.BE.Services.VendorAPI.Validators;
 
@@ -8,11 +9,11 @@ public class CreateVendorValidator : AbstractValidator<CreateVendorDto>
     internal static string InvalidEmailAddressMessage = "Email address is not in correct format";
     internal static string InvalidNumberMessage(string topic) => $"{topic} number is not in correct format";
 
-    public CreateVendorValidator()
+    public CreateVendorValidator(IValidatorFactory validatorFactory)
     {
-        RuleFor(x => x.Name).NotEmpty().MaximumLength(20);
+        var factory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
 
-
+        RuleFor(x => x.UserId).SetValidator(factory.GetValidator<Guid>());
         RuleFor(x => x.City).NotEmpty().MaximumLength(20);
         RuleFor(x => x.Street).NotEmpty().MaximumLength(40);
         RuleFor(x => x.Building).NotEmpty().MaximumLength(5);

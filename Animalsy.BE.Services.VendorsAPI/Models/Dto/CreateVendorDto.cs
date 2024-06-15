@@ -2,6 +2,7 @@
 
 public record CreateVendorDto
 {
+    public Guid UserId { get; set; }
     public string Name { get; init; }
     public string Nip { get; init; }
     public string City { get; init; }

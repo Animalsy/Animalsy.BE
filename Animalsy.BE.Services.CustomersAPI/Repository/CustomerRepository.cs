@@ -46,9 +46,9 @@ public class CustomerRepository : ICustomerRepository
         return _mapper.Map<CustomerDto>(customer);
     }
 
-    public async Task<CustomerProfileDto> GetCustomerProfileAsync(Guid customerId)
+    public async Task<CustomerProfileDto> GetCustomerProfileAsync(Guid userId)
     {
-        var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
+        var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.UserId == userId);
         return customer != null
             ? await _customerProfileBuilderFactory.Create(_mapper.Map<CustomerDto>(customer))
                 .WithPets()

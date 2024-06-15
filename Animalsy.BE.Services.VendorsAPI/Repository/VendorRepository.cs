@@ -4,6 +4,7 @@ using Animalsy.BE.Services.VendorAPI.Models.Dto;
 using Animalsy.BE.Services.VendorAPI.Repository.Builder.Factory;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Animalsy.BE.Services.VendorAPI.Repository;
 
@@ -26,29 +27,25 @@ public class VendorRepository : IVendorRepository
         return _mapper.Map<IEnumerable<VendorDto>>(results);
     }
 
-    public async Task<IEnumerable<VendorDto>> GetByNameAsync(string name)
-    {
-        var results = await _dbContext.Vendors.ToListAsync();
-        return _mapper.Map<IEnumerable<VendorDto>>(results);
-    }
-
     public async Task<VendorDto> GetByIdAsync(Guid vendorId)
     {
         var result = await _dbContext.Vendors.FirstOrDefaultAsync(c => c.Id == vendorId);
         return _mapper.Map<VendorDto>(result);
     }
 
-    public async Task<VendorProfileDto> GetVendorProfileAsync(Guid vendorId)
+    public async Task<IEnumerable<VendorProfileDto>> GetVendorProfilesAsync(Guid userId)
     {
-        var vendor = await _dbContext.Vendors.FirstOrDefaultAsync(c => c.Id == vendorId);
+        var vendors = await _dbContext.Vendors.Where(c => c.UserId == userId).ToListAsync();
 
-        return vendor != null
-            ? await _vendorProfileBuilderFactory.Create(_mapper.Map<VendorDto>(vendor))
+        if (vendors.IsNullOrEmpty()) return [];
+
+        var results = vendors.Select(vendor =>
+            _vendorProfileBuilderFactory.Create(_mapper.Map<VendorDto>(vendor))
                 .WithContractors()
                 .WithVisits()
-                .BuildAsync()
-                .ConfigureAwait(false)
-            : null;
+                .BuildAsync());
+
+        return await Task.WhenAll(results).ConfigureAwait(false);
     }
 
     public async Task<Guid> CreateAsync(CreateVendorDto vendorDto)
@@ -64,7 +61,7 @@ public class VendorRepository : IVendorRepository
         var existingCustomer = await _dbContext.Vendors.FirstOrDefaultAsync(c => c.Id == vendorDto.Id);
         if (existingCustomer == null) return false;
 
-        existingCustomer.Name =  vendorDto.Name;
+        existingCustomer.Name = vendorDto.Name;
         existingCustomer.Nip = vendorDto.Nip;
         existingCustomer.City = vendorDto.City;
         existingCustomer.Street = vendorDto.Street;

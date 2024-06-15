@@ -2,6 +2,7 @@
 using Animalsy.BE.Services.VendorAPI.Repository;
 using Animalsy.BE.Services.VendorAPI.Validators.Factory;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Animalsy.BE.Services.VendorAPI.Controllers;
 
@@ -30,18 +31,6 @@ public class VendorController : Controller
             : NotFound("There are no vendors added yet");
     }
 
-    [HttpGet("Name/{name}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByNameAsync(string name)
-    {
-        var vendors = await _vendorRepository.GetByNameAsync(name);
-        return vendors.Any()
-            ? Ok(vendors)
-            : NotFound("There are no vendors with provided name");
-    }
-
     [HttpGet("{vendorId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -60,22 +49,22 @@ public class VendorController : Controller
             : NotFound(VendorNotFoundMessage("Id", vendorId.ToString()));
     }
 
-    [HttpGet("Profile/{vendorId:guid}")]
+    [HttpGet("Profiles/{userId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetVendorProfileAsync(Guid vendorId)
+    public async Task<IActionResult> GetVendorProfilesAsync(Guid userId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(vendorId);
+            .ValidateAsync(userId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var vendor = await _vendorRepository.GetVendorProfileAsync(vendorId);
-        return vendor != null
-            ? Ok(vendor)
-            : NotFound(VendorNotFoundMessage("Id", vendorId.ToString()));
+        var profiles = await _vendorRepository.GetVendorProfilesAsync(userId);
+        return !profiles.IsNullOrEmpty()
+            ? Ok(profiles)
+            : NotFound($"Vendors for UserId :{userId} have not been found");
     }
 
     [HttpPost]

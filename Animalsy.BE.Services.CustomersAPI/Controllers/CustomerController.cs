@@ -48,22 +48,22 @@ public class CustomerController: Controller
             : NotFound(CustomerNotFoundMessage(customerId.ToString()));
     }
 
-    [HttpGet("Profile/{customerId:guid}")]
+    [HttpGet("Profile/{userId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetCustomerProfileAsync(Guid customerId)
+    public async Task<IActionResult> GetCustomerProfileAsync(Guid userId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(customerId);
+            .ValidateAsync(userId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var customer = await _customerRepository.GetCustomerProfileAsync(customerId);
+        var customer = await _customerRepository.GetCustomerProfileAsync(userId);
         return customer != null
             ? Ok(customer)
-            : NotFound(CustomerNotFoundMessage(customerId.ToString()));
+            : NotFound(CustomerNotFoundMessage(userId.ToString()));
     }
 
     [HttpPost]
