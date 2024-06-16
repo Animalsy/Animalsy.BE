@@ -1,4 +1,5 @@
-﻿using Animalsy.BE.Services.AuthAPI.Validators;
+﻿using Animalsy.BE.Services.AuthAPI.Models.Dto;
+using Animalsy.BE.Services.AuthAPI.Validators;
 using FluentValidation;
 
 namespace Animalsy.BE.Services.AuthAPI.Utilities;
@@ -10,9 +11,9 @@ public static partial class AppExtensions
         DisableValidationTranslation();
 
         serviceCollection
-            .AddScoped<AssignRoleValidator>()
-            .AddScoped<LoginUserValidator>()
-            .AddScoped<RegisterUserValidator>();
+            .AddScoped<IValidator<AssignRoleDto>, AssignRoleValidator>()
+            .AddScoped<IValidator<LoginUserDto>, LoginUserValidator>()
+            .AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>();
     }
 
     private static void DisableValidationTranslation()

@@ -52,7 +52,7 @@ namespace Animalsy.BE.Services.ContractorAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Contractors");
+                    b.ToTable("Contractors", (string)null);
                 });
 #pragma warning restore 612, 618
         }

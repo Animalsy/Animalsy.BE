@@ -1,4 +1,5 @@
-﻿using Animalsy.BE.Services.VisitAPI.Validators;
+﻿using Animalsy.BE.Services.VisitAPI.Models.Dto;
+using Animalsy.BE.Services.VisitAPI.Validators;
 using FluentValidation;
 
 namespace Animalsy.BE.Services.VisitAPI.Utilities;
@@ -10,9 +11,9 @@ public static partial class AppExtensions
         DisableValidationTranslation();
 
         serviceCollection
-            .AddScoped<UniqueIdValidator>()
-            .AddScoped<CreateVisitValidator>()
-            .AddScoped<UpdateVisitValidator>();
+            .AddScoped<IValidator<Guid>, UniqueIdValidator>()
+            .AddScoped<IValidator<CreateVisitDto>, CreateVisitValidator>()
+            .AddScoped<IValidator<UpdateVisitDto>, UpdateVisitValidator>();
     }
 
     private static void DisableValidationTranslation()

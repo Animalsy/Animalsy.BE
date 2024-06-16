@@ -106,7 +106,7 @@ public class VendorController : Controller
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), updateVendorDto.UserId))
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), updateVendorDto.UserId))
             return Unauthorized();
 
         var updateSuccessful = await _vendorRepository.TryUpdateAsync(updateVendorDto);
@@ -131,7 +131,7 @@ public class VendorController : Controller
         var vendorDto = await _vendorRepository.GetByIdAsync(vendorId);
         if (vendorDto == null) return NotFound(VendorNotFoundMessage("Id", vendorId.ToString()));
 
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), vendorDto.UserId))
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), vendorDto.UserId))
             return Unauthorized();
 
         await _vendorRepository.DeleteAsync(vendorDto);
@@ -140,7 +140,7 @@ public class VendorController : Controller
 
     private async Task AssignVendorRoleIfRequiredAsync()
     {
-        var email = User.FindFirst(JwtRegisteredClaimNames.Email);
+        var email = User.FindFirst(ClaimTypes.Email);
 
         if (User.IsInRole(SD.RoleVendor) || email == null)
             return;

@@ -17,7 +17,7 @@ public class AuthService : IAuthService
     {
         using var client = _httpClientFactory.CreateClient("AuthApiClient");
         using var content = new StringContent(JsonConvert.SerializeObject(assignRoleDto), Encoding.UTF8, "application/json");
-        using var response = await client.PostAsync(new Uri("Api/Auth/AssignRole"), content);
+        using var response = await client.PostAsync(new Uri(client.BaseAddress!, "Api/Auth/AssignRole"), content);
         return new ResponseDto
         {
             IsSuccess = response.IsSuccessStatusCode,

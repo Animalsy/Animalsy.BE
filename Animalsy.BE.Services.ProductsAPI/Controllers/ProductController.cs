@@ -115,7 +115,7 @@ public class ProductController : ControllerBase
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), productDto.UserId) || !User.IsInRole(SD.RoleAdmin))
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), productDto.UserId) || !User.IsInRole(SD.RoleAdmin))
             return Unauthorized();
 
         var updateResult = await _productRepository.TryUpdateAsync(productDto);
@@ -140,7 +140,7 @@ public class ProductController : ControllerBase
         var productDto = await _productRepository.GetByIdAsync(productId);
         if (productDto == null) return NotFound(ProductIdNotFoundMessage(productId));
 
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), productDto.UserId) || !User.IsInRole(SD.RoleAdmin))
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), productDto.UserId) || !User.IsInRole(SD.RoleAdmin))
             return Unauthorized();
 
         await _productRepository.DeleteAsync(productDto);

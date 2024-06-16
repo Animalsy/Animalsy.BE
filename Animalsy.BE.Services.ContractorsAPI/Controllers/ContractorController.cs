@@ -88,7 +88,7 @@ public class ContractorController : ControllerBase
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), updateContractorDto.UserId))
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), updateContractorDto.UserId))
             return Unauthorized();
 
         var updateResult = await _contractorRepository.TryUpdateAsync(updateContractorDto);
@@ -113,7 +113,7 @@ public class ContractorController : ControllerBase
         var contractorDto = await _contractorRepository.GetByIdAsync(contractorId);
         if (contractorDto == null) return NotFound(ContractorIdNotFoundMessage(contractorId));
 
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), contractorDto.UserId))
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), contractorDto.UserId))
             return Unauthorized();
 
         await _contractorRepository.DeleteAsync(contractorDto);

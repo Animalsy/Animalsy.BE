@@ -1,4 +1,5 @@
-﻿using Animalsy.BE.Services.ContractorAPI.Validators;
+﻿using Animalsy.BE.Services.ContractorAPI.Models.Dto;
+using Animalsy.BE.Services.ContractorAPI.Validators;
 using FluentValidation;
 
 namespace Animalsy.BE.Services.ContractorAPI.Utilities;
@@ -10,9 +11,9 @@ public static partial class AppExtensions
         DisableValidationTranslation();
 
         serviceCollection
-            .AddScoped<UniqueIdValidator>()
-            .AddScoped<CreateContractorValidator>()
-            .AddScoped<UpdateContractorValidator>();
+            .AddScoped<IValidator<Guid>, UniqueIdValidator>()
+            .AddScoped<IValidator<CreateContractorDto>, CreateContractorValidator>()
+            .AddScoped<IValidator<UpdateContractorDto>, UpdateContractorValidator>();
     }
 
     private static void DisableValidationTranslation()

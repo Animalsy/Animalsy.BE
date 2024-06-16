@@ -25,6 +25,7 @@ builder.Services.AddTransient<IResponseHandler, ResponseHandler>();
 builder.Services.AddScoped<IValidatorFactory, ValidatorFactory>();
 builder.Services.AddValidators();
 
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
 builder.Services.Configure<ServiceUrlConfiguration>(builder.Configuration.GetSection(nameof(ServiceUrlConfiguration))!);
 builder.Services.AddHttpClients();
 

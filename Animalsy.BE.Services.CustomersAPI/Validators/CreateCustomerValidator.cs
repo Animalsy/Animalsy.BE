@@ -25,7 +25,7 @@ public class CreateCustomerValidator : AbstractValidator<CreateCustomerDto>
             .EmailAddress().WithMessage(InvalidEmailAddressMessage)
             .MaximumLength(50);
         RuleFor(x => x.PhoneNumber).NotEmpty()
-            .Must(x => int.TryParse(x, out var result)).WithMessage(InvalidPhoneNumberMessage)
+            .Must(x => x.All(char.IsDigit)).WithMessage(InvalidPhoneNumberMessage)
             .Length(9);
     }
 }

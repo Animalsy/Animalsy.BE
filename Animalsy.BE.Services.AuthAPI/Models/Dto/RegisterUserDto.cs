@@ -4,7 +4,6 @@ public record RegisterUserDto
 {
     public string EmailAddress { get; init; }
     public string Password { get; init; }
-    public string Role { get; set; }
     public string Name { get; init; }
     public string LastName { get; init; }
     public string City { get; init; }

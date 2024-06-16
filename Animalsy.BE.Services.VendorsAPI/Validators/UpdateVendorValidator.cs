@@ -27,10 +27,10 @@ public class UpdateVendorValidator : AbstractValidator<UpdateVendorDto>
             .EmailAddress().WithMessage(InvalidEmailAddressMessage)
             .MaximumLength(50);
         RuleFor(x => x.Nip).NotEmpty()
-            .Must(x => int.TryParse(x, out var result)).WithMessage(InvalidNumberMessage("Nip"))
+            .Must(x => x.All(char.IsDigit)).WithMessage(InvalidNumberMessage("Nip"))
             .Length(10);
         RuleFor(x => x.PhoneNumber)
-            .NotEmpty().Must(x => int.TryParse(x, out var result)).WithMessage(InvalidNumberMessage("Phone"))
+            .NotEmpty().Must(x => x.All(char.IsDigit)).WithMessage(InvalidNumberMessage("Phone"))
             .Length(9);
 
     }

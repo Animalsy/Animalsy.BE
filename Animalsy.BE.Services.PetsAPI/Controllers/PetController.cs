@@ -35,7 +35,7 @@ public class PetController: ControllerBase
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), customerId))
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), customerId))
             return Unauthorized();
 
         var pets = await _petRepository.GetByCustomerAsync(customerId);
@@ -90,7 +90,7 @@ public class PetController: ControllerBase
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), petDto.UserId) || !User.IsInRole(SD.RoleAdmin))
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), petDto.UserId) || !User.IsInRole(SD.RoleAdmin))
             return Unauthorized();
 
         var updateResult = await _petRepository.TryUpdateAsync(petDto);
@@ -114,7 +114,7 @@ public class PetController: ControllerBase
         var petDto = await _petRepository.GetByIdAsync(petId);
         if (petDto == null) return NotFound(PetIdNotFoundMessage(petId));
 
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), petDto.UserId) || !User.IsInRole(SD.RoleAdmin))
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), petDto.UserId) || !User.IsInRole(SD.RoleAdmin))
             return Unauthorized();
 
         await _petRepository.DeleteAsync(petDto);

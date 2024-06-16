@@ -12,6 +12,6 @@ public class ApiService : IApiService
     public async Task<HttpResponseMessage> GetAsync(string clientName, string path)
     {
         using var client = _httpClientFactory.CreateClient(clientName);
-        return await client.GetAsync(new Uri(path)).ConfigureAwait(false);
+        return await client.GetAsync(new Uri(client.BaseAddress!, path)).ConfigureAwait(false);
     }
 }

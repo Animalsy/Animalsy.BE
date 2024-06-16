@@ -105,7 +105,7 @@ public class CustomerController: Controller
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), customerDto.UserId)) 
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), customerDto.UserId)) 
             return Unauthorized();
 
         var updateSuccessful = await _customerRepository.TryUpdateAsync(customerDto);
@@ -128,7 +128,7 @@ public class CustomerController: Controller
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), userId))
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), userId))
             return Unauthorized();
 
         var deleteSuccessful = await _customerRepository.TryDeleteAsync(userId);

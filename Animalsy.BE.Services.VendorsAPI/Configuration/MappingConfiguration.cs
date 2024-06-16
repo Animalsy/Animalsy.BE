@@ -10,7 +10,7 @@ public class MappingConfiguration
     {
         return new MapperConfiguration(config =>
         {
-            config.CreateMap<Vendor, VendorDto>();
+            config.CreateMap<Vendor, VendorDto>().ReverseMap();
             config.CreateMap<CreateVendorDto, Vendor>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
         });

@@ -1,4 +1,5 @@
-﻿using Animalsy.BE.Services.PetAPI.Validators;
+﻿using Animalsy.BE.Services.PetAPI.Models.Dto;
+using Animalsy.BE.Services.PetAPI.Validators;
 using FluentValidation;
 
 namespace Animalsy.BE.Services.PetAPI.Utilities;
@@ -10,9 +11,9 @@ public static partial class AppExtensions
         DisableValidationTranslation();
 
         serviceCollection
-            .AddScoped<UniqueIdValidator>()
-            .AddScoped<CreatePetValidator>()
-            .AddScoped<UpdatePetValidator>();
+            .AddScoped<IValidator<Guid>, UniqueIdValidator>()
+            .AddScoped<IValidator<CreatePetDto>, CreatePetValidator>()
+            .AddScoped<IValidator<UpdatePetDto>, UpdatePetValidator>();
     }
 
     private static void DisableValidationTranslation()
