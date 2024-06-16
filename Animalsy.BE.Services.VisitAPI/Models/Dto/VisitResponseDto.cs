@@ -11,4 +11,5 @@ public class VisitResponseDto
     public DateTime Date { get; set; }
     public string Comment { get; set; }
     public string State { get; set; }
+    public IEnumerable<KeyValuePair<string, string>> ResponseDetails { get; init; }
 }

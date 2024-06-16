@@ -1,14 +1,17 @@
-﻿using Newtonsoft.Json;
+﻿namespace Animalsy.BE.Services.VendorAPI.Services;
 
-namespace Animalsy.BE.Services.VendorAPI.Services;
-
-public class ApiService(IHttpClientFactory httpClientFactory) : IApiService
+public class ApiService : IApiService
 {
-    public async Task<T> GetAsync<T>(string clientName, string path)
+    private readonly IHttpClientFactory _httpClientFactory;
+
+    public ApiService(IHttpClientFactory httpClientFactory)
     {
-        using var client = httpClientFactory.CreateClient(clientName);
-        using var response = await client.GetAsync(new Uri(path)).ConfigureAwait(false);
-        var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-        return JsonConvert.DeserializeObject<T>(content);
+        _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+    }
+
+    public async Task<HttpResponseMessage> GetAsync(string clientName, string path)
+    {
+        using var client = _httpClientFactory.CreateClient(clientName);
+        return await client.GetAsync(new Uri(path)).ConfigureAwait(false);
     }
 }

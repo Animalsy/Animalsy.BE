@@ -1,13 +1,16 @@
 ﻿using Animalsy.BE.Services.ContractorAPI.Models.Dto;
 using FluentValidation;
+using IValidatorFactory = Animalsy.BE.Services.ContractorAPI.Validators.Factory.IValidatorFactory;
 
 namespace Animalsy.BE.Services.ContractorAPI.Validators;
 
 public class CreateContractorValidator : AbstractValidator<CreateContractorDto>
 {
-    public CreateContractorValidator(UniqueIdValidator idValidator)
+    public CreateContractorValidator(IValidatorFactory validatorFactory)
     {
-        RuleFor(x => x.VendorId).SetValidator(idValidator);
+        var factory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
+
+        RuleFor(x => x.VendorId).SetValidator(factory.GetValidator<Guid>());
         RuleFor(x => x.Name).NotEmpty().MaximumLength(20);
         RuleFor(x => x.LastName).NotEmpty().MaximumLength(20);
         RuleFor(x => x.Specialization).NotEmpty().MaximumLength(400);

@@ -1,13 +1,16 @@
 ﻿using Animalsy.BE.Services.PetAPI.Models.Dto;
 using FluentValidation;
+using IValidatorFactory = Animalsy.BE.Services.PetAPI.Validators.Factory.IValidatorFactory;
 
 namespace Animalsy.BE.Services.PetAPI.Validators;
 
 public class CreatePetValidator : AbstractValidator<CreatePetDto>
 {
-    public CreatePetValidator(UniqueIdValidator idValidator)
+    public CreatePetValidator(IValidatorFactory validatorFactory)
     {
-        RuleFor(x => x.CustomerId).SetValidator(idValidator);
+        var factory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
+
+        RuleFor(x => x.CustomerId).SetValidator(factory.GetValidator<Guid>());
         RuleFor(x => x.Name).NotEmpty().MaximumLength(20);
         RuleFor(x => x.Species).NotEmpty().MaximumLength(40);
         RuleFor(x => x.Race).NotEmpty().MaximumLength(20);

@@ -1,19 +1,33 @@
-﻿using Animalsy.BE.Services.VendorAPI.Models.Dto;
+﻿using System.Collections.Concurrent;
+using Animalsy.BE.Services.VendorAPI.Models.Dto;
+using Animalsy.BE.Services.VendorAPI.Repository.ResponseHandler;
 using Animalsy.BE.Services.VendorAPI.Services;
 
 namespace Animalsy.BE.Services.VendorAPI.Repository.Builder;
 
-public class VendorProfileBuilder(IApiService apiService, VendorDto vendor) : IVendorProfileBuilder
+public class VendorProfileBuilder : IVendorProfileBuilder
 {
-    private readonly Queue<Task> _builderQueue = new();
+    private readonly List<Task> _tasks = new();
+    private readonly ConcurrentDictionary<string, string> _responseDetails = new();
     private IEnumerable<ContractorDto> _contractors;
     private IEnumerable<VisitDto> _visits;
+    private readonly IApiService _apiService;
+    private readonly IResponseHandler _responseHandler;
+    private readonly VendorDto _vendor;
+
+    public VendorProfileBuilder(IApiService apiService, IResponseHandler responseHandler, VendorDto vendor)
+    {
+        _apiService = apiService ?? throw new ArgumentNullException(nameof(apiService));
+        _responseHandler = responseHandler ?? throw new ArgumentNullException(nameof(responseHandler));
+        _vendor = vendor ?? throw new ArgumentNullException(nameof(vendor));
+    }
 
     public IVendorProfileBuilder WithContractors()
     {
-        _builderQueue.Enqueue(Task.Run(async () =>
+        _tasks.Add(Task.Run(async () =>
         {
-            _contractors = await apiService.GetAsync<IEnumerable<ContractorDto>>("ContractorApiClient", $"Api/Contractor/Vendor/{vendor.Id}");
+            _contractors = await _responseHandler.EvaluateResponse<IEnumerable<ContractorDto>>(nameof(_contractors), _responseDetails,
+                () => _apiService.GetAsync("ContractorApiClient", $"Api/Contractor/Vendor/{_vendor.Id}"));
         }));
 
         return this;
@@ -21,38 +35,25 @@ public class VendorProfileBuilder(IApiService apiService, VendorDto vendor) : IV
 
     public IVendorProfileBuilder WithVisits()
     {
-        _builderQueue.Enqueue(Task.Run(async () =>
+        _tasks.Add(Task.Run(async () =>
         {
-            _visits = await apiService.GetAsync<IEnumerable<VisitDto>>("VisitApiClient", $"Api/Visit/Vendor/{vendor.Id}");
+            _visits = await _responseHandler.EvaluateResponse<IEnumerable<VisitDto>>(nameof(_visits), _responseDetails,
+                 () => _apiService.GetAsync("VisitApiClient", $"Api/Visit/Vendor/{_vendor.Id}"));
         }));
         return this;
     }
 
-
     public async Task<VendorProfileDto> BuildAsync()
     {
 
-        while (_builderQueue.TryDequeue(out var currentTask))
-        {
-            await currentTask.ConfigureAwait(false);
-        }
+        await Task.WhenAll(_tasks).ConfigureAwait(false);
 
         return new VendorProfileDto
         {
-            Id = vendor.Id,
-            Name = vendor.Name,
-            Nip = vendor.Nip,
-            City = vendor.City,
-            Street = vendor.Street,
-            Building = vendor.Building,
-            Flat = vendor.Flat,
-            PostalCode = vendor.PostalCode,
-            PhoneNumber = vendor.PhoneNumber,
-            EmailAddress = vendor.EmailAddress,
-            OpeningHour = vendor.OpeningHour,
-            ClosingHour = vendor.ClosingHour,
+            Vendor = _vendor,
             Contractors = _contractors,
             Visits = _visits,
+            ResponseDetails = _responseDetails
         };
     }
 }

@@ -15,7 +15,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Animalsy.BE.Services.Contra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Animalsy.BE.Services.VendorAPI", "Animalsy.BE.Services.VendorsAPI\Animalsy.BE.Services.VendorAPI.csproj", "{BF2B1080-411B-4F1F-9A18-9769531D3640}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Animalsy.BE.Services.VisitAPI", "Animalsy.BE.Services.VisitAPI\Animalsy.BE.Services.VisitAPI.csproj", "{8011A405-6A22-470E-BDEE-0D797C87C904}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Animalsy.BE.Services.VisitAPI", "Animalsy.BE.Services.VisitAPI\Animalsy.BE.Services.VisitAPI.csproj", "{8011A405-6A22-470E-BDEE-0D797C87C904}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Animalsy.BE.Services.AuthAPI", "Animalsy.BE.Services.AuthAPI\Animalsy.BE.Services.AuthAPI.csproj", "{896F93E8-E80C-49A6-85F2-945F51467A2B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2FDEBC88-1284-4903-8420-BCB5283B06A2}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +54,10 @@ Global
 		{8011A405-6A22-470E-BDEE-0D797C87C904}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8011A405-6A22-470E-BDEE-0D797C87C904}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8011A405-6A22-470E-BDEE-0D797C87C904}.Release|Any CPU.Build.0 = Release|Any CPU
+		{896F93E8-E80C-49A6-85F2-945F51467A2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{896F93E8-E80C-49A6-85F2-945F51467A2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{896F93E8-E80C-49A6-85F2-945F51467A2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{896F93E8-E80C-49A6-85F2-945F51467A2B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,6 +69,7 @@ Global
 		{16056AD3-2AA8-42A3-A43B-7195D9AA0B42} = {713775F4-DD74-4576-AB72-9F0DFE984614}
 		{BF2B1080-411B-4F1F-9A18-9769531D3640} = {713775F4-DD74-4576-AB72-9F0DFE984614}
 		{8011A405-6A22-470E-BDEE-0D797C87C904} = {713775F4-DD74-4576-AB72-9F0DFE984614}
+		{896F93E8-E80C-49A6-85F2-945F51467A2B} = {713775F4-DD74-4576-AB72-9F0DFE984614}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E0E46E6D-3F9D-4DA3-895D-B1A376045056}

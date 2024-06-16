@@ -1,87 +1,99 @@
 ﻿using Animalsy.BE.Services.VisitAPI.Data;
 using Animalsy.BE.Services.VisitAPI.Models;
 using Animalsy.BE.Services.VisitAPI.Models.Dto;
-using Animalsy.BE.Services.VisitAPI.Services;
+using Animalsy.BE.Services.VisitAPI.Repository.Builder.Factory;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Animalsy.BE.Services.VisitAPI.Repository
 {
-    public class VisitRepository(AppDbContext dbContext, IApiService apiService, IMapper mapper) : IVisitRepository
+    public class VisitRepository : IVisitRepository
     {
+        private readonly AppDbContext _dbContext;
+        private readonly IVisitResponseBuilderFactory _visitResponseBuilderFactory;
+        private readonly IMapper _mapper;
+
+        public VisitRepository(AppDbContext dbContext, IVisitResponseBuilderFactory visitResponseBuilderFactory, IMapper mapper)
+        {
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _visitResponseBuilderFactory = visitResponseBuilderFactory ?? throw new ArgumentNullException(nameof(visitResponseBuilderFactory));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        }
+
         public async Task<VisitResponseDto> GetByIdAsync(Guid visitId)
         {
-            var visit = await dbContext.Visits.FirstOrDefaultAsync(c => c.Id == visitId);
+            var visit = await _dbContext.Visits.FirstOrDefaultAsync(c => c.Id == visitId);
 
             return visit != null
-                ? await new VisitResponseBuilder(apiService, mapper.Map<VisitDto>(visit))
+                ? await _visitResponseBuilderFactory.Create(_mapper.Map<VisitDto>(visit))
                     .WithContractor()
                     .WithCustomer()
                     .WithPet()
                     .WithProduct()
                     .WithVendor()
                     .BuildAsync()
+                    .ConfigureAwait(false)
                 : null;
         }
 
         public async Task<IEnumerable<VisitResponseDto>> GetByVendorIdAsync(Guid vendorId)
         {
-            var visits = await dbContext.Visits
+            var visits = await _dbContext.Visits
                 .Where(v => v.VendorId == vendorId)
                 .ToListAsync();
 
             if (!visits.IsNullOrEmpty()) return [];
 
-            return await BuildResultsAsync(visits).ConfigureAwait(false);
+            return await BuildResultsAsync(visits);
         }
 
         public async Task<IEnumerable<VisitResponseDto>> GetByCustomerIdAsync(Guid customerId)
         {
-            var visits = await dbContext.Visits
+            var visits = await _dbContext.Visits
                 .Where(v => v.CustomerId == customerId)
                 .ToListAsync();
 
             if (!visits.IsNullOrEmpty()) return [];
 
-            return await BuildResultsAsync(visits).ConfigureAwait(false);
+            return await BuildResultsAsync(visits);
         }
 
         public async Task<Guid> CreateAsync(CreateVisitDto visitDto)
         {
-            var visit = mapper.Map<Visit>(visitDto);
-            await dbContext.AddAsync(visit);
-            await dbContext.SaveChangesAsync();
+            var visit = _mapper.Map<Visit>(visitDto);
+            await _dbContext.AddAsync(visit);
+            await _dbContext.SaveChangesAsync();
             return visit.Id;
         }
 
         public async Task<bool> TryUpdateAsync(UpdateVisitDto visitDto)
         {
-            var existingVisit = await dbContext.Visits.FirstOrDefaultAsync(v => v.Id == visitDto.Id);
+            var existingVisit = await _dbContext.Visits.FirstOrDefaultAsync(v => v.Id == visitDto.Id);
             if (existingVisit == null) return false;
 
             existingVisit.Comment = visitDto.Comment;
             existingVisit.State = visitDto.State;
             existingVisit.Date = visitDto.Date;
 
-            await dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> TryDeleteAsync(Guid visitId)
         {
-            var existingVisit = await dbContext.Visits.FirstOrDefaultAsync(v => v.Id == visitId);
+            var existingVisit = await _dbContext.Visits.FirstOrDefaultAsync(v => v.Id == visitId);
             if (existingVisit == null) return false;
 
-            dbContext.Remove(existingVisit);
-            await dbContext.SaveChangesAsync();
+            _dbContext.Remove(existingVisit);
+            await _dbContext.SaveChangesAsync();
             return true;
         }
 
         private async Task<IEnumerable<VisitResponseDto>> BuildResultsAsync(IEnumerable<Visit> visits)
         {
             var tasks = visits.Select(visit =>
-                new VisitResponseBuilder(apiService, mapper.Map<VisitDto>(visit))
+                _visitResponseBuilderFactory.Create(_mapper.Map<VisitDto>(visit))
                     .WithContractor()
                     .WithCustomer()
                     .WithPet()
@@ -89,7 +101,7 @@ namespace Animalsy.BE.Services.VisitAPI.Repository
                     .WithVendor()
                     .BuildAsync());
 
-            return await Task.WhenAll(tasks);
+            return await Task.WhenAll(tasks).ConfigureAwait(false);
         }
     }
 }

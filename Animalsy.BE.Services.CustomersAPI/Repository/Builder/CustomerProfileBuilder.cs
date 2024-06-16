@@ -1,19 +1,33 @@
 ﻿using Animalsy.BE.Services.CustomerAPI.Models.Dto;
 using Animalsy.BE.Services.CustomerAPI.Services;
+using System.Collections.Concurrent;
+using Animalsy.BE.Services.CustomerAPI.Repository.ResponseHandler;
 
 namespace Animalsy.BE.Services.CustomerAPI.Repository.Builder;
 
-public class CustomerProfileBuilder(IApiService apiService, CustomerDto customer) : ICustomerProfileBuilder
+public class CustomerProfileBuilder : ICustomerProfileBuilder
 {
-    private readonly Queue<Task> _builderQueue = new();
+    private readonly List<Task> _tasks = new();
+    private readonly ConcurrentDictionary<string, string> _responseDetails = new();
     private IEnumerable<PetDto> _pets;
     private IEnumerable<VisitDto> _visits;
+    private readonly IApiService _apiService;
+    private readonly IResponseHandler _responseHandler;
+    private readonly CustomerDto _customer;
+
+    public CustomerProfileBuilder(IApiService apiService, IResponseHandler responseHandler, CustomerDto customer)
+    {
+        _apiService = apiService ?? throw new ArgumentNullException(nameof(apiService));
+        _responseHandler = responseHandler ?? throw new ArgumentNullException(nameof(responseHandler));
+        _customer = customer ?? throw new ArgumentNullException(nameof(customer));
+    }
 
     public ICustomerProfileBuilder WithPets()
     {
-        _builderQueue.Enqueue(Task.Run(async () =>
+        _tasks.Add(Task.Run(async () =>
         {
-            _pets = await apiService.GetAsync<IEnumerable<PetDto>>("PetApiClient", $"Api/Pet/Customer/{customer.Id}");
+            _pets = await _responseHandler.EvaluateResponse <IEnumerable<PetDto>>(nameof(_pets), _responseDetails,
+                () => _apiService.GetAsync("PetApiClient", $"Api/Pet/Customer/{_customer.Id}"));
         }));
 
         return this;
@@ -21,34 +35,24 @@ public class CustomerProfileBuilder(IApiService apiService, CustomerDto customer
 
     public ICustomerProfileBuilder WithVisits()
     {
-        _builderQueue.Enqueue(Task.Run(async () =>
+        _tasks.Add(Task.Run(async () =>
         {
-            _visits = await apiService.GetAsync<IEnumerable<VisitDto>>("VisitApiClient", $"Api/Visit/Customer/{customer.Id}");
+            _visits = await _responseHandler.EvaluateResponse<IEnumerable<VisitDto>>(nameof(_visits), _responseDetails,
+                () => _apiService.GetAsync("VisitApiClient", $"Api/Visit/Customer/{_customer.Id}"));
         }));
         return this;
     }
 
     public async Task<CustomerProfileDto> BuildAsync()
     {
-
-        while (_builderQueue.TryDequeue(out var currentTask))
-        {
-            await currentTask.ConfigureAwait(false);
-        }
+        await Task.WhenAll(_tasks).ConfigureAwait(false);
 
         return new CustomerProfileDto
         {
-            Id = customer.Id,
-            Name = customer.Name,
-            City = customer.City,
-            Street = customer.Street,
-            Building = customer.Building,
-            Flat = customer.Flat,
-            PostalCode = customer.PostalCode,
-            PhoneNumber = customer.PhoneNumber,
-            EmailAddress = customer.EmailAddress,
+            Customer = _customer,
             Pets = _pets,
             Visits = _visits,
+            ResponseDetails = _responseDetails
         };
     }
 }
