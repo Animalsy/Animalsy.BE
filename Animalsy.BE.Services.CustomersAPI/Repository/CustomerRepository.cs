@@ -40,15 +40,9 @@ public class CustomerRepository : ICustomerRepository
         return _mapper.Map<CustomerDto>(customer);
     }
 
-    public async Task<CustomerDto> GetByEmailAsync(string email)
-    {
-        var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.EmailAddress == email);
-        return _mapper.Map<CustomerDto>(customer);
-    }
-
     public async Task<CustomerProfileDto> GetCustomerProfileAsync(Guid userId)
     {
-        var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.UserId == userId);
+        var customer = await _dbContext.Customers.SingleOrDefaultAsync(c => c.UserId == userId);
         return customer != null
             ? await _customerProfileBuilderFactory.Create(_mapper.Map<CustomerDto>(customer))
                 .WithPets()
@@ -59,7 +53,7 @@ public class CustomerRepository : ICustomerRepository
 
     public async Task<bool> TryUpdateAsync(UpdateCustomerDto customerDto)
     {
-        var existingCustomer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerDto.Id);
+        var existingCustomer = await _dbContext.Customers.SingleOrDefaultAsync(c => c.UserId == customerDto.UserId);
         if (existingCustomer == null) return false;
 
         existingCustomer.Name =  customerDto.Name;
@@ -76,9 +70,9 @@ public class CustomerRepository : ICustomerRepository
         return true;
     }
 
-    public async Task<bool> TryDeleteAsync(Guid customerId)
+    public async Task<bool> TryDeleteAsync(Guid userId)
     {
-        var existingCustomer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
+        var existingCustomer = await _dbContext.Customers.SingleOrDefaultAsync(c => c.UserId == userId);
         if (existingCustomer == null) return false;
 
         _dbContext.Customers.Remove(existingCustomer);

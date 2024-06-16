@@ -29,6 +29,9 @@ builder.Services.AddLogging(cfg =>
         opt.LogToStandardErrorThreshold = LogLevel.Error);
 });
 
+builder.Services.AddSwaggerGenWithAuthentication();
+builder.AddAppAuthentication();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -41,6 +44,8 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

@@ -1,12 +1,15 @@
 ﻿using Animalsy.BE.Services.ContractorAPI.Models.Dto;
 using Animalsy.BE.Services.ContractorAPI.Repository;
+using Animalsy.BE.Services.ContractorAPI.Utilities;
 using Animalsy.BE.Services.ContractorAPI.Validators.Factory;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Animalsy.BE.Services.ContractorAPI.Controllers;
 
 [Route("Api/[controller]")]
 [ApiController]
+[Authorize]
 public class ContractorController : ControllerBase
 {
     private readonly IContractorRepository _contractorRepository;
@@ -55,7 +58,8 @@ public class ContractorController : ControllerBase
             : NotFound(VendorIdNotFoundMessage(vendorId));
     }
 
-    [HttpPost]
+    [HttpPost] 
+    [Authorize(Roles = SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -71,6 +75,7 @@ public class ContractorController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -89,6 +94,7 @@ public class ContractorController : ControllerBase
     }
 
     [HttpDelete("{contractorId:guid}")]
+    [Authorize(Roles = SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

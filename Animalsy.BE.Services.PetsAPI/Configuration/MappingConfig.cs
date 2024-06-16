@@ -2,7 +2,7 @@
 using Animalsy.BE.Services.PetAPI.Models.Dto;
 using AutoMapper;
 
-namespace Animalsy.BE.Services.PetAPI;
+namespace Animalsy.BE.Services.PetAPI.Configuration;
 
 public class MappingConfig
 {

@@ -24,6 +24,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{425B88B0-6F80-442D-8950-C729CC034B03}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Animalsy.BE.Gateway", "Animalsy.BE.Gateway\Animalsy.BE.Gateway.csproj", "{DF8E9EC0-0E8D-4CD5-9FFA-237B70A93C22}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +62,10 @@ Global
 		{896F93E8-E80C-49A6-85F2-945F51467A2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{896F93E8-E80C-49A6-85F2-945F51467A2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{896F93E8-E80C-49A6-85F2-945F51467A2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF8E9EC0-0E8D-4CD5-9FFA-237B70A93C22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF8E9EC0-0E8D-4CD5-9FFA-237B70A93C22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF8E9EC0-0E8D-4CD5-9FFA-237B70A93C22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF8E9EC0-0E8D-4CD5-9FFA-237B70A93C22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,6 +78,7 @@ Global
 		{BF2B1080-411B-4F1F-9A18-9769531D3640} = {713775F4-DD74-4576-AB72-9F0DFE984614}
 		{8011A405-6A22-470E-BDEE-0D797C87C904} = {713775F4-DD74-4576-AB72-9F0DFE984614}
 		{896F93E8-E80C-49A6-85F2-945F51467A2B} = {713775F4-DD74-4576-AB72-9F0DFE984614}
+		{DF8E9EC0-0E8D-4CD5-9FFA-237B70A93C22} = {425B88B0-6F80-442D-8950-C729CC034B03}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E0E46E6D-3F9D-4DA3-895D-B1A376045056}

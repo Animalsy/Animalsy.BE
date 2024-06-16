@@ -7,8 +7,7 @@ public interface ICustomerRepository
     Task<Guid> CreateAsync(CreateCustomerDto customerDto);
     Task<IEnumerable<CustomerDto>> GetAllAsync();
     Task<CustomerDto> GetByIdAsync(Guid customerId);
-    Task<CustomerDto> GetByEmailAsync(string email);
     Task<CustomerProfileDto> GetCustomerProfileAsync(Guid userId);
     Task<bool> TryUpdateAsync(UpdateCustomerDto customerDto);
-    Task<bool> TryDeleteAsync(Guid customerId);
+    Task<bool> TryDeleteAsync(Guid userId);
 }

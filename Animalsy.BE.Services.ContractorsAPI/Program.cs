@@ -22,12 +22,15 @@ builder.Services.AddValidators();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services.AddLogging(cfg =>
 {
     cfg.AddConsole(opt =>
         opt.LogToStandardErrorThreshold = LogLevel.Error);
 });
+
+
+builder.Services.AddSwaggerGenWithAuthentication();
+builder.AddAppAuthentication();
 
 var app = builder.Build();
 
@@ -41,6 +44,8 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
