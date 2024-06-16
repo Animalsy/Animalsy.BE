@@ -24,7 +24,7 @@ public class CustomerRepository : ICustomerRepository
     {
         var customer = _mapper.Map<Customer>(customerDto);
         await _dbContext.Customers.AddAsync(customer);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         return customer.Id;
     }
 
@@ -66,7 +66,7 @@ public class CustomerRepository : ICustomerRepository
         existingCustomer.PhoneNumber = customerDto.PhoneNumber;
         existingCustomer.EmailAddress = customerDto.EmailAddress;
 
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         return true;
     }
 
@@ -76,7 +76,7 @@ public class CustomerRepository : ICustomerRepository
         if (existingCustomer == null) return false;
 
         _dbContext.Customers.Remove(existingCustomer);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         return true;
     }
 }

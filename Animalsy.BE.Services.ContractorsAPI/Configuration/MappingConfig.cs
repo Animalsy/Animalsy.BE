@@ -10,7 +10,7 @@ public class MappingConfig
     {
         return new MapperConfiguration(config =>
         {
-            config.CreateMap<Contractor, ContractorResponseDto>();
+            config.CreateMap<Contractor, ContractorDto>();
             config.CreateMap<CreateContractorDto, Contractor>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
         });

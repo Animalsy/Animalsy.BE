@@ -1,4 +1,4 @@
-using Animalsy.BE.Services.ProductAPI;
+using Animalsy.BE.Services.ProductAPI.Configuration;
 using Animalsy.BE.Services.ProductAPI.Data;
 using Animalsy.BE.Services.ProductAPI.Middleware;
 using Animalsy.BE.Services.ProductAPI.Repository;

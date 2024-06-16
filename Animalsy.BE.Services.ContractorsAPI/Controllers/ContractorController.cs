@@ -4,12 +4,13 @@ using Animalsy.BE.Services.ContractorAPI.Utilities;
 using Animalsy.BE.Services.ContractorAPI.Validators.Factory;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Animalsy.BE.Services.ContractorAPI.Controllers;
 
 [Route("Api/[controller]")]
 [ApiController]
-[Authorize]
 public class ContractorController : ControllerBase
 {
     private readonly IContractorRepository _contractorRepository;
@@ -80,17 +81,20 @@ public class ContractorController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UpdateAsync([FromBody] UpdateContractorDto contractorDto)
+    public async Task<IActionResult> UpdateAsync([FromBody] UpdateContractorDto updateContractorDto)
     {
         var validationResult = await _validatorFactory.GetValidator<UpdateContractorDto>()
-            .ValidateAsync(contractorDto);
+            .ValidateAsync(updateContractorDto);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var updateResult = await _contractorRepository.TryUpdateAsync(contractorDto);
+        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), updateContractorDto.UserId))
+            return Unauthorized();
+
+        var updateResult = await _contractorRepository.TryUpdateAsync(updateContractorDto);
         return updateResult
             ? Ok("Contractor has been updated successfully")
-            : NotFound(ContractorIdNotFoundMessage(contractorDto.Id));
+            : NotFound(ContractorIdNotFoundMessage(updateContractorDto.Id));
     }
 
     [HttpDelete("{contractorId:guid}")]
@@ -106,10 +110,19 @@ public class ContractorController : ControllerBase
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var deleteResult = await _contractorRepository.TryDeleteAsync(contractorId);
-        return deleteResult
-            ? Ok("Contractor has been deleted successfully")
-            : NotFound(ContractorIdNotFoundMessage(contractorId));
+        var contractorDto = await _contractorRepository.GetByIdAsync(contractorId);
+        if (contractorDto == null) return NotFound(ContractorIdNotFoundMessage(contractorId));
+
+        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), contractorDto.UserId))
+            return Unauthorized();
+
+        await _contractorRepository.DeleteAsync(contractorDto);
+        return Ok("Contractor has been deleted successfully");
+    }
+
+    private bool CheckLoggedUser(Claim claim, Guid requestedId)
+    {
+        return (claim != null && Guid.TryParse(claim.Value, out var id) && id == requestedId) || User.IsInRole(SD.RoleAdmin);
     }
 
     private static string ContractorIdNotFoundMessage(Guid? id) => $"Contractor with Id {id} has not been found";

@@ -92,7 +92,7 @@ public class VisitResponseBuilder : IVisitResponseBuilder
             Id = _visit.Id,
             Comment = _visit.Comment,
             Date = _visit.Date,
-            State = _visit.State,
+            Status = _visit.Status,
             Contractor = _contractor,
             Customer = _customer,
             Pet = _pet,

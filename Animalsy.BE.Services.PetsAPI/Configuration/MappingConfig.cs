@@ -10,7 +10,7 @@ public class MappingConfig
     {
         return new MapperConfiguration(config =>
         {
-            config.CreateMap<Pet, PetResponseDto>();
+            config.CreateMap<Pet, PetDto>();
             config.CreateMap<CreatePetDto, Pet>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
         });

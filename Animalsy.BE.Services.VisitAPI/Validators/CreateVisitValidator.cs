@@ -19,7 +19,6 @@ namespace Animalsy.BE.Services.VisitAPI.Validators
             RuleFor(x => x.VendorId).SetValidator(idValidator);
             RuleFor(x => x.Date).NotEmpty();
             RuleFor(x => x.Comment).NotEmpty().When(x => x.Comment is not null);
-            RuleFor(x => x.State).NotEmpty().When(x => x.State is not null);
         }
     }
 }

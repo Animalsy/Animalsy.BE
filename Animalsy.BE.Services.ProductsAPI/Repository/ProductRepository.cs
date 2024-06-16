@@ -17,10 +17,10 @@ public class ProductRepository : IProductRepository
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<IEnumerable<ProductResponseDto>> GetAllAsync()
+    public async Task<IEnumerable<ProductDto>> GetAllAsync()
     {
         var results = await _dbContext.Products.ToListAsync();
-        return _mapper.Map<IEnumerable<ProductResponseDto>>(results);
+        return _mapper.Map<IEnumerable<ProductDto>>(results);
     }
 
     public async Task<IEnumerable<ProductResponseDto>> GetByVendorAsync(Guid vendorId, string categoryAndSubcategory = null)
@@ -48,21 +48,21 @@ public class ProductRepository : IProductRepository
 
     public async Task<Guid> CreateAsync(CreateProductDto productDto)
     {
-        var product = _mapper.Map<Product>(productDto);
+        var product = _mapper.Map<Product>(createProductDto);
         await _dbContext.Products.AddAsync(product);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         return product.Id;
     }
 
-    public async Task<ProductResponseDto> GetByIdAsync(Guid productId)
+    public async Task<ProductDto> GetByIdAsync(Guid productId)
     {
         var result = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
-        return _mapper.Map<ProductResponseDto>(result);
+        return _mapper.Map<ProductDto>(result);
     }
 
-    public async Task<bool> TryUpdateAsync(UpdateProductDto productDto)
+    public async Task<bool> TryUpdateAsync(UpdateProductDto updateProductDto)
     {
-        var existingProduct = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productDto.Id);
+        var existingProduct = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == updateProductDto.Id);
         if (existingProduct == null) return false;
 
         existingProduct.Name = productDto.Name;
@@ -73,17 +73,13 @@ public class ProductRepository : IProductRepository
         existingProduct.PromoPrice = productDto.PromoPrice;
         existingProduct.Duration = productDto.Duration;
 
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         return true;
     }
 
-    public async Task<bool> TryDeleteAsync(Guid productId)
+    public async Task DeleteAsync(ProductDto productDto)
     {
-        var existingProduct = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
-        if (existingProduct == null) return false;
-
-        _dbContext.Products.Remove(existingProduct);
-        await _dbContext.SaveChangesAsync();
-        return true;
+        _dbContext.Products.Remove(_mapper.Map<Product>(productDto));
+        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
     }
 }

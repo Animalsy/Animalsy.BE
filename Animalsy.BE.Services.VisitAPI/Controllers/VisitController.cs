@@ -1,6 +1,9 @@
-﻿using Animalsy.BE.Services.VisitAPI.Models.Dto;
+﻿using System.Security.Claims;
+using Animalsy.BE.Services.VisitAPI.Models.Dto;
 using Animalsy.BE.Services.VisitAPI.Repository;
+using Animalsy.BE.Services.VisitAPI.Utilities;
 using Animalsy.BE.Services.VisitAPI.Validators.Factory;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -8,6 +11,7 @@ namespace Animalsy.BE.Services.VisitAPI.Controllers;
 
 [Route("Api/[controller]")]
 [ApiController]
+[Authorize]
 public class VisitController : Controller
 {
     private readonly IVisitRepository _visitRepository;
@@ -107,6 +111,7 @@ public class VisitController : Controller
     }
 
     [HttpDelete("{visitId:guid}")]
+    [Authorize(Roles = SD.RoleAdmin)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -122,6 +127,11 @@ public class VisitController : Controller
         return deleteSuccessful
             ? Ok("Visit has been deleted successfully")
             : NotFound(VisitNotFoundMessage("Id", visitId.ToString()));
+    }
+
+    private bool CheckLoggedUser(Claim claim, Guid requestedId)
+    {
+        return (claim != null && Guid.TryParse(claim.Value, out var id) && id == requestedId) || User.IsInRole(SD.RoleAdmin);
     }
 
     private static string VisitNotFoundMessage(string topic, string value) =>

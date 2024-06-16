@@ -1,9 +1,11 @@
 ﻿using Animalsy.BE.Services.ProductAPI.Models.Dto;
 using Animalsy.BE.Services.ProductAPI.Repository;
-using Animalsy.BE.Services.ProductAPI.Validators;
+using Animalsy.BE.Services.ProductAPI.Utilities;
 using Animalsy.BE.Services.ProductAPI.Validators.Factory;
-using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Animalsy.BE.Services.ProductAPI.Controllers;
 
@@ -83,6 +85,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -98,6 +101,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -109,6 +113,9 @@ public class ProductController : ControllerBase
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
+        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), productDto.UserId) || !User.IsInRole(SD.RoleAdmin))
+            return Unauthorized();
+
         var updateResult = await _productRepository.TryUpdateAsync(productDto);
         return updateResult
             ? Ok("Product has been updated successfully")
@@ -116,6 +123,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpDelete("{productId:guid}")]
+    [Authorize(Roles = SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -127,10 +135,19 @@ public class ProductController : ControllerBase
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var deleteResult = await _productRepository.TryDeleteAsync(productId);
-        return deleteResult
-            ? Ok("Product has been deleted successfully")
-            : NotFound(ProductIdNotFoundMessage(productId));
+        var productDto = await _productRepository.GetByIdAsync(productId);
+        if (productDto == null) return NotFound(ProductIdNotFoundMessage(productId));
+
+        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), productDto.UserId) || !User.IsInRole(SD.RoleAdmin))
+            return Unauthorized();
+
+        await _productRepository.DeleteAsync(productDto);
+        return Ok("Product has been deleted successfully");
+    }
+
+    private static bool CheckLoggedUser(Claim claim, Guid requestedId)
+    {
+        return claim != null && Guid.TryParse(claim.Value, out var id) && id == requestedId;
     }
 
     private async Task<ValidationResult> ValidateVendorCategoryAsync(Guid vendorId, string categoryAndSubCategory)

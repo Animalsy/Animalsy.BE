@@ -14,6 +14,7 @@ public class UpdateVendorValidator : AbstractValidator<UpdateVendorDto>
         var factory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
 
         RuleFor(x => x.Id).SetValidator(factory.GetValidator<Guid>());
+        RuleFor(x => x.UserId).SetValidator(factory.GetValidator<Guid>());
         RuleFor(x => x.Name).NotEmpty().MaximumLength(20);
         RuleFor(x => x.City).NotEmpty().MaximumLength(20);
         RuleFor(x => x.Street).NotEmpty().MaximumLength(40);

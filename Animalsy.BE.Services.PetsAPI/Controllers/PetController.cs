@@ -5,6 +5,7 @@ using Animalsy.BE.Services.PetAPI.Validators.Factory;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Animalsy.BE.Services.PetAPI.Utilities;
 
 namespace Animalsy.BE.Services.PetAPI.Controllers;
 
@@ -71,6 +72,8 @@ public class PetController: ControllerBase
         var validationResult = await _validatorFactory.GetValidator<CreatePetDto>()
             .ValidateAsync(petDto);
 
+
+
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var createdPetId = await _petRepository.CreateAsync(petDto);
@@ -89,7 +92,7 @@ public class PetController: ControllerBase
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), petDto.UserId))
+        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), petDto.UserId) || !User.IsInRole(SD.RoleAdmin))
             return Unauthorized();
 
         var updateResult = await _petRepository.TryUpdateAsync(petDto);
@@ -110,18 +113,20 @@ public class PetController: ControllerBase
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), petDto.UserId))
+        var petDto = await _petRepository.GetByIdAsync(petId);
+        if (petDto == null) return NotFound(PetIdNotFoundMessage(petId));
+
+        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), petDto.UserId) || !User.IsInRole(SD.RoleAdmin))
             return Unauthorized();
 
-        var deleteResult = await _petRepository.TryDeleteAsync(petId);
-        return deleteResult
-            ? Ok("Pet has been deleted successfully")
-            : NotFound(PetIdNotFoundMessage(petId));
+        await _petRepository.DeleteAsync(petDto);
+        return Ok("Pet has been deleted successfully");
     }
 
     private static bool CheckLoggedUser(Claim claim, Guid requestedId)
     {
         return claim != null && Guid.TryParse(claim.Value, out var id) && id == requestedId;
     }
+
     private static string PetIdNotFoundMessage(Guid? id) => $"Pet with Id {id} has not been found";
 }

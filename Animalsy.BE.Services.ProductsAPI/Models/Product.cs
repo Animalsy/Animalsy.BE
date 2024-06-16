@@ -6,8 +6,12 @@ public record Product
 {
     [Key]
     public Guid Id { get; init; }
+
     [Required]
     public Guid VendorId { get; init; }
+
+    [Required]
+    public Guid UserId { get; init; }
 
     [Required, MaxLength(50)] 
     public string Name { get; set; }
