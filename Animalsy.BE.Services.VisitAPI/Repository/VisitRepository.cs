@@ -43,8 +43,6 @@ namespace Animalsy.BE.Services.VisitAPI.Repository
                 .Where(v => v.VendorId == vendorId)
                 .ToListAsync();
 
-            if (!visits.IsNullOrEmpty()) return [];
-
             return await BuildResultsAsync(visits);
         }
 

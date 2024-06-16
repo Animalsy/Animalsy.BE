@@ -3,6 +3,7 @@ using Animalsy.BE.Services.ContractorAPI.Models;
 using Animalsy.BE.Services.ContractorAPI.Models.Dto;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Animalsy.BE.Services.ContractorAPI.Repository;
 
@@ -19,17 +20,8 @@ public class ContractorRepository : IContractorRepository
 
     public async Task<ContractorDto> GetByIdAsync(Guid contractorId)
     {
-        try
-        {
-            var result = await _dbContext.Contractors.FirstOrDefaultAsync(p => p.Id == contractorId);
-            return _mapper.Map<ContractorDto>(result);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-        
+        var result = await _dbContext.Contractors.FirstOrDefaultAsync(p => p.Id == contractorId);
+        return result != null ? _mapper.Map<ContractorDto>(result) : null;
     }
 
     public async Task<IEnumerable<ContractorDto>> GetByVendorAsync(Guid vendorId)

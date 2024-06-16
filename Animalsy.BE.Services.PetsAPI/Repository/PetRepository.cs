@@ -3,6 +3,7 @@ using Animalsy.BE.Services.PetAPI.Models;
 using Animalsy.BE.Services.PetAPI.Models.Dto;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Animalsy.BE.Services.PetAPI.Repository;
 
@@ -36,7 +37,7 @@ public class PetRepository : IPetRepository
     public async Task<PetDto> GetByIdAsync(Guid petId)
     {
         var pet = await _dbContext.Pets.FirstOrDefaultAsync(p => p.Id == petId);
-        return _mapper.Map<PetDto>(pet);
+        return pet != null ? _mapper.Map<PetDto>(pet) : null;
     }
 
     public async Task<bool> TryUpdateAsync(UpdatePetDto updatePetDto)

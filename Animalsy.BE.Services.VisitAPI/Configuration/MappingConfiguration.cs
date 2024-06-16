@@ -14,7 +14,7 @@ public class MappingConfiguration
             config.CreateMap<Visit, VisitDto>();
             config.CreateMap<CreateVisitDto, Visit>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => VisitStatus.Pending));
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => VisitStatus.Pending.ToString()));
         });
     }
 }

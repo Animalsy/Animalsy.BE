@@ -30,7 +30,7 @@ public class VendorRepository : IVendorRepository
     public async Task<VendorDto> GetByIdAsync(Guid vendorId)
     {
         var result = await _dbContext.Vendors.FirstOrDefaultAsync(c => c.Id == vendorId);
-        return _mapper.Map<VendorDto>(result);
+        return result != null ? _mapper.Map<VendorDto>(result) : null;
     }
 
     public async Task<IEnumerable<VendorProfileDto>> GetVendorProfilesAsync(Guid userId)

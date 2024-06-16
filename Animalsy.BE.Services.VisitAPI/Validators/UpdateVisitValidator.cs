@@ -14,7 +14,10 @@ namespace Animalsy.BE.Services.VisitAPI.Validators
             RuleFor(x => x.Id).SetValidator(factory.GetValidator<Guid>());
             RuleFor(x => x.Date).NotEmpty();
             RuleFor(x => x.Comment).NotEmpty().When(x => x.Comment is not null);
-            RuleFor(x => x.Status).NotEmpty().Must(x => Guid.TryParse<VisitStatus>(x, out var status))
+            RuleFor(x => x.Status)
+                .NotEmpty()
+                .Must(x => Enum.TryParse<VisitStatus>(x, true, out var status))
+                .WithMessage("Invalid visit status")
                 .When(x => x.Status is not null);
         }
     }

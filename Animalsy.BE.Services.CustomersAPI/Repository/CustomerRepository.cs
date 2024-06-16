@@ -4,6 +4,7 @@ using Animalsy.BE.Services.CustomerAPI.Models.Dto;
 using Animalsy.BE.Services.CustomerAPI.Repository.Builder.Factory;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Animalsy.BE.Services.CustomerAPI.Repository;
 
@@ -37,7 +38,7 @@ public class CustomerRepository : ICustomerRepository
     public async Task<CustomerDto> GetByIdAsync(Guid customerId)
     {
         var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
-        return _mapper.Map<CustomerDto>(customer);
+        return customer != null ? _mapper.Map<CustomerDto>(customer) : null;
     }
 
     public async Task<CustomerProfileDto> GetCustomerProfileAsync(Guid userId)

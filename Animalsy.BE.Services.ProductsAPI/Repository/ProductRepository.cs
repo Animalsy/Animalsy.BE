@@ -3,6 +3,7 @@ using Animalsy.BE.Services.ProductAPI.Models;
 using Animalsy.BE.Services.ProductAPI.Models.Dto;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Animalsy.BE.Services.ProductAPI.Repository;
 
@@ -23,7 +24,7 @@ public class ProductRepository : IProductRepository
         return _mapper.Map<IEnumerable<ProductDto>>(results);
     }
 
-    public async Task<IEnumerable<ProductResponseDto>> GetByVendorAsync(Guid vendorId, string categoryAndSubcategory = null)
+    public async Task<IEnumerable<ProductDto>> GetByVendorAsync(Guid vendorId, string categoryAndSubcategory = null)
     {
         var query = _dbContext.Products.Where(p => p.VendorId == vendorId);
 
@@ -33,7 +34,7 @@ public class ProductRepository : IProductRepository
         }
 
         var results = await query.ToListAsync();
-        return _mapper.Map<IEnumerable<ProductResponseDto>>(results);
+        return _mapper.Map<IEnumerable<ProductDto>>(results);
     }
 
     public async Task<IEnumerable<Guid>> GetVendorIdsByProductCategoryAsync(string categoryAndSubcategory)
@@ -48,7 +49,7 @@ public class ProductRepository : IProductRepository
 
     public async Task<Guid> CreateAsync(CreateProductDto productDto)
     {
-        var product = _mapper.Map<Product>(createProductDto);
+        var product = _mapper.Map<Product>(productDto);
         await _dbContext.Products.AddAsync(product);
         await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         return product.Id;
@@ -57,7 +58,7 @@ public class ProductRepository : IProductRepository
     public async Task<ProductDto> GetByIdAsync(Guid productId)
     {
         var result = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
-        return _mapper.Map<ProductDto>(result);
+        return result != null ? _mapper.Map<ProductDto>(result) : null;
     }
 
     public async Task<bool> TryUpdateAsync(UpdateProductDto updateProductDto)
@@ -65,13 +66,13 @@ public class ProductRepository : IProductRepository
         var existingProduct = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == updateProductDto.Id);
         if (existingProduct == null) return false;
 
-        existingProduct.Name = productDto.Name;
-        existingProduct.Description = productDto.Description;
-        existingProduct.CategoryAndSubCategory = productDto.CategoryAndSubCategory;
-        existingProduct.MinPrice = productDto.MinPrice;
-        existingProduct.MaxPrice = productDto.MaxPrice;
-        existingProduct.PromoPrice = productDto.PromoPrice;
-        existingProduct.Duration = productDto.Duration;
+        existingProduct.Name = updateProductDto.Name;
+        existingProduct.Description = updateProductDto.Description;
+        existingProduct.CategoryAndSubCategory = updateProductDto.CategoryAndSubCategory;
+        existingProduct.MinPrice = updateProductDto.MinPrice;
+        existingProduct.MaxPrice = updateProductDto.MaxPrice;
+        existingProduct.PromoPrice = updateProductDto.PromoPrice;
+        existingProduct.Duration = updateProductDto.Duration;
 
         await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         return true;

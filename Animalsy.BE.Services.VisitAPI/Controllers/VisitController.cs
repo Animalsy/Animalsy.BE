@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Animalsy.BE.Services.VisitAPI.Models.Dto;
+﻿using Animalsy.BE.Services.VisitAPI.Models.Dto;
 using Animalsy.BE.Services.VisitAPI.Repository;
 using Animalsy.BE.Services.VisitAPI.Utilities;
 using Animalsy.BE.Services.VisitAPI.Validators.Factory;
@@ -77,7 +76,7 @@ public class VisitController : Controller
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateVisitDto visitDto)
@@ -88,7 +87,7 @@ public class VisitController : Controller
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var createdVisitId = await _visitRepository.CreateAsync(visitDto);
-        return Ok(createdVisitId);
+        return new ObjectResult(createdVisitId) { StatusCode = StatusCodes.Status201Created };
     }
 
     [HttpPut]
@@ -127,11 +126,6 @@ public class VisitController : Controller
         return deleteSuccessful
             ? Ok("Visit has been deleted successfully")
             : NotFound(VisitNotFoundMessage("Id", visitId.ToString()));
-    }
-
-    private bool CheckLoggedUser(Claim claim, Guid requestedId)
-    {
-        return (claim != null && Guid.TryParse(claim.Value, out var id) && id == requestedId) || User.IsInRole(SD.RoleAdmin);
     }
 
     private static string VisitNotFoundMessage(string topic, string value) =>

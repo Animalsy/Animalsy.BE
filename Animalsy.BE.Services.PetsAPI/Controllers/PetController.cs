@@ -64,7 +64,7 @@ public class PetController: ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreatePetDto petDto)
@@ -72,12 +72,10 @@ public class PetController: ControllerBase
         var validationResult = await _validatorFactory.GetValidator<CreatePetDto>()
             .ValidateAsync(petDto);
 
-
-
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var createdPetId = await _petRepository.CreateAsync(petDto);
-        return Ok(createdPetId);
+        return new ObjectResult(createdPetId) { StatusCode = StatusCodes.Status201Created };
     }
 
     [HttpPut]

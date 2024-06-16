@@ -73,6 +73,25 @@ public class CustomerController: Controller
             : NotFound(CustomerNotFoundMessage(userId.ToString()));
     }
 
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> CreateAsync([FromBody] CreateCustomerDto customerDto)
+    {
+        var validationResult = await _validatorFactory.GetValidator<CreateCustomerDto>()
+            .ValidateAsync(customerDto);
+
+        if (!validationResult.IsValid) return BadRequest(validationResult);
+
+        var createdCustomerId = await _customerRepository
+            .CreateAsync(customerDto)
+            .ConfigureAwait(false);
+
+        return new ObjectResult(createdCustomerId) { StatusCode = StatusCodes.Status201Created };
+    }
+
     [HttpPut]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -81,13 +100,13 @@ public class CustomerController: Controller
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateCustomerDto customerDto)
     {
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), customerDto.UserId) || User.IsInRole(SD.RoleAdmin)) 
-            return Unauthorized();
-
         var validationResult = await _validatorFactory.GetValidator<UpdateCustomerDto>()
             .ValidateAsync(customerDto);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
+
+        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), customerDto.UserId)) 
+            return Unauthorized();
 
         var updateSuccessful = await _customerRepository.TryUpdateAsync(customerDto);
         return updateSuccessful
@@ -104,13 +123,13 @@ public class CustomerController: Controller
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid userId)
     {
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), userId) || User.IsInRole(SD.RoleAdmin))
-            return Unauthorized();
-
         var validationResult = await _validatorFactory.GetValidator<Guid>()
             .ValidateAsync(userId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
+
+        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), userId))
+            return Unauthorized();
 
         var deleteSuccessful = await _customerRepository.TryDeleteAsync(userId);
         return deleteSuccessful
@@ -118,9 +137,9 @@ public class CustomerController: Controller
             : NotFound(CustomerNotFoundMessage(userId.ToString()));
     }
 
-    private static bool CheckLoggedUser(Claim claim, Guid requestedId)
+    private bool CheckLoggedUser(Claim claim, Guid requestedId)
     {
-        return claim != null && Guid.TryParse(claim.Value, out var id) && id == requestedId;
+        return (claim != null && Guid.TryParse(claim.Value, out var id) && id == requestedId) || User.IsInRole(SD.RoleAdmin);
     }
 
     private static string CustomerNotFoundMessage(string id) => $"Customer with Id {id} has not been found";

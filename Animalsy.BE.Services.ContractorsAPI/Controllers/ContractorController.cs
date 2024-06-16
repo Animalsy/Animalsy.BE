@@ -61,7 +61,7 @@ public class ContractorController : ControllerBase
 
     [HttpPost] 
     [Authorize(Roles = SD.RoleAdminAndVendor)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateContractorDto contractorDto)
@@ -72,7 +72,7 @@ public class ContractorController : ControllerBase
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var createdContractorId = await _contractorRepository.CreateAsync(contractorDto);
-        return Ok(createdContractorId);
+        return new ObjectResult(createdContractorId) { StatusCode = StatusCodes.Status201Created };
     }
 
     [HttpPut]

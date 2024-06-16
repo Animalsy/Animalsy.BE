@@ -5,6 +5,8 @@ using Animalsy.BE.Services.ProductAPI.Validators.Factory;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Animalsy.BE.Services.ProductAPI.Validators;
+using FluentValidation.Results;
 using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Animalsy.BE.Services.ProductAPI.Controllers;
@@ -86,7 +88,7 @@ public class ProductController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = SD.RoleAdminAndVendor)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateProductDto productDto)
@@ -97,7 +99,7 @@ public class ProductController : ControllerBase
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var createdProductId = await _productRepository.CreateAsync(productDto);
-        return Ok(createdProductId);
+        return new ObjectResult(createdProductId) { StatusCode = StatusCodes.Status201Created };
     }
 
     [HttpPut]
