@@ -3,6 +3,7 @@ using Animalsy.BE.Services.PetAPI.Models;
 using Animalsy.BE.Services.PetAPI.Models.Dto;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Animalsy.BE.Services.PetAPI.Repository;
 
@@ -17,49 +18,45 @@ public class PetRepository : IPetRepository
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> CreateAsync(CreatePetDto petDto)
+    public async Task<Guid> CreateAsync(CreatePetDto createPetDto)
     {
-        var pet = _mapper.Map<Pet>(petDto);
+        var pet = _mapper.Map<Pet>(createPetDto);
         await _dbContext.Pets.AddAsync(pet);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         return pet.Id;
     }
 
-    public async Task<IEnumerable<PetResponseDto>> GetByCustomerAsync(Guid customerId)
+    public async Task<IEnumerable<PetDto>> GetByCustomerAsync(Guid customerId)
     {
         var results = await _dbContext.Pets
             .Where(pet => pet.CustomerId == customerId)
             .ToListAsync();
-        return _mapper.Map<IEnumerable<PetResponseDto>>(results);
+        return _mapper.Map<IEnumerable<PetDto>>(results);
     }
 
-    public async Task<PetResponseDto> GetByIdAsync(Guid petId)
+    public async Task<PetDto> GetByIdAsync(Guid petId)
     {
         var pet = await _dbContext.Pets.FirstOrDefaultAsync(p => p.Id == petId);
-        return _mapper.Map<PetResponseDto>(pet);
+        return pet != null ? _mapper.Map<PetDto>(pet) : null;
     }
 
-    public async Task<bool> TryUpdateAsync(UpdatePetDto petDto)
+    public async Task<bool> TryUpdateAsync(UpdatePetDto updatePetDto)
     {
-        var existingPet = await _dbContext.Pets.FirstOrDefaultAsync(p => p.Id == petDto.Id);
+        var existingPet = await _dbContext.Pets.FirstOrDefaultAsync(p => p.Id == updatePetDto.Id);
         if (existingPet == null) return false;
 
-        existingPet.Name = petDto.Name;
-        existingPet.Species = petDto.Species;
-        existingPet.Race = petDto.Race;
-        existingPet.DateOfBirth = petDto.DateOfBirth;
-        existingPet.ImageUrl = petDto.ImageUrl;
-        await _dbContext.SaveChangesAsync();
+        existingPet.Name = updatePetDto.Name;
+        existingPet.Species = updatePetDto.Species;
+        existingPet.Race = updatePetDto.Race;
+        existingPet.DateOfBirth = updatePetDto.DateOfBirth;
+        existingPet.ImageUrl = updatePetDto.ImageUrl;
+        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         return true;
     }
 
-    public async Task<bool> TryDeleteAsync(Guid petId)
+    public async Task DeleteAsync(PetDto petDto)
     {
-        var existingPet = await _dbContext.Pets.FirstOrDefaultAsync(p => p.Id == petId);
-        if (existingPet == null) return false;
-
-        _dbContext.Pets.Remove(existingPet);
-        await _dbContext.SaveChangesAsync();
-        return true;
+        _dbContext.Pets.Remove(_mapper.Map<Pet>(petDto));
+        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
     }
 }

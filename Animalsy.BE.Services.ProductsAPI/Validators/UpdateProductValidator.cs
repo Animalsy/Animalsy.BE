@@ -1,12 +1,16 @@
 ﻿using Animalsy.BE.Services.ProductAPI.Models.Dto;
 using FluentValidation;
+using IValidatorFactory = Animalsy.BE.Services.ProductAPI.Validators.Factory.IValidatorFactory;
 
 namespace Animalsy.BE.Services.ProductAPI.Validators;
 
 public class UpdateProductValidator : AbstractValidator<UpdateProductDto>
 {
-    public UpdateProductValidator()
+    public UpdateProductValidator(IValidatorFactory validatorFactory)
     {
+        var factory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
+
+        RuleFor(x => x.UserId).SetValidator(factory.GetValidator<Guid>());
         RuleFor(x => x.Name).NotEmpty().MaximumLength(50);
         RuleFor(x => x.Description).NotEmpty().MaximumLength(1000);
         RuleFor(x => x.MinPrice).NotEmpty();

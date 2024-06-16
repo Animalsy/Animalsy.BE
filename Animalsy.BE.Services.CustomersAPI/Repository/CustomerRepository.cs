@@ -4,6 +4,7 @@ using Animalsy.BE.Services.CustomerAPI.Models.Dto;
 using Animalsy.BE.Services.CustomerAPI.Repository.Builder.Factory;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Animalsy.BE.Services.CustomerAPI.Repository;
 
@@ -24,7 +25,7 @@ public class CustomerRepository : ICustomerRepository
     {
         var customer = _mapper.Map<Customer>(customerDto);
         await _dbContext.Customers.AddAsync(customer);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         return customer.Id;
     }
 
@@ -37,18 +38,12 @@ public class CustomerRepository : ICustomerRepository
     public async Task<CustomerDto> GetByIdAsync(Guid customerId)
     {
         var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
-        return _mapper.Map<CustomerDto>(customer);
-    }
-
-    public async Task<CustomerDto> GetByEmailAsync(string email)
-    {
-        var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.EmailAddress == email);
-        return _mapper.Map<CustomerDto>(customer);
+        return customer != null ? _mapper.Map<CustomerDto>(customer) : null;
     }
 
     public async Task<CustomerProfileDto> GetCustomerProfileAsync(Guid userId)
     {
-        var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.UserId == userId);
+        var customer = await _dbContext.Customers.SingleOrDefaultAsync(c => c.UserId == userId);
         return customer != null
             ? await _customerProfileBuilderFactory.Create(_mapper.Map<CustomerDto>(customer))
                 .WithPets()
@@ -59,7 +54,7 @@ public class CustomerRepository : ICustomerRepository
 
     public async Task<bool> TryUpdateAsync(UpdateCustomerDto customerDto)
     {
-        var existingCustomer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerDto.Id);
+        var existingCustomer = await _dbContext.Customers.SingleOrDefaultAsync(c => c.UserId == customerDto.UserId);
         if (existingCustomer == null) return false;
 
         existingCustomer.Name =  customerDto.Name;
@@ -72,17 +67,17 @@ public class CustomerRepository : ICustomerRepository
         existingCustomer.PhoneNumber = customerDto.PhoneNumber;
         existingCustomer.EmailAddress = customerDto.EmailAddress;
 
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         return true;
     }
 
-    public async Task<bool> TryDeleteAsync(Guid customerId)
+    public async Task<bool> TryDeleteAsync(Guid userId)
     {
-        var existingCustomer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
+        var existingCustomer = await _dbContext.Customers.SingleOrDefaultAsync(c => c.UserId == userId);
         if (existingCustomer == null) return false;
 
         _dbContext.Customers.Remove(existingCustomer);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         return true;
     }
 }

@@ -1,12 +1,17 @@
-﻿using Animalsy.BE.Services.PetAPI.Models.Dto;
+﻿using System.IdentityModel.Tokens.Jwt;
+using Animalsy.BE.Services.PetAPI.Models.Dto;
 using Animalsy.BE.Services.PetAPI.Repository;
 using Animalsy.BE.Services.PetAPI.Validators.Factory;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Animalsy.BE.Services.PetAPI.Utilities;
 
 namespace Animalsy.BE.Services.PetAPI.Controllers;
 
 [Route("Api/[controller]")]
 [ApiController]
+[Authorize]
 public class PetController: ControllerBase
 {
     private readonly IPetRepository _petRepository;
@@ -17,7 +22,6 @@ public class PetController: ControllerBase
         _petRepository = petRepository ?? throw new ArgumentNullException(nameof(petRepository));
         _validatorFactory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
     }
-
 
     [HttpGet("Customer/{customerId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -30,6 +34,9 @@ public class PetController: ControllerBase
             .ValidateAsync(customerId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
+
+        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), customerId))
+            return Unauthorized();
 
         var pets = await _petRepository.GetByCustomerAsync(customerId);
         return pets.Any()
@@ -57,7 +64,7 @@ public class PetController: ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreatePetDto petDto)
@@ -68,7 +75,7 @@ public class PetController: ControllerBase
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var createdPetId = await _petRepository.CreateAsync(petDto);
-        return Ok(createdPetId);
+        return new ObjectResult(createdPetId) { StatusCode = StatusCodes.Status201Created };
     }
 
     [HttpPut]
@@ -82,6 +89,9 @@ public class PetController: ControllerBase
             .ValidateAsync(petDto);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
+
+        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), petDto.UserId) || !User.IsInRole(SD.RoleAdmin))
+            return Unauthorized();
 
         var updateResult = await _petRepository.TryUpdateAsync(petDto);
         return updateResult
@@ -101,10 +111,19 @@ public class PetController: ControllerBase
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var deleteResult = await _petRepository.TryDeleteAsync(petId);
-        return deleteResult
-            ? Ok("Pet has been deleted successfully")
-            : NotFound(PetIdNotFoundMessage(petId));
+        var petDto = await _petRepository.GetByIdAsync(petId);
+        if (petDto == null) return NotFound(PetIdNotFoundMessage(petId));
+
+        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), petDto.UserId) || !User.IsInRole(SD.RoleAdmin))
+            return Unauthorized();
+
+        await _petRepository.DeleteAsync(petDto);
+        return Ok("Pet has been deleted successfully");
+    }
+
+    private static bool CheckLoggedUser(Claim claim, Guid requestedId)
+    {
+        return claim != null && Guid.TryParse(claim.Value, out var id) && id == requestedId;
     }
 
     private static string PetIdNotFoundMessage(Guid? id) => $"Pet with Id {id} has not been found";

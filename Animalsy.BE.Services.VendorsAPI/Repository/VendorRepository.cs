@@ -30,7 +30,7 @@ public class VendorRepository : IVendorRepository
     public async Task<VendorDto> GetByIdAsync(Guid vendorId)
     {
         var result = await _dbContext.Vendors.FirstOrDefaultAsync(c => c.Id == vendorId);
-        return _mapper.Map<VendorDto>(result);
+        return result != null ? _mapper.Map<VendorDto>(result) : null;
     }
 
     public async Task<IEnumerable<VendorProfileDto>> GetVendorProfilesAsync(Guid userId)
@@ -48,40 +48,36 @@ public class VendorRepository : IVendorRepository
         return await Task.WhenAll(results).ConfigureAwait(false);
     }
 
-    public async Task<Guid> CreateAsync(CreateVendorDto vendorDto)
+    public async Task<Guid> CreateAsync(CreateVendorDto createVendorDto)
     {
-        var vendor = _mapper.Map<Vendor>(vendorDto);
+        var vendor = _mapper.Map<Vendor>(createVendorDto);
         await _dbContext.Vendors.AddAsync(vendor);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         return vendor.Id;
     }
 
-    public async Task<bool> TryUpdateAsync(UpdateVendorDto vendorDto)
+    public async Task<bool> TryUpdateAsync(UpdateVendorDto updateVendorDto)
     {
-        var existingCustomer = await _dbContext.Vendors.FirstOrDefaultAsync(c => c.Id == vendorDto.Id);
+        var existingCustomer = await _dbContext.Vendors.FirstOrDefaultAsync(c => c.Id == updateVendorDto.Id);
         if (existingCustomer == null) return false;
 
-        existingCustomer.Name = vendorDto.Name;
-        existingCustomer.Nip = vendorDto.Nip;
-        existingCustomer.City = vendorDto.City;
-        existingCustomer.Street = vendorDto.Street;
-        existingCustomer.Building = vendorDto.Building;
-        existingCustomer.Flat = vendorDto.Flat;
-        existingCustomer.PostalCode = vendorDto.PostalCode;
-        existingCustomer.PhoneNumber = vendorDto.PhoneNumber;
-        existingCustomer.EmailAddress = vendorDto.EmailAddress;
+        existingCustomer.Name = updateVendorDto.Name;
+        existingCustomer.Nip = updateVendorDto.Nip;
+        existingCustomer.City = updateVendorDto.City;
+        existingCustomer.Street = updateVendorDto.Street;
+        existingCustomer.Building = updateVendorDto.Building;
+        existingCustomer.Flat = updateVendorDto.Flat;
+        existingCustomer.PostalCode = updateVendorDto.PostalCode;
+        existingCustomer.PhoneNumber = updateVendorDto.PhoneNumber;
+        existingCustomer.EmailAddress = updateVendorDto.EmailAddress;
 
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         return true;
     }
 
-    public async Task<bool> TryDeleteAsync(Guid vendorId)
+    public async Task DeleteAsync(VendorDto vendorDto)
     {
-        var existingVendor = await _dbContext.Vendors.FirstOrDefaultAsync(c => c.Id == vendorId);
-        if (existingVendor == null) return false;
-
-        _dbContext.Vendors.Remove(existingVendor);
-        await _dbContext.SaveChangesAsync();
-        return true;
+        _dbContext.Vendors.Remove(_mapper.Map<Vendor>(vendorDto));
+        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
     }
 }

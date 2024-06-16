@@ -4,9 +4,9 @@ namespace Animalsy.BE.Services.ContractorAPI.Repository;
 
 public interface IContractorRepository
 {
-    Task<Guid> CreateAsync(CreateContractorDto contractorDto);
-    Task<ContractorResponseDto> GetByIdAsync(Guid contractorId);
-    Task<IEnumerable<ContractorResponseDto>> GetByVendorAsync(Guid vendorId);
-    Task<bool> TryUpdateAsync(UpdateContractorDto contractorDto);
-    Task<bool> TryDeleteAsync(Guid contractorId);
+    Task<Guid> CreateAsync(CreateContractorDto createContractorDto);
+    Task<ContractorDto> GetByIdAsync(Guid contractorId);
+    Task<IEnumerable<ContractorDto>> GetByVendorAsync(Guid vendorId);
+    Task<bool> TryUpdateAsync(UpdateContractorDto updateContractorDto);
+    Task DeleteAsync(ContractorDto contractorDto);
 }

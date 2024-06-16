@@ -1,8 +1,9 @@
 ﻿namespace Animalsy.BE.Services.ContractorAPI.Models.Dto;
 
-public record ContractorResponseDto
+public record ContractorDto
 {
     public Guid Id { get; init; }
+    public Guid UserId { get; init; }
     public Guid VendorId { get; init; }
     public string Name { get; init; }
     public string LastName { get; init; }

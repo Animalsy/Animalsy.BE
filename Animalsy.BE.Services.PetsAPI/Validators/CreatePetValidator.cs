@@ -10,7 +10,7 @@ public class CreatePetValidator : AbstractValidator<CreatePetDto>
     {
         var factory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
 
-        RuleFor(x => x.CustomerId).SetValidator(factory.GetValidator<Guid>());
+        RuleFor(x => x.UserId).SetValidator(factory.GetValidator<Guid>());
         RuleFor(x => x.Name).NotEmpty().MaximumLength(20);
         RuleFor(x => x.Species).NotEmpty().MaximumLength(40);
         RuleFor(x => x.Race).NotEmpty().MaximumLength(20);

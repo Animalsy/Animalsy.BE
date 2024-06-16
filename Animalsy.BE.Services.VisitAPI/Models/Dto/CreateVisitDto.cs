@@ -10,5 +10,4 @@ public record CreateVisitDto
     public Guid VendorId { get; init; }
     public DateTime Date { get; init; }
     public string Comment { get; init; }
-    public string State { get; init; }
 }

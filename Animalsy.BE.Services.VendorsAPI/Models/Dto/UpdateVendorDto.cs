@@ -3,6 +3,7 @@
 public record UpdateVendorDto
 {
     public Guid Id { get; init; }
+    public Guid UserId { get; init; }
     public string Name { get; init; }
     public string Nip { get; init; }
     public string City { get; init; }

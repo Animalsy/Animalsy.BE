@@ -4,9 +4,9 @@ namespace Animalsy.BE.Services.PetAPI.Repository;
 
 public interface IPetRepository
 {
-    Task<Guid> CreateAsync(CreatePetDto petDto);
-    Task<IEnumerable<PetResponseDto>> GetByCustomerAsync(Guid customerId);
-    Task<PetResponseDto> GetByIdAsync(Guid petId);
-    Task<bool> TryUpdateAsync(UpdatePetDto petDto);
-    Task<bool> TryDeleteAsync(Guid petId);
+    Task<Guid> CreateAsync(CreatePetDto createPetDto);
+    Task<IEnumerable<PetDto>> GetByCustomerAsync(Guid customerId);
+    Task<PetDto> GetByIdAsync(Guid petId);
+    Task<bool> TryUpdateAsync(UpdatePetDto updatePetDto);
+    Task DeleteAsync(PetDto petDto);
 }

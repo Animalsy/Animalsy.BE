@@ -3,6 +3,7 @@
 public record CreateContractorDto
 {
     public Guid VendorId { get; init; }
+    public Guid UserId { get; init; }
     public string Name { get; init; }
     public string LastName { get; init; }
     public string Specialization { get; init; }

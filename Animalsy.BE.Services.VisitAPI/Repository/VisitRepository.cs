@@ -43,8 +43,6 @@ namespace Animalsy.BE.Services.VisitAPI.Repository
                 .Where(v => v.VendorId == vendorId)
                 .ToListAsync();
 
-            if (!visits.IsNullOrEmpty()) return [];
-
             return await BuildResultsAsync(visits);
         }
 
@@ -63,7 +61,7 @@ namespace Animalsy.BE.Services.VisitAPI.Repository
         {
             var visit = _mapper.Map<Visit>(visitDto);
             await _dbContext.AddAsync(visit);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
             return visit.Id;
         }
 
@@ -73,10 +71,10 @@ namespace Animalsy.BE.Services.VisitAPI.Repository
             if (existingVisit == null) return false;
 
             existingVisit.Comment = visitDto.Comment;
-            existingVisit.State = visitDto.State;
+            existingVisit.Status = visitDto.Status;
             existingVisit.Date = visitDto.Date;
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
             return true;
         }
 
@@ -86,7 +84,7 @@ namespace Animalsy.BE.Services.VisitAPI.Repository
             if (existingVisit == null) return false;
 
             _dbContext.Remove(existingVisit);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
             return true;
         }
 

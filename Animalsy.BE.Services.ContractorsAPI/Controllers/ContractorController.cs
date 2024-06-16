@@ -1,7 +1,11 @@
 ﻿using Animalsy.BE.Services.ContractorAPI.Models.Dto;
 using Animalsy.BE.Services.ContractorAPI.Repository;
+using Animalsy.BE.Services.ContractorAPI.Utilities;
 using Animalsy.BE.Services.ContractorAPI.Validators.Factory;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Animalsy.BE.Services.ContractorAPI.Controllers;
 
@@ -55,8 +59,9 @@ public class ContractorController : ControllerBase
             : NotFound(VendorIdNotFoundMessage(vendorId));
     }
 
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpPost] 
+    [Authorize(Roles = SD.RoleAdminAndVendor)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateContractorDto contractorDto)
@@ -67,28 +72,33 @@ public class ContractorController : ControllerBase
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var createdContractorId = await _contractorRepository.CreateAsync(contractorDto);
-        return Ok(createdContractorId);
+        return new ObjectResult(createdContractorId) { StatusCode = StatusCodes.Status201Created };
     }
 
     [HttpPut]
+    [Authorize(Roles = SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UpdateAsync([FromBody] UpdateContractorDto contractorDto)
+    public async Task<IActionResult> UpdateAsync([FromBody] UpdateContractorDto updateContractorDto)
     {
         var validationResult = await _validatorFactory.GetValidator<UpdateContractorDto>()
-            .ValidateAsync(contractorDto);
+            .ValidateAsync(updateContractorDto);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var updateResult = await _contractorRepository.TryUpdateAsync(contractorDto);
+        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), updateContractorDto.UserId))
+            return Unauthorized();
+
+        var updateResult = await _contractorRepository.TryUpdateAsync(updateContractorDto);
         return updateResult
             ? Ok("Contractor has been updated successfully")
-            : NotFound(ContractorIdNotFoundMessage(contractorDto.Id));
+            : NotFound(ContractorIdNotFoundMessage(updateContractorDto.Id));
     }
 
     [HttpDelete("{contractorId:guid}")]
+    [Authorize(Roles = SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -100,10 +110,19 @@ public class ContractorController : ControllerBase
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var deleteResult = await _contractorRepository.TryDeleteAsync(contractorId);
-        return deleteResult
-            ? Ok("Contractor has been deleted successfully")
-            : NotFound(ContractorIdNotFoundMessage(contractorId));
+        var contractorDto = await _contractorRepository.GetByIdAsync(contractorId);
+        if (contractorDto == null) return NotFound(ContractorIdNotFoundMessage(contractorId));
+
+        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), contractorDto.UserId))
+            return Unauthorized();
+
+        await _contractorRepository.DeleteAsync(contractorDto);
+        return Ok("Contractor has been deleted successfully");
+    }
+
+    private bool CheckLoggedUser(Claim claim, Guid requestedId)
+    {
+        return (claim != null && Guid.TryParse(claim.Value, out var id) && id == requestedId) || User.IsInRole(SD.RoleAdmin);
     }
 
     private static string ContractorIdNotFoundMessage(Guid? id) => $"Contractor with Id {id} has not been found";

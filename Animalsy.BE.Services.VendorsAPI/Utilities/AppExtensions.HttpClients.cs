@@ -10,6 +10,9 @@ public static partial class AppExtensions
         var provider = serviceCollection.BuildServiceProvider();
         var configuration = provider.GetRequiredService<IOptionsMonitor<ServiceUrlConfiguration>>();
 
+        serviceCollection.AddHttpClient("AuthApiClient", client =>
+            client.BaseAddress = new Uri(configuration.CurrentValue.AuthApi!));
+
         serviceCollection.AddHttpClient("CustomerApiClient", client =>
             client.BaseAddress = new Uri(configuration.CurrentValue.CustomerApi!));
 

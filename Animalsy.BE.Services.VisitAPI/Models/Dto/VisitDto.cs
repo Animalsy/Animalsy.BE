@@ -10,5 +10,5 @@ public record VisitDto
     public Guid PetId { get; init; }
     public DateTime Date { get; init; }
     public string Comment { get; init; }
-    public string State { get; init; }
+    public string Status { get; init; }
 }

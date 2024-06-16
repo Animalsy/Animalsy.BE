@@ -1,4 +1,4 @@
-using Animalsy.BE.Services.ProductAPI;
+using Animalsy.BE.Services.ProductAPI.Configuration;
 using Animalsy.BE.Services.ProductAPI.Data;
 using Animalsy.BE.Services.ProductAPI.Middleware;
 using Animalsy.BE.Services.ProductAPI.Repository;
@@ -29,6 +29,9 @@ builder.Services.AddLogging(cfg =>
         opt.LogToStandardErrorThreshold = LogLevel.Error);
 });
 
+builder.Services.AddSwaggerGenWithAuthentication();
+builder.AddAppAuthentication();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -41,6 +44,8 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

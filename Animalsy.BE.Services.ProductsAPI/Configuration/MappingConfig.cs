@@ -1,8 +1,8 @@
-﻿using Animalsy.BE.Services.PetAPI.Models;
-using Animalsy.BE.Services.PetAPI.Models.Dto;
+﻿using Animalsy.BE.Services.ProductAPI.Models;
+using Animalsy.BE.Services.ProductAPI.Models.Dto;
 using AutoMapper;
 
-namespace Animalsy.BE.Services.PetAPI;
+namespace Animalsy.BE.Services.ProductAPI.Configuration;
 
 public class MappingConfig
 {
@@ -10,8 +10,8 @@ public class MappingConfig
     {
         return new MapperConfiguration(config =>
         {
-            config.CreateMap<Pet, PetResponseDto>();
-            config.CreateMap<CreatePetDto, Pet>()
+            config.CreateMap<Product, ProductDto>();
+            config.CreateMap<CreateProductDto, Product>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
         });
 

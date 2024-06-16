@@ -1,6 +1,8 @@
 ﻿using Animalsy.BE.Services.VisitAPI.Models.Dto;
 using Animalsy.BE.Services.VisitAPI.Repository;
+using Animalsy.BE.Services.VisitAPI.Utilities;
 using Animalsy.BE.Services.VisitAPI.Validators.Factory;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -8,6 +10,7 @@ namespace Animalsy.BE.Services.VisitAPI.Controllers;
 
 [Route("Api/[controller]")]
 [ApiController]
+[Authorize]
 public class VisitController : Controller
 {
     private readonly IVisitRepository _visitRepository;
@@ -73,7 +76,7 @@ public class VisitController : Controller
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateVisitDto visitDto)
@@ -84,7 +87,7 @@ public class VisitController : Controller
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
         var createdVisitId = await _visitRepository.CreateAsync(visitDto);
-        return Ok(createdVisitId);
+        return new ObjectResult(createdVisitId) { StatusCode = StatusCodes.Status201Created };
     }
 
     [HttpPut]
@@ -107,6 +110,7 @@ public class VisitController : Controller
     }
 
     [HttpDelete("{visitId:guid}")]
+    [Authorize(Roles = SD.RoleAdmin)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

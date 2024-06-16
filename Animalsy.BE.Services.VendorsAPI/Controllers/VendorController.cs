@@ -1,8 +1,13 @@
 ﻿using Animalsy.BE.Services.VendorAPI.Models.Dto;
 using Animalsy.BE.Services.VendorAPI.Repository;
+using Animalsy.BE.Services.VendorAPI.Utilities;
 using Animalsy.BE.Services.VendorAPI.Validators.Factory;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using Animalsy.BE.Services.VendorAPI.Services;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Animalsy.BE.Services.VendorAPI.Controllers;
 
@@ -12,11 +17,13 @@ public class VendorController : Controller
 {
     private readonly IVendorRepository _vendorRepository;
     private readonly IValidatorFactory _validatorFactory;
+    private readonly IAuthService _authService;
 
-    public VendorController(IVendorRepository vendorRepository, IValidatorFactory validatorFactory)
+    public VendorController(IVendorRepository vendorRepository, IValidatorFactory validatorFactory, IAuthService authService)
     {
         _vendorRepository = vendorRepository ?? throw new ArgumentNullException(nameof(vendorRepository));
         _validatorFactory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
+        _authService = authService ?? throw new ArgumentNullException(nameof(authService));
     }
 
     [HttpGet]
@@ -50,6 +57,7 @@ public class VendorController : Controller
     }
 
     [HttpGet("Profiles/{userId:guid}")]
+    [Authorize(Roles = SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -68,54 +76,81 @@ public class VendorController : Controller
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> CreateAsync([FromBody] CreateVendorDto vendorDto)
+    public async Task<IActionResult> CreateAsync([FromBody] CreateVendorDto createVendorDto)
     {
         var validationResult = await _validatorFactory.GetValidator<CreateVendorDto>()
-            .ValidateAsync(vendorDto);
+            .ValidateAsync(createVendorDto);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
             
-        var createdVendorId = await _vendorRepository.CreateAsync(vendorDto);
-        return Ok(createdVendorId);
+        var createdVendorId = await _vendorRepository.CreateAsync(createVendorDto);
+        await AssignVendorRoleIfRequiredAsync().ConfigureAwait(false);
+        
+        return new ObjectResult(createdVendorId) { StatusCode = StatusCodes.Status201Created };
     }
 
     [HttpPut]
+    [Authorize(Roles = SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UpdateAsync([FromBody] UpdateVendorDto vendorDto)
+    public async Task<IActionResult> UpdateAsync([FromBody] UpdateVendorDto updateVendorDto)
     {
         var validationResult = await _validatorFactory.GetValidator<UpdateVendorDto>()
-            .ValidateAsync(vendorDto);
+            .ValidateAsync(updateVendorDto);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var updateSuccessful = await _vendorRepository.TryUpdateAsync(vendorDto);
+        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), updateVendorDto.UserId))
+            return Unauthorized();
+
+        var updateSuccessful = await _vendorRepository.TryUpdateAsync(updateVendorDto);
         return updateSuccessful
             ? Ok("Vendor has been updated successfully")
-            : NotFound(VendorNotFoundMessage("Id",vendorDto.Id.ToString()));
+            : NotFound(VendorNotFoundMessage("Id",updateVendorDto.Id.ToString()));
     }
 
-    [HttpDelete("{customerId:guid}")]
+    [HttpDelete("{vendorId:guid}")]
+    [Authorize(Roles = SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> DeleteAsync([FromRoute] Guid customerId)
+    public async Task<IActionResult> DeleteAsync([FromRoute] Guid vendorId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(customerId);
+            .ValidateAsync(vendorId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var deleteSuccessful = await _vendorRepository.TryDeleteAsync(customerId);
-        return deleteSuccessful
-            ? Ok("Customer has been deleted successfully")
-            : NotFound(VendorNotFoundMessage("Id",customerId.ToString()));
+        var vendorDto = await _vendorRepository.GetByIdAsync(vendorId);
+        if (vendorDto == null) return NotFound(VendorNotFoundMessage("Id", vendorId.ToString()));
+
+        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), vendorDto.UserId))
+            return Unauthorized();
+
+        await _vendorRepository.DeleteAsync(vendorDto);
+        return Ok("Customer has been deleted successfully");
+    }
+
+    private async Task AssignVendorRoleIfRequiredAsync()
+    {
+        var email = User.FindFirst(JwtRegisteredClaimNames.Email);
+
+        if (User.IsInRole(SD.RoleVendor) || email == null)
+            return;
+
+        await _authService.AssignRoleAsync(new AssignRoleDto { Email = email.Value, RoleName = SD.RoleVendor });
+    }
+
+    private bool CheckLoggedUser(Claim claim, Guid requestedId)
+    {
+        return (claim != null && Guid.TryParse(claim.Value, out var id) && id == requestedId) || User.IsInRole(SD.RoleAdmin);
     }
 
     private static string VendorNotFoundMessage(string topic, string value) => $"Vendor with {topic} {value} has not been found";

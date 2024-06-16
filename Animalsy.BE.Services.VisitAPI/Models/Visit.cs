@@ -28,5 +28,5 @@ public record Visit
     [MaxLength(100)]
     public string Comment { get; set; }
     [MaxLength(20)]
-    public string State { get; set; }
+    public string Status { get; set; }
 }

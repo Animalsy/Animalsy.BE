@@ -15,7 +15,6 @@ public class CustomerService : ICustomerService
 
     public async Task<ResponseDto> CreateCustomerAsync(CreateCustomerDto customerDto)
     {
-
         using var client = _httpClientFactory.CreateClient("CustomerApi");
         using var content = new StringContent(JsonConvert.SerializeObject(customerDto), Encoding.UTF8, "application/json");
         using var response = await client.PostAsync(new Uri("Api/Customer"), content);
