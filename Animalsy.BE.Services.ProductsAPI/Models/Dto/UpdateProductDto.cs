@@ -5,8 +5,7 @@ public record UpdateProductDto
     public Guid Id { get; init; }
     public string Name { get; init; }
     public string Description { get; init; }
-    public string Category { get; init; }
-    public string SubCategory { get; init; }
+    public string CategoryAndSubCategory { get; init; }
     public decimal MinPrice { get; init; }
     public decimal MaxPrice { get; init; }
     public decimal PromoPrice { get; init; }
