@@ -12,7 +12,8 @@ public static partial class AppExtensions
         serviceCollection
             .AddScoped<UniqueIdValidator>()
             .AddScoped<CreateProductValidator>()
-            .AddScoped<UpdateProductValidator>();
+            .AddScoped<UpdateProductValidator>()
+            .AddScoped<VendorCategoryValidator>();
     }
 
     private static void DisableValidationTranslation()

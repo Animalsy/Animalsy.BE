@@ -23,12 +23,27 @@ public class ProductRepository : IProductRepository
         return _mapper.Map<IEnumerable<ProductResponseDto>>(results);
     }
 
-    public async Task<IEnumerable<ProductResponseDto>> GetByVendorAsync(Guid vendorId)
+    public async Task<IEnumerable<ProductResponseDto>> GetByVendorAsync(Guid vendorId, string categoryAndSubcategory = null)
     {
-        var results = await _dbContext.Products
-            .Where(p => p.VendorId == vendorId)
-            .ToListAsync();
+        var query = _dbContext.Products.Where(p => p.VendorId == vendorId);
+
+        if (categoryAndSubcategory != null)
+        {
+            query = query.Where(p => p.CategoryAndSubCategory == categoryAndSubcategory);
+        }
+
+        var results = await query.ToListAsync();
         return _mapper.Map<IEnumerable<ProductResponseDto>>(results);
+    }
+
+    public async Task<IEnumerable<Guid>> GetVendorIdsByProductCategoryAsync(string categoryAndSubcategory)
+    {
+        return await _dbContext.Products
+            .Where(p => p.CategoryAndSubCategory.StartsWith(categoryAndSubcategory))
+            .Select(p => p.VendorId)
+            .Distinct()
+            .ToListAsync()
+            .ConfigureAwait(false);
     }
 
     public async Task<Guid> CreateAsync(CreateProductDto productDto)
@@ -52,8 +67,7 @@ public class ProductRepository : IProductRepository
 
         existingProduct.Name = productDto.Name;
         existingProduct.Description = productDto.Description;
-        existingProduct.Category = productDto.Category;
-        existingProduct.SubCategory = productDto.SubCategory;
+        existingProduct.CategoryAndSubCategory = productDto.CategoryAndSubCategory;
         existingProduct.MinPrice = productDto.MinPrice;
         existingProduct.MaxPrice = productDto.MaxPrice;
         existingProduct.PromoPrice = productDto.PromoPrice;

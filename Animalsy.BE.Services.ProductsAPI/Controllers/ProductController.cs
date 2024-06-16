@@ -1,6 +1,8 @@
 ﻿using Animalsy.BE.Services.ProductAPI.Models.Dto;
 using Animalsy.BE.Services.ProductAPI.Repository;
+using Animalsy.BE.Services.ProductAPI.Validators;
 using Animalsy.BE.Services.ProductAPI.Validators.Factory;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Animalsy.BE.Services.ProductAPI.Controllers;
@@ -30,22 +32,36 @@ public class ProductController : ControllerBase
             : NotFound("There were no products added yet");
     }
 
-    [HttpGet("Vendor/{vendorId:guid}")]
+    [HttpGet("Vendor/{vendorId:guid}/{categoryAndSubCategory}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByVendorAsync([FromRoute] Guid vendorId)
+    public async Task<IActionResult> GetByVendorAsync([FromRoute] Guid vendorId, [FromRoute] string categoryAndSubCategory = null)
     {
-        var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(vendorId);
-
+        var validationResult = await ValidateVendorCategoryAsync(vendorId, categoryAndSubCategory);
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        var products = await _productRepository.GetByVendorAsync(vendorId);
+        var products = await _productRepository.GetByVendorAsync(vendorId, categoryAndSubCategory);
         return products.Any()
             ? Ok(products)
-            : NotFound(VendorIdNotFoundMessage(vendorId));
+            : NotFound(VendorIdNotFoundMessage(vendorId, categoryAndSubCategory));
+    }
+
+    [HttpGet("Vendor/{categoryAndSubCategory}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetVendorIdsByProductsCategoryAsync([FromRoute] string categoryAndSubCategory)
+    {
+        var validationResult = await new CategoryValidator(false).ValidateAsync(categoryAndSubCategory);
+        if (!validationResult.IsValid) return BadRequest(validationResult);
+
+        var vendorIds = await _productRepository.GetVendorIdsByProductCategoryAsync(categoryAndSubCategory);
+        return vendorIds.Any()
+            ? Ok(vendorIds)
+            : NotFound(VendorIdNotFoundMessage(categoryAndSubCategory: categoryAndSubCategory));
     }
 
     [HttpGet("{productId:guid}")]
@@ -117,6 +133,29 @@ public class ProductController : ControllerBase
             : NotFound(ProductIdNotFoundMessage(productId));
     }
 
+    private async Task<ValidationResult> ValidateVendorCategoryAsync(Guid vendorId, string categoryAndSubCategory)
+    {
+        if (categoryAndSubCategory == null)
+        {
+            return await _validatorFactory.GetValidator<Guid>().ValidateAsync(vendorId);
+        }
+
+        return await _validatorFactory.GetValidator<VendorCategoryDto>()
+            .ValidateAsync(new VendorCategoryDto(vendorId, categoryAndSubCategory));
+    }
+
     private static string ProductIdNotFoundMessage(Guid? id) => $"Product with Id {id} has not been found";
-    private static string VendorIdNotFoundMessage(Guid? id) => $"Products for Vendor with Id {id} have not been found";
+
+    private static string VendorIdNotFoundMessage(Guid? id = null, string categoryAndSubCategory = null)
+    {
+        return id switch
+        {
+            null when categoryAndSubCategory == null => "Vendor Id and category are required to retrieve products",
+            null => $"Vendors with products for category {categoryAndSubCategory} have not been found",
+            _ => categoryAndSubCategory == null
+                ? $"Products for Vendor Id {id} have not been found"
+                : $"Products for Vendor Id {id} and category {categoryAndSubCategory} have not been found"
+        };
+    }
+
 }
