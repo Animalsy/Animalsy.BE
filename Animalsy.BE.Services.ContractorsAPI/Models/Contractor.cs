@@ -8,6 +8,9 @@ public record Contractor
     public Guid Id { get; init; }
 
     [Required]
+    public Guid UserId { get; init; }
+
+    [Required]
     public Guid VendorId { get; init; }
 
     [Required, MaxLength(20)]
@@ -16,7 +19,7 @@ public record Contractor
     [Required, MaxLength(20)]
     public string LastName { get; set; }
 
-    [Required, MaxLength(400)]
+    [Required, MaxLength(60)]
     public string Specialization { get; set; }
 
     [MaxLength(500)]

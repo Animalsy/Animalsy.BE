@@ -1,5 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using Animalsy.BE.Services.PetAPI.Models.Dto;
+﻿using Animalsy.BE.Services.PetAPI.Models.Dto;
 using Animalsy.BE.Services.PetAPI.Repository;
 using Animalsy.BE.Services.PetAPI.Validators.Factory;
 using Microsoft.AspNetCore.Authorization;
@@ -23,22 +22,23 @@ public class PetController: ControllerBase
         _validatorFactory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
     }
 
-    [HttpGet("Customer/{customerId:guid}")]
+    [HttpGet("User/{userId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByCustomerAsync([FromRoute] Guid customerId)
+    public async Task<IActionResult> GetByCustomerAsync([FromRoute] Guid userId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
-            .ValidateAsync(customerId);
+            .ValidateAsync(userId);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), customerId))
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), userId))
             return Unauthorized();
 
-        var pets = await _petRepository.GetByCustomerAsync(customerId);
+        var pets = await _petRepository.GetByUserAsync(userId);
         return pets.Any()
             ? Ok(pets)
             : NotFound("You have not added any pet yet");
@@ -48,6 +48,7 @@ public class PetController: ControllerBase
     [Route("{petId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByIdAsync([FromRoute] Guid petId)
@@ -66,6 +67,7 @@ public class PetController: ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreatePetDto petDto)
     {
@@ -74,6 +76,9 @@ public class PetController: ControllerBase
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), petDto.UserId))
+            return Unauthorized();
+
         var createdPetId = await _petRepository.CreateAsync(petDto);
         return new ObjectResult(createdPetId) { StatusCode = StatusCodes.Status201Created };
     }
@@ -81,6 +86,7 @@ public class PetController: ControllerBase
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateAsync([FromBody] UpdatePetDto petDto)
@@ -90,7 +96,7 @@ public class PetController: ControllerBase
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), petDto.UserId) || !User.IsInRole(SD.RoleAdmin))
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), petDto.UserId))
             return Unauthorized();
 
         var updateResult = await _petRepository.TryUpdateAsync(petDto);
@@ -102,6 +108,7 @@ public class PetController: ControllerBase
     [HttpDelete("{petId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid petId)
@@ -114,16 +121,18 @@ public class PetController: ControllerBase
         var petDto = await _petRepository.GetByIdAsync(petId);
         if (petDto == null) return NotFound(PetIdNotFoundMessage(petId));
 
-        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), petDto.UserId) || !User.IsInRole(SD.RoleAdmin))
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), petDto.UserId))
             return Unauthorized();
 
-        await _petRepository.DeleteAsync(petDto);
-        return Ok("Pet has been deleted successfully");
+        var deleteResult = await _petRepository.TryDeleteAsync(petId);
+        return deleteResult 
+            ? Ok("Pet has been deleted successfully")
+            : NotFound(PetIdNotFoundMessage(petId));
     }
 
-    private static bool CheckLoggedUser(Claim claim, Guid requestedId)
+    private bool CheckLoggedUser(Claim claim, Guid requestedId)
     {
-        return claim != null && Guid.TryParse(claim.Value, out var id) && id == requestedId;
+        return (claim != null && Guid.TryParse(claim.Value, out var id) && id == requestedId) || User.IsInRole(SD.RoleAdmin);
     }
 
     private static string PetIdNotFoundMessage(Guid? id) => $"Pet with Id {id} has not been found";

@@ -53,7 +53,7 @@ public class AuthService : IAuthService
             }
 
             var roleAssignmentResult = await AssignRoleAsync(new AssignRoleDto
-                { Email = user.Email, RoleName = SD.RoleCustomer });
+                { Email = user.Email, RoleName = SD.RoleAdmin });
             if (!roleAssignmentResult.IsSuccess)
             {
                 await transaction.RollbackAsync().ConfigureAwait(false);

@@ -5,7 +5,7 @@ using Animalsy.BE.Services.ContractorAPI.Validators.Factory;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Microsoft.IdentityModel.JsonWebTokens;
+using FluentValidation.Results;
 
 namespace Animalsy.BE.Services.ContractorAPI.Controllers;
 
@@ -21,7 +21,6 @@ public class ContractorController : ControllerBase
         _contractorRepository = contractorRepository ?? throw new ArgumentNullException(nameof(contractorRepository));
         _validatorFactory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
     }
-
 
     [HttpGet("{contractorId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -39,6 +38,23 @@ public class ContractorController : ControllerBase
         return contractor != null
             ? Ok(contractor)
             : NotFound(ContractorIdNotFoundMessage(contractorId));
+    }
+
+    [HttpGet("Vendor/{vendorId:guid}/{specialization}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetByVendorAndSpecializationAsync([FromRoute] Guid vendorId, [FromRoute] string specialization)
+    {
+        var validationResult = await ValidateVendorAndSpecializationAsync(vendorId, specialization);
+
+        if (!validationResult.IsValid) return BadRequest(validationResult);
+
+        var contractors = await _contractorRepository.GetByVendorAsync(vendorId, specialization);
+        return contractors.Any()
+            ? Ok(contractors)
+            : NotFound(VendorIdNotFoundMessage(vendorId, specialization));
     }
 
     [HttpGet("Vendor/{vendorId:guid}")]
@@ -62,6 +78,8 @@ public class ContractorController : ControllerBase
     [HttpPost] 
     [Authorize(Roles = SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateContractorDto contractorDto)
@@ -71,6 +89,9 @@ public class ContractorController : ControllerBase
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), contractorDto.UserId))
+            return Unauthorized();
+
         var createdContractorId = await _contractorRepository.CreateAsync(contractorDto);
         return new ObjectResult(createdContractorId) { StatusCode = StatusCodes.Status201Created };
     }
@@ -79,6 +100,8 @@ public class ContractorController : ControllerBase
     [Authorize(Roles = SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateContractorDto updateContractorDto)
@@ -101,6 +124,8 @@ public class ContractorController : ControllerBase
     [Authorize(Roles = SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid contractorId)
@@ -116,8 +141,21 @@ public class ContractorController : ControllerBase
         if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), contractorDto.UserId))
             return Unauthorized();
 
-        await _contractorRepository.DeleteAsync(contractorDto);
-        return Ok("Contractor has been deleted successfully");
+        var deleteResult = await _contractorRepository.TryDeleteAsync(contractorId);
+        return deleteResult
+            ? Ok("Contractor has been deleted successfully")
+            : NotFound(ContractorIdNotFoundMessage(contractorId));
+    }
+
+    private async Task<ValidationResult> ValidateVendorAndSpecializationAsync(Guid vendorId, string specialization)
+    {
+        if (specialization == null)
+        {
+            return await _validatorFactory.GetValidator<Guid>().ValidateAsync(vendorId);
+        }
+
+        return await _validatorFactory.GetValidator<ContractorSpecializationDto>()
+            .ValidateAsync(new ContractorSpecializationDto(vendorId, specialization));
     }
 
     private bool CheckLoggedUser(Claim claim, Guid requestedId)
@@ -126,5 +164,10 @@ public class ContractorController : ControllerBase
     }
 
     private static string ContractorIdNotFoundMessage(Guid? id) => $"Contractor with Id {id} has not been found";
-    private static string VendorIdNotFoundMessage(Guid? id) => $"Contractors for Vendor Id {id} have not been found";
+    private static string VendorIdNotFoundMessage(Guid id, string specialization = null)
+    {
+        return specialization == null
+            ? $"Contractors for Vendor Id {id} have not been found"
+            : $"Contractors for Vendor Id {id} and specialization {specialization} have not been found";
+    }
 }

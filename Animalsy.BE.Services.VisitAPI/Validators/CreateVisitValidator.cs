@@ -11,7 +11,6 @@ namespace Animalsy.BE.Services.VisitAPI.Validators
             var factory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
             var idValidator = factory.GetValidator<Guid>();
 
-            RuleFor(x => x.Id).SetValidator(idValidator);
             RuleFor(x => x.ContractorId).SetValidator(idValidator);
             RuleFor(x => x.CustomerId).SetValidator(idValidator);
             RuleFor(x => x.PetId).SetValidator(idValidator);

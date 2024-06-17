@@ -13,8 +13,8 @@ public static partial class AppExtensions
         serviceCollection.AddHttpClient("AuthApiClient", client =>
             client.BaseAddress = new Uri(configuration.CurrentValue.AuthApi!));
 
-        serviceCollection.AddHttpClient("CustomerApiClient", client =>
-            client.BaseAddress = new Uri(configuration.CurrentValue.CustomerApi!));
+        serviceCollection.AddHttpClient("ContractorApiClient", client =>
+            client.BaseAddress = new Uri(configuration.CurrentValue.ContractorApi!));
 
         serviceCollection.AddHttpClient("VisitApiClient", client =>
             client.BaseAddress = new Uri(configuration.CurrentValue.VisitApi!));

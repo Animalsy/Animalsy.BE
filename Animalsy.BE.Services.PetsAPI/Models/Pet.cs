@@ -8,7 +8,7 @@ public record Pet
     public Guid Id { get; init; }
 
     [Required]
-    public Guid CustomerId { get; init; }
+    public Guid UserId { get; init; }
 
     [Required, MinLength(1), MaxLength(20)]
     public string Species { get; set; }

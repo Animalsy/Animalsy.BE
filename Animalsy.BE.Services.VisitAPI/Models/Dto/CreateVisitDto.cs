@@ -2,7 +2,6 @@
 
 public record CreateVisitDto
 {
-    public Guid Id { get; init; }
     public Guid ContractorId { get; init; }
     public Guid CustomerId { get; init; }
     public Guid PetId { get; init; }

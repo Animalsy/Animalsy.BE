@@ -9,5 +9,5 @@ public interface IVendorRepository
     Task<IEnumerable<VendorProfileDto>> GetVendorProfilesAsync(Guid userId);
     Task<Guid> CreateAsync(CreateVendorDto createVendorDto);
     Task<bool> TryUpdateAsync(UpdateVendorDto updateVendorDto);
-    Task DeleteAsync(VendorDto vendorDto);
+    Task<bool> TryDeleteAsync(Guid vendorId);
 }

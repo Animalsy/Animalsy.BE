@@ -13,7 +13,8 @@ public static partial class AppExtensions
         serviceCollection
             .AddScoped<IValidator<Guid>, UniqueIdValidator>()
             .AddScoped<IValidator<CreateContractorDto>, CreateContractorValidator>()
-            .AddScoped<IValidator<UpdateContractorDto>, UpdateContractorValidator>();
+            .AddScoped<IValidator<UpdateContractorDto>, UpdateContractorValidator>()
+            .AddScoped<IValidator<ContractorSpecializationDto>, ContractorSpecializationValidator>();
     }
 
     private static void DisableValidationTranslation()
