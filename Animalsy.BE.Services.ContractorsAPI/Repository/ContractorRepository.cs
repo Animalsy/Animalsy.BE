@@ -3,7 +3,6 @@ using Animalsy.BE.Services.ContractorAPI.Models;
 using Animalsy.BE.Services.ContractorAPI.Models.Dto;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Animalsy.BE.Services.ContractorAPI.Repository;
 
@@ -24,11 +23,16 @@ public class ContractorRepository : IContractorRepository
         return result != null ? _mapper.Map<ContractorDto>(result) : null;
     }
 
-    public async Task<IEnumerable<ContractorDto>> GetByVendorAsync(Guid vendorId)
+    public async Task<IEnumerable<ContractorDto>> GetByVendorAsync(Guid vendorId, string specialization = null)
     {
-        var results = await _dbContext.Contractors
-            .Where(p => p.VendorId == vendorId)
-            .ToListAsync();
+        var query = _dbContext.Contractors.Where(p => p.VendorId == vendorId);
+
+        if (specialization != null)
+        {
+            query = query.Where(p => p.Specialization.StartsWith(specialization));
+        }
+
+        var results = await query.ToListAsync();
         return _mapper.Map<IEnumerable<ContractorDto>>(results);
     }
 
@@ -54,9 +58,13 @@ public class ContractorRepository : IContractorRepository
         return true;
     }
 
-    public async Task DeleteAsync(ContractorDto contractorDto)
+    public async Task<bool> TryDeleteAsync(Guid contractorId)
     {
-        _dbContext.Contractors.Remove(_mapper.Map<Contractor>(contractorDto));
+        var existingContractor = await _dbContext.Contractors.FirstOrDefaultAsync(p => p.Id == contractorId);
+        if (existingContractor == null) return false;
+
+        _dbContext.Contractors.Remove(existingContractor);
         await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+        return true;
     }
 }

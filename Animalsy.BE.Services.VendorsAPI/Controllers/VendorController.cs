@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using Animalsy.BE.Services.VendorAPI.Models;
 using Animalsy.BE.Services.VendorAPI.Services;
-using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Animalsy.BE.Services.VendorAPI.Controllers;
 
@@ -60,6 +60,8 @@ public class VendorController : Controller
     [Authorize(Roles = SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetVendorProfilesAsync(Guid userId)
@@ -79,6 +81,7 @@ public class VendorController : Controller
     [Authorize]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateVendorDto createVendorDto)
     {
@@ -86,7 +89,10 @@ public class VendorController : Controller
             .ValidateAsync(createVendorDto);
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
-            
+
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), createVendorDto.UserId))
+            return Unauthorized();
+
         var createdVendorId = await _vendorRepository.CreateAsync(createVendorDto);
         await AssignVendorRoleIfRequiredAsync().ConfigureAwait(false);
         
@@ -97,6 +103,8 @@ public class VendorController : Controller
     [Authorize(Roles = SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateVendorDto updateVendorDto)
@@ -106,7 +114,7 @@ public class VendorController : Controller
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), updateVendorDto.UserId))
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), updateVendorDto.UserId))
             return Unauthorized();
 
         var updateSuccessful = await _vendorRepository.TryUpdateAsync(updateVendorDto);
@@ -119,6 +127,8 @@ public class VendorController : Controller
     [Authorize(Roles = SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid vendorId)
@@ -131,16 +141,18 @@ public class VendorController : Controller
         var vendorDto = await _vendorRepository.GetByIdAsync(vendorId);
         if (vendorDto == null) return NotFound(VendorNotFoundMessage("Id", vendorId.ToString()));
 
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), vendorDto.UserId))
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), vendorDto.UserId))
             return Unauthorized();
 
-        await _vendorRepository.DeleteAsync(vendorDto);
-        return Ok("Customer has been deleted successfully");
+        var deleteResult = await _vendorRepository.TryDeleteAsync(vendorId);
+        return deleteResult
+            ? Ok("Customer has been deleted successfully")
+            : NotFound(VendorNotFoundMessage("Id", vendorId.ToString()));
     }
 
     private async Task AssignVendorRoleIfRequiredAsync()
     {
-        var email = User.FindFirst(JwtRegisteredClaimNames.Email);
+        var email = User.FindFirst(ClaimTypes.Email);
 
         if (User.IsInRole(SD.RoleVendor) || email == null)
             return;

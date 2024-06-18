@@ -22,12 +22,15 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 builder.Services.AddScoped<IVendorProfileBuilderFactory, VendorProfileBuilderFactory>();
 builder.Services.AddTransient<IApiService, ApiService>();
+builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IResponseHandler, ResponseHandler>();
 builder.Services.AddScoped<IValidatorFactory, ValidatorFactory>();
 builder.Services.AddValidators();
 
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
 builder.Services.Configure<ServiceUrlConfiguration>(builder.Configuration.GetSection(nameof(ServiceUrlConfiguration))!);
 builder.Services.AddHttpClients();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

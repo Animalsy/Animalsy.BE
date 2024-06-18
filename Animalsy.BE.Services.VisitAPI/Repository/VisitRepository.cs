@@ -52,7 +52,7 @@ namespace Animalsy.BE.Services.VisitAPI.Repository
                 .Where(v => v.CustomerId == customerId)
                 .ToListAsync();
 
-            if (!visits.IsNullOrEmpty()) return [];
+            if (visits.IsNullOrEmpty()) return [];
 
             return await BuildResultsAsync(visits);
         }

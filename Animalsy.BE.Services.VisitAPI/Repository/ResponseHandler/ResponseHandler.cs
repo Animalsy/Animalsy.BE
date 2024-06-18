@@ -14,7 +14,7 @@ public class ResponseHandler : IResponseHandler
             return JsonConvert.DeserializeObject<T>(content);
         }
 
-        details.AddOrUpdate(objectName, content, (oldKey, oldValue) => content);
+        details.AddOrUpdate(objectName, response.StatusCode.ToString(), (oldKey, oldValue) => content);
         return default;
     }
 }

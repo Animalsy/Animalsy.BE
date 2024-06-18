@@ -14,7 +14,7 @@ public class UpdateContractorValidator : AbstractValidator<UpdateContractorDto>
         RuleFor(x => x.UserId).SetValidator(factory.GetValidator<Guid>());
         RuleFor(x => x.Name).NotEmpty().MaximumLength(20);
         RuleFor(x => x.LastName).NotEmpty().MaximumLength(20);
-        RuleFor(x => x.Specialization).NotEmpty().MaximumLength(400);
         RuleFor(x => x.ImageUrl).MaximumLength(500).When(x => x is not null);
+        RuleFor(x => x.Specialization).SetValidator(new CategoryValidator(true));
     }
 }

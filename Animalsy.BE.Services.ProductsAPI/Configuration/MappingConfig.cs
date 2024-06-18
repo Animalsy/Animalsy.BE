@@ -14,6 +14,5 @@ public class MappingConfig
             config.CreateMap<CreateProductDto, Product>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
         });
-
     }
 }

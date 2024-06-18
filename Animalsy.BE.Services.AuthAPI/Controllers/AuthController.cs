@@ -49,9 +49,9 @@ namespace Animalsy.BE.Services.AuthAPI.Controllers
         }
 
 
-        private async Task<IActionResult> HandleRequest<TDto>(TDto dto, Func<Task<ResponseDto>> requestFunc)
+        private async Task<IActionResult> HandleRequest<T>(T dto, Func<Task<ResponseDto>> requestFunc)
         {
-            var validator = _validatorFactory.GetValidator<TDto>();
+            var validator = _validatorFactory.GetValidator<T>();
             if (validator != null)
             {
                 var validationResult = await validator.ValidateAsync(dto).ConfigureAwait(false);

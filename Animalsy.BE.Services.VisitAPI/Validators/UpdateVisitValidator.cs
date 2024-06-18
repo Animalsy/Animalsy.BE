@@ -11,7 +11,6 @@ namespace Animalsy.BE.Services.VisitAPI.Validators
         {
             var factory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
 
-            RuleFor(x => x.Id).SetValidator(factory.GetValidator<Guid>());
             RuleFor(x => x.Date).NotEmpty();
             RuleFor(x => x.Comment).NotEmpty().When(x => x.Comment is not null);
             RuleFor(x => x.Status)

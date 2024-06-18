@@ -75,9 +75,13 @@ public class VendorRepository : IVendorRepository
         return true;
     }
 
-    public async Task DeleteAsync(VendorDto vendorDto)
+    public async Task<bool> TryDeleteAsync(Guid vendorId)
     {
-        _dbContext.Vendors.Remove(_mapper.Map<Vendor>(vendorDto));
+        var existingVendor = await _dbContext.Vendors.SingleOrDefaultAsync(v => v.Id == vendorId);
+        if (existingVendor == null) return false;
+
+        _dbContext.Vendors.Remove(existingVendor);
         await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+        return true;
     }
 }

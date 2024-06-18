@@ -1,5 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Animalsy.BE.Services.CustomerAPI.Models.Dto;
 using Animalsy.BE.Services.CustomerAPI.Repository;
 using Animalsy.BE.Services.CustomerAPI.Utilities;
@@ -25,6 +24,8 @@ public class CustomerController: Controller
     [HttpGet]
     [Authorize(Roles = SD.RoleAdmin)]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAllAsync()
@@ -36,9 +37,11 @@ public class CustomerController: Controller
     }
 
     [HttpGet("{customerId:guid}")]
-    [Authorize]
+    [Authorize(Roles= SD.RoleAdminAndVendor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByIdAsync(Guid customerId)
@@ -58,6 +61,7 @@ public class CustomerController: Controller
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetCustomerProfileAsync(Guid userId)
@@ -96,6 +100,7 @@ public class CustomerController: Controller
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateCustomerDto customerDto)
@@ -105,7 +110,7 @@ public class CustomerController: Controller
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), customerDto.UserId)) 
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), customerDto.UserId)) 
             return Unauthorized();
 
         var updateSuccessful = await _customerRepository.TryUpdateAsync(customerDto);
@@ -119,6 +124,7 @@ public class CustomerController: Controller
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid userId)
@@ -128,7 +134,7 @@ public class CustomerController: Controller
 
         if (!validationResult.IsValid) return BadRequest(validationResult);
 
-        if (!CheckLoggedUser(User.FindFirst(JwtRegisteredClaimNames.Sub), userId))
+        if (!CheckLoggedUser(User.FindFirst(ClaimTypes.NameIdentifier), userId))
             return Unauthorized();
 
         var deleteSuccessful = await _customerRepository.TryDeleteAsync(userId);
@@ -139,7 +145,7 @@ public class CustomerController: Controller
 
     private bool CheckLoggedUser(Claim claim, Guid requestedId)
     {
-        return (claim != null && Guid.TryParse(claim.Value, out var id) && id == requestedId) || User.IsInRole(SD.RoleAdmin);
+        return claim != null && Guid.TryParse(claim.Value, out var id) && id == requestedId || User.IsInRole(SD.RoleAdmin);
     }
 
     private static string CustomerNotFoundMessage(string id) => $"Customer with Id {id} has not been found";

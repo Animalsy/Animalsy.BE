@@ -55,6 +55,9 @@ namespace Animalsy.BE.Services.ProductAPI.Migrations
                     b.Property<decimal>("PromoPrice")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("VendorId")
                         .HasColumnType("uniqueidentifier");
 

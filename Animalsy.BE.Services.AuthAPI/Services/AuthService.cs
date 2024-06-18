@@ -1,6 +1,7 @@
 ﻿using Animalsy.BE.Services.AuthAPI.Data;
 using Animalsy.BE.Services.AuthAPI.Models;
 using Animalsy.BE.Services.AuthAPI.Models.Dto;
+using Animalsy.BE.Services.AuthAPI.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -51,8 +52,20 @@ public class AuthService : IAuthService
                 };
             }
 
+            var roleAssignmentResult = await AssignRoleAsync(new AssignRoleDto
+                { Email = user.Email, RoleName = SD.RoleAdmin });
+            if (!roleAssignmentResult.IsSuccess)
+            {
+                await transaction.RollbackAsync().ConfigureAwait(false);
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Result = roleAssignmentResult
+                };
+            }
+
             var createdUser = await _dbContext.Users.SingleAsync(u =>
-                u.Email.Equals(registerUserDto.EmailAddress, StringComparison.OrdinalIgnoreCase)).ConfigureAwait(false);
+                u.NormalizedEmail == registerUserDto.EmailAddress.ToUpperInvariant()).ConfigureAwait(false);
 
             var createCustomerDto = _mapper.Map<CreateCustomerDto>(registerUserDto);
             createCustomerDto.UserId = createdUser.Id;
@@ -78,7 +91,7 @@ public class AuthService : IAuthService
             return new ResponseDto
             {
                 IsSuccess = false,
-                Result = ex,
+                Result = $"{ex.Message}{ex.StackTrace}",
                 Message = "Error encountered"
             };
         }
@@ -87,7 +100,7 @@ public class AuthService : IAuthService
     public async Task<ResponseDto> LoginAsync(LoginUserDto loginUserDto)
     {
         var user = await _dbContext.Users.FirstOrDefaultAsync(u =>
-            u.Email.Equals(loginUserDto.Email, StringComparison.OrdinalIgnoreCase)).ConfigureAwait(false);
+            u.NormalizedEmail == loginUserDto.Email.ToUpperInvariant()).ConfigureAwait(false);
 
         if (user == null || !await _userManager.CheckPasswordAsync(user, loginUserDto.Password).ConfigureAwait(false))
         {
@@ -110,7 +123,7 @@ public class AuthService : IAuthService
 
     public async Task<ResponseDto> AssignRoleAsync(AssignRoleDto assignRoleDto)
     {
-        var user = _dbContext.Users.FirstOrDefault(user => user.Email.Equals(assignRoleDto.Email, StringComparison.OrdinalIgnoreCase));
+        var user = _dbContext.Users.FirstOrDefault(u => u.NormalizedEmail == assignRoleDto.Email.ToUpperInvariant());
         if (user == null)
             return new ResponseDto
             {

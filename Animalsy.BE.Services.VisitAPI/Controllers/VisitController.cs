@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
+
 namespace Animalsy.BE.Services.VisitAPI.Controllers;
 
 [Route("Api/[controller]")]
@@ -24,6 +25,8 @@ public class VisitController : Controller
 
     [HttpGet("{visitId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByIdAsync(Guid visitId)
@@ -42,9 +45,10 @@ public class VisitController : Controller
     [HttpGet("Vendor/{vendorId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByVendorIdAsync(Guid vendorId)
+    public async Task<IActionResult> GetByVendorAsync(Guid vendorId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
             .ValidateAsync(vendorId);
@@ -60,9 +64,10 @@ public class VisitController : Controller
     [HttpGet("Customer/{customerId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByCustomerIdAsync(Guid customerId)
+    public async Task<IActionResult> GetByCustomerAsync(Guid customerId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
             .ValidateAsync(customerId);
@@ -78,6 +83,7 @@ public class VisitController : Controller
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateVisitDto visitDto)
     {
@@ -93,6 +99,7 @@ public class VisitController : Controller
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateVisitDto visitDto)
@@ -113,6 +120,8 @@ public class VisitController : Controller
     [Authorize(Roles = SD.RoleAdmin)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid visitId)

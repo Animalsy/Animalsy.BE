@@ -27,7 +27,7 @@ public class CustomerProfileBuilder : ICustomerProfileBuilder
         _tasks.Add(Task.Run(async () =>
         {
             _pets = await _responseHandler.EvaluateResponse <IEnumerable<PetDto>>(nameof(_pets), _responseDetails,
-                () => _apiService.GetAsync("PetApiClient", $"Api/Pet/Customer/{_customer.Id}"));
+                () => _apiService.GetAsync("PetApiClient", $"Api/Pet/User/{_customer.UserId}"));
         }));
 
         return this;

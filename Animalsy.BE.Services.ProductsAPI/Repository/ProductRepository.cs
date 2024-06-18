@@ -3,7 +3,6 @@ using Animalsy.BE.Services.ProductAPI.Models;
 using Animalsy.BE.Services.ProductAPI.Models.Dto;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Animalsy.BE.Services.ProductAPI.Repository;
 
@@ -30,7 +29,7 @@ public class ProductRepository : IProductRepository
 
         if (categoryAndSubcategory != null)
         {
-            query = query.Where(p => p.CategoryAndSubCategory == categoryAndSubcategory);
+            query = query.Where(p => p.CategoryAndSubCategory.StartsWith(categoryAndSubcategory));
         }
 
         var results = await query.ToListAsync();
@@ -78,9 +77,13 @@ public class ProductRepository : IProductRepository
         return true;
     }
 
-    public async Task DeleteAsync(ProductDto productDto)
+    public async Task<bool> TryDeleteAsync(Guid productId)
     {
-        _dbContext.Products.Remove(_mapper.Map<Product>(productDto));
+        var existingProduct = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
+        if (existingProduct == null) return false;
+
+        _dbContext.Products.Remove(existingProduct);
         await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+        return true;
     }
 }

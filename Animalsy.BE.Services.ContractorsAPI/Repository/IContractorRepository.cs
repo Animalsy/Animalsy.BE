@@ -6,7 +6,7 @@ public interface IContractorRepository
 {
     Task<Guid> CreateAsync(CreateContractorDto createContractorDto);
     Task<ContractorDto> GetByIdAsync(Guid contractorId);
-    Task<IEnumerable<ContractorDto>> GetByVendorAsync(Guid vendorId);
+    Task<IEnumerable<ContractorDto>> GetByVendorAsync(Guid vendorId, string specialization = null);
     Task<bool> TryUpdateAsync(UpdateContractorDto updateContractorDto);
-    Task DeleteAsync(ContractorDto contractorDto);
+    Task<bool> TryDeleteAsync(Guid contractorId);
 }

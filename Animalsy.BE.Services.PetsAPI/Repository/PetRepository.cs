@@ -26,10 +26,10 @@ public class PetRepository : IPetRepository
         return pet.Id;
     }
 
-    public async Task<IEnumerable<PetDto>> GetByCustomerAsync(Guid customerId)
+    public async Task<IEnumerable<PetDto>> GetByUserAsync(Guid userId)
     {
         var results = await _dbContext.Pets
-            .Where(pet => pet.CustomerId == customerId)
+            .Where(pet => pet.UserId == userId)
             .ToListAsync();
         return _mapper.Map<IEnumerable<PetDto>>(results);
     }
@@ -54,9 +54,13 @@ public class PetRepository : IPetRepository
         return true;
     }
 
-    public async Task DeleteAsync(PetDto petDto)
+    public async Task<bool> TryDeleteAsync(Guid petId)
     {
-        _dbContext.Pets.Remove(_mapper.Map<Pet>(petDto));
+        var existingPet = _dbContext.Pets.FirstOrDefault(p => p.Id == petId); 
+        if (existingPet == null) return false;
+
+        _dbContext.Pets.Remove(existingPet);
         await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+        return true;
     }
 }

@@ -10,5 +10,5 @@ public interface IProductRepository
     Task<Guid> CreateAsync(CreateProductDto createProductDto);
     Task<ProductDto> GetByIdAsync(Guid productId);
     Task<bool> TryUpdateAsync(UpdateProductDto updateProductDto);
-    Task DeleteAsync(ProductDto productDto);
+    Task<bool> TryDeleteAsync(Guid productId);
 }
