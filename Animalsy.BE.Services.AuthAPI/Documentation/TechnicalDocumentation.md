@@ -12,6 +12,10 @@ The AuthAPI service is responsible for managing user authentication and roles wi
 - **Swashbuckle** (v6.2.3): For generating Swagger documentation.
 - **IdentityModel** (v5.2.0): For handling authentication and authorization with JWT tokens.
 
+### Dockerfile
+
+The Dockerfile is used to build a Docker image for the AuthAPI service. It defines the steps to set up the environment, copy the necessary files, restore dependencies, build the project, and expose the required ports.
+
 ## Database Configuration
 
 The AuthAPI service uses Microsoft SQL Server as its database. Below are the configurations for different environments:
@@ -28,7 +32,7 @@ Configured in `appsettings.Development.json`:
 Configured in `appsettings.Development.Local.json`:
 
 - **Connection String**: Connects to a local SQL Server instance using LocalDB. Useful for developers running the database locally.
-- **JWT Options**: Same as in the general development configuration, used to generate and validate JWT tokens.
+- **Service URLs**: Defines URLs for other services, such as `CustomerApi`, within the Local environment.
 
 ### Development Docker Configuration
 
@@ -42,7 +46,8 @@ Configured in `appsettings.Development.Docker.json`:
 Configured in `appsettings.Production.json`:
 
 - **Connection String**: Connects to a SQL Server instance suitable for a production environment. Uses a specific server, user ID, and password.
-- **JWT Options**: Production-specific settings for the secret key, issuer, audience, and token expiration time for JWT tokens.
+- **JWT Options**: Production-specific settings for the secret key, issuer, audience, and token expiration time for JWT tokens. 
+- **Service URLs**: Defines URLs for other services, such as `CustomerApi`, within the Production environment.
 
 ## Database Context
 
