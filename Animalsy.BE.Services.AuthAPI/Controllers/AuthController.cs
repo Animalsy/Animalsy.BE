@@ -24,7 +24,7 @@ namespace Animalsy.BE.Services.AuthAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public Task<IActionResult> RegisterAsync([FromBody] RegisterUserDto registerUserDto)
+        public Task<ActionResult<ResponseDto>> RegisterAsync([FromBody] RegisterUserDto registerUserDto)
         {
             return HandleRequest(registerUserDto, () => _authService.RegisterAsync(registerUserDto));
         }
@@ -34,7 +34,7 @@ namespace Animalsy.BE.Services.AuthAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public Task<IActionResult> LoginAsync([FromBody] LoginUserDto loginDto)
+        public Task<ActionResult<ResponseDto>> LoginAsync([FromBody] LoginUserDto loginDto)
         {
             return HandleRequest(loginDto, () => _authService.LoginAsync(loginDto));
         }
@@ -43,13 +43,13 @@ namespace Animalsy.BE.Services.AuthAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public Task<IActionResult> AssignRoleAsync([FromBody] AssignRoleDto assignRoleDto)
+        public Task<ActionResult<ResponseDto>> AssignRoleAsync([FromBody] AssignRoleDto assignRoleDto)
         {
             return HandleRequest(assignRoleDto, () => _authService.AssignRoleAsync(assignRoleDto));
         }
 
 
-        private async Task<IActionResult> HandleRequest<T>(T dto, Func<Task<ResponseDto>> requestFunc)
+        private async Task<ActionResult<ResponseDto>> HandleRequest<T>(T dto, Func<Task<ResponseDto>> requestFunc)
         {
             var validator = _validatorFactory.GetValidator<T>();
             if (validator != null)

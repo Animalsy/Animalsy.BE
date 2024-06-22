@@ -28,7 +28,7 @@ public class PetController: ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByCustomerAsync([FromRoute] Guid userId)
+    public async Task<ActionResult<IEnumerable<PetDto>>> GetByUserAsync([FromRoute] Guid userId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
             .ValidateAsync(userId);
@@ -51,7 +51,7 @@ public class PetController: ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid petId)
+    public async Task<ActionResult<PetDto>> GetByIdAsync([FromRoute] Guid petId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
             .ValidateAsync(petId);
@@ -69,7 +69,7 @@ public class PetController: ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> CreateAsync([FromBody] CreatePetDto petDto)
+    public async Task<ActionResult<Guid>> CreateAsync([FromBody] CreatePetDto petDto)
     {
         var validationResult = await _validatorFactory.GetValidator<CreatePetDto>()
             .ValidateAsync(petDto);

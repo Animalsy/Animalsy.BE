@@ -30,7 +30,7 @@ public class VendorController : Controller
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetAllAsync()
+    public async Task<ActionResult<IEnumerable<VendorDto>>> GetAllAsync()
     {
         var vendors = await _vendorRepository.GetAllAsync();
         return vendors.Any() 
@@ -43,7 +43,7 @@ public class VendorController : Controller
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByIdAsync(Guid vendorId)
+    public async Task<ActionResult<VendorDto>> GetByIdAsync(Guid vendorId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
             .ValidateAsync(vendorId);
@@ -64,7 +64,7 @@ public class VendorController : Controller
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetVendorProfilesAsync(Guid userId)
+    public async Task<ActionResult<VendorProfileDto>> GetVendorProfilesAsync(Guid userId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
             .ValidateAsync(userId);
@@ -83,7 +83,7 @@ public class VendorController : Controller
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> CreateAsync([FromBody] CreateVendorDto createVendorDto)
+    public async Task<ActionResult<Guid>> CreateAsync([FromBody] CreateVendorDto createVendorDto)
     {
         var validationResult = await _validatorFactory.GetValidator<CreateVendorDto>()
             .ValidateAsync(createVendorDto);

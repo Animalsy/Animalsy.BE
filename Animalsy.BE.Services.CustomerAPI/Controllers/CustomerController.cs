@@ -28,7 +28,7 @@ public class CustomerController: Controller
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetAllAsync()
+    public async Task<ActionResult<IEnumerable<CustomerDto>>> GetAllAsync()
     {
         var customers = await _customerRepository.GetAllAsync();
         return customers.Any() 
@@ -44,7 +44,7 @@ public class CustomerController: Controller
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByIdAsync(Guid customerId)
+    public async Task<ActionResult<CustomerDto>> GetByIdAsync(Guid customerId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
             .ValidateAsync(customerId);
@@ -64,7 +64,7 @@ public class CustomerController: Controller
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetCustomerProfileAsync(Guid userId)
+    public async Task<ActionResult<CustomerProfileDto>> GetCustomerProfileAsync(Guid userId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
             .ValidateAsync(userId);
@@ -83,7 +83,7 @@ public class CustomerController: Controller
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> CreateAsync([FromBody] CreateCustomerDto customerDto)
+    public async Task<ActionResult<Guid>> CreateAsync([FromBody] CreateCustomerDto customerDto)
     {
         var validationResult = await _validatorFactory.GetValidator<CreateCustomerDto>()
             .ValidateAsync(customerDto);

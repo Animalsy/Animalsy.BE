@@ -27,7 +27,7 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetAllAsync()
+    public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllAsync()
     {
         var products = await _productRepository.GetAllAsync();
         return products.Any()
@@ -40,7 +40,7 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByVendorAsync([FromRoute] Guid vendorId)
+    public async Task<ActionResult<IEnumerable<ProductDto>>> GetByVendorAsync([FromRoute] Guid vendorId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
             .ValidateAsync(vendorId);
@@ -58,7 +58,7 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetVendorIdsByProductsCategoryAsync([FromRoute] string categoryAndSubCategory)
+    public async Task<ActionResult<IEnumerable<Guid>>> GetVendorIdsByProductsCategoryAsync([FromRoute] string categoryAndSubCategory)
     {
         var validationResult = await new CategoryValidator(false).ValidateAsync(categoryAndSubCategory);
         if (!validationResult.IsValid) return BadRequest(validationResult);
@@ -74,7 +74,7 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByVendorAndCategoryAsync([FromRoute] Guid vendorId, [FromRoute] string categoryAndSubCategory = null)
+    public async Task<ActionResult<IEnumerable<ProductDto>>> GetByVendorAndCategoryAsync([FromRoute] Guid vendorId, [FromRoute] string categoryAndSubCategory = null)
     {
         var validationResult = await ValidateVendorAndCategoryAsync(vendorId, categoryAndSubCategory);
         if (!validationResult.IsValid) return BadRequest(validationResult);
@@ -90,7 +90,7 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid productId)
+    public async Task<ActionResult<ProductDto>> GetByIdAsync([FromRoute] Guid productId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
             .ValidateAsync(productId);
@@ -110,7 +110,7 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> CreateAsync([FromBody] CreateProductDto productDto)
+    public async Task<ActionResult<Guid>> CreateAsync([FromBody] CreateProductDto productDto)
     {
         var validationResult = await _validatorFactory.GetValidator<CreateProductDto>()
             .ValidateAsync(productDto);
