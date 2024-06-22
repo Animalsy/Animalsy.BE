@@ -10,44 +10,44 @@ Animalsy.BE serves as the backbone of the Animalsy application, providing essent
 
 ## Technical Architecture
 
-The backend application consists of several microservices, each responsible for a specific domain within the system. These microservices are containerized using Docker and orchestrated with Docker Compose to ensure easy deployment and scalability. Below is a summary of each service and its purpose, along with links to their detailed documentation.
+The backend application consists of several microservices, each responsible for a specific domain within the system. These microservices are containerized using Docker and orchestrated with Docker Compose to ensure easy system-agnostic deployment and scalability. Below is a summary of each service and its purpose, along with links to their detailed documentation.
 
 ### Services
 
 1. **AuthAPI**
    - **Purpose**: Manages user authentication and roles.
-   - **Technical Documentation**: [AuthAPI Technical Documentation](./Animalsy.BE.Services.AuthAPI/Documentation/Technical.md)
-   - **API Documentation**: [AuthAPI Documentation](./Animalsy.BE.Services.AuthAPI/Documentation/README.md)
+   - **Technical Documentation**: [AuthAPI Technical Documentation](./Animalsy.BE.Services.AuthAPI/Documentation/TechnicalDocumentation.md)
+   - **API Documentation**: [AuthAPI Documentation](./Animalsy.BE.Services.AuthAPI/Documentation/ApiDocumentation.md)
 
 2. **ContractorAPI**
    - **Purpose**: Manages contractor-related data.
-   - **Technical Documentation**: [ContractorAPI Technical Documentation](./Animalsy.BE.Services.ContractorAPI/Documentation/Technical.md)
-   - **API Documentation**: [ContractorAPI Documentation](./Animalsy.BE.Services.ContractorAPI/Documentation/README.md)
+   - **Technical Documentation**: [ContractorAPI Technical Documentation](./Animalsy.BE.Services.ContractorAPI/Documentation/TechnicalDocumentation.md)
+   - **API Documentation**: [ContractorAPI Documentation](./Animalsy.BE.Services.ContractorAPI/Documentation/ApiDocumentation.md)
 
 3. **CustomerAPI**
    - **Purpose**: Manages customer-related data.
-   - **Technical Documentation**: [CustomerAPI Technical Documentation](./Animalsy.BE.Services.CustomerAPI/Documentation/Technical.md)
-   - **API Documentation**: [CustomerAPI Documentation](./Animalsy.BE.Services.CustomerAPI/Documentation/README.md)
+   - **Technical Documentation**: [CustomerAPI Technical Documentation](./Animalsy.BE.Services.CustomerAPI/Documentation/TechnicalDocumentation.md)
+   - **API Documentation**: [CustomerAPI Documentation](./Animalsy.BE.Services.CustomerAPI/Documentation/ApiDocumentation.md)
 
 4. **PetAPI**
    - **Purpose**: Manages pet-related data.
-   - **Technical Documentation**: [PetAPI Technical Documentation](./Animalsy.BE.Services.PetAPI/Documentation/Technical.md)
-   - **API Documentation**: [PetAPI Documentation](./Animalsy.BE.Services.PetAPI/Documentation/README.md)
+   - **Technical Documentation**: [PetAPI Technical Documentation](./Animalsy.BE.Services.PetAPI/Documentation/TechnicalDocumentation.md)
+   - **API Documentation**: [PetAPI Documentation](./Animalsy.BE.Services.PetAPI/Documentation/ApiDocumentation.md)
 
 5. **ProductAPI**
    - **Purpose**: Manages product-related data.
-   - **Technical Documentation**: [ProductAPI Technical Documentation](./Animalsy.BE.Services.ProductAPI/Documentation/Technical.md)
-   - **API Documentation**: [ProductAPI Documentation](./Animalsy.BE.Services.ProductAPI/Documentation/README.md)
+   - **Technical Documentation**: [ProductAPI Technical Documentation](./Animalsy.BE.Services.ProductAPI/Documentation/TechnicalDocumentation.md)
+   - **API Documentation**: [ProductAPI Documentation](./Animalsy.BE.Services.ProductAPI/Documentation/ApiDocumentation.md)
 
 6. **VendorAPI**
    - **Purpose**: Manages vendor-related data.
-   - **Technical Documentation**: [VendorAPI Technical Documentation](./Animalsy.BE.Services.VendorAPI/Documentation/Technical.md)
-   - **API Documentation**: [VendorAPI Documentation](./Animalsy.BE.Services.VendorAPI/Documentation/README.md)
+   - **Technical Documentation**: [VendorAPI Technical Documentation](./Animalsy.BE.Services.VendorAPI/Documentation/TechnicalDocumentation.md)
+   - **API Documentation**: [VendorAPI Documentation](./Animalsy.BE.Services.VendorAPI/Documentation/ApiDocumentation.md)
 
 7. **VisitAPI**
    - **Purpose**: Manages visit-related data.
-   - **Technical Documentation**: [VisitAPI Technical Documentation](./Animalsy.BE.Services.VisitAPI/Documentation/Technical.md)
-   - **API Documentation**: [VisitAPI Documentation](./Animalsy.BE.Services.VisitAPI/Documentation/README.md)
+   - **Technical Documentation**: [VisitAPI Technical Documentation](./Animalsy.BE.Services.VisitAPI/Documentation/TechnicalDocumentation.md)
+   - **API Documentation**: [VisitAPI Documentation](./Animalsy.BE.Services.VisitAPI/Documentation/ApiDocumentation.md)
 
 ### Gateway
 
@@ -69,10 +69,6 @@ This will build and start all the microservices defined in the `docker-compose.y
 ## Contributing
 
 We welcome contributions to improve Animalsy.BE. Please fork the repository, create a feature branch, and submit a pull request with your changes.
-
-## License
-
-Animalsy.BE is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more information.
 
 ## Contact
 
