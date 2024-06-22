@@ -2,14 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>264ec206-03db-4c8e-b242-648e344b5fed</UserSecretsId>
+    <UserSecretsId>d116c481-64be-4dba-97f2-0646a0bd3ac6</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="appsettings.Development.Docker.json" />
     <_ContentIncludedByDefault Remove="appsettings.Production.json" />
   </ItemGroup>
 

@@ -1,0 +1,18 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "animalsy.be.gateway": "StartDebugging",
+        "animalsy.be.services.authapi": "StartDebugging",
+        "animalsy.be.services.contractorapi": "StartDebugging",
+        "animalsy.be.services.customerapi": "StartDebugging",
+        "animalsy.be.services.petapi": "StartDebugging",
+        "animalsy.be.services.productapi": "StartDebugging",
+        "animalsy.be.services.vendorapi": "StartDebugging",
+        "animalsy.be.services.visitapi": "StartDebugging"
+      }
+    }
+  }
+}

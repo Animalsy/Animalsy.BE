@@ -1,0 +1,62 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/contractor/{contractorId}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "contractorapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "contractorapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/contractor/{contractorId}",
+      "UpstreamHttpMethod": [ "GET", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/contractor/vendor/{vendorId}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "contractorapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "contractorapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/contractor/vendor/{vendorId}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/contractor/vendor/{vendorId}/{specialization}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "contractorapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "contractorapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/contractor/vendor/{vendorId}/{specialization}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/contractor",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "contractorapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "contractorapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/contractor",
+      "UpstreamHttpMethod": [ "POST", "PUT" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    }
+  ]
+}

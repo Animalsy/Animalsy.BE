@@ -1,0 +1,68 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/visit/{visitId}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "visitapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "visitapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/visit/{visitId}",
+      "UpstreamHttpMethod": [ "GET", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/visit/vendor/{vendorId}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "visitapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "visitapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/visit/vendor/{vendorId}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/visit/customer/{customerId}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "visitapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "visitapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/visit/customer/{customerId}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/visit",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "visitapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "visitapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/visit",
+      "UpstreamHttpMethod": [ "POST", "PUT" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "SwaggerEndpoints": [
+    {
+      "Key": "contractorapi",
+      "TransformByOcelotConfig": true,
+      "Config": [
+        {
+          "Name": "ContractorAPI",
+          "Version": "1.0",
+          "Url": "http://contractorapi:8080/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "customerapi",
+      "TransformByOcelotConfig": true,
+      "Config": [
+        {
+          "Name": "CustomerAPI",
+          "Version": "1.0",
+          "Url": "http://customerapi:8080/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "petapi",
+      "TransformByOcelotConfig": true,
+      "Config": [
+        {
+          "Name": "PetAPI",
+          "Version": "1.0",
+          "Url": "http://petapi:8080/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "productapi",
+      "TransformByOcelotConfig": true,
+      "Config": [
+        {
+          "Name": "ProductAPI",
+          "Version": "1.0",
+          "Url": "http://productapi:8080/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "vendorapi",
+      "TransformByOcelotConfig": true,
+      "Config": [
+        {
+          "Name": "VendorAPI",
+          "Version": "1.0",
+          "Url": "http://vendorapi:8080/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "visitapi",
+      "TransformByOcelotConfig": true,
+      "Config": [
+        {
+          "Name": "VisitAPI",
+          "Version": "1.0",
+          "Url": "http://visitapi:8080/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ]
+}
