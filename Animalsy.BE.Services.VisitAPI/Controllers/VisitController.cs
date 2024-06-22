@@ -29,7 +29,7 @@ public class VisitController : Controller
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByIdAsync(Guid visitId)
+    public async Task<ActionResult<VisitDto>> GetByIdAsync(Guid visitId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
             .ValidateAsync(visitId);
@@ -48,7 +48,7 @@ public class VisitController : Controller
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByVendorAsync(Guid vendorId)
+    public async Task<ActionResult<IEnumerable<VisitDto>>> GetByVendorAsync(Guid vendorId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
             .ValidateAsync(vendorId);
@@ -67,7 +67,7 @@ public class VisitController : Controller
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByCustomerAsync(Guid customerId)
+    public async Task<ActionResult<IEnumerable<VisitDto>>> GetByCustomerAsync(Guid customerId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
             .ValidateAsync(customerId);
@@ -85,7 +85,7 @@ public class VisitController : Controller
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> CreateAsync([FromBody] CreateVisitDto visitDto)
+    public async Task<ActionResult<Guid>> CreateAsync([FromBody] CreateVisitDto visitDto)
     {
         var validationResult = await _validatorFactory.GetValidator<CreateVisitDto>()
             .ValidateAsync(visitDto);

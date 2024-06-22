@@ -27,7 +27,7 @@ public class ContractorController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid contractorId)
+    public async Task<ActionResult<ContractorDto>> GetByIdAsync([FromRoute] Guid contractorId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
             .ValidateAsync(contractorId);
@@ -45,7 +45,7 @@ public class ContractorController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByVendorAndSpecializationAsync([FromRoute] Guid vendorId, [FromRoute] string specialization)
+    public async Task<ActionResult<IEnumerable<ContractorDto>>> GetByVendorAndSpecializationAsync([FromRoute] Guid vendorId, [FromRoute] string specialization)
     {
         var validationResult = await ValidateVendorAndSpecializationAsync(vendorId, specialization);
 
@@ -62,7 +62,7 @@ public class ContractorController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByVendorAsync([FromRoute] Guid vendorId)
+    public async Task<ActionResult<IEnumerable<ContractorDto>>> GetByVendorAsync([FromRoute] Guid vendorId)
     {
         var validationResult = await _validatorFactory.GetValidator<Guid>()
             .ValidateAsync(vendorId);
@@ -82,7 +82,7 @@ public class ContractorController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> CreateAsync([FromBody] CreateContractorDto contractorDto)
+    public async Task<ActionResult<Guid>> CreateAsync([FromBody] CreateContractorDto contractorDto)
     {
         var validationResult = await _validatorFactory.GetValidator<CreateContractorDto>()
             .ValidateAsync(contractorDto);
