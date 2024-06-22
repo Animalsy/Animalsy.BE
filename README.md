@@ -10,51 +10,51 @@ Animalsy.BE serves as the backbone of the Animalsy application, providing essent
 
 ## Technical Architecture
 
-The backend application consists of several microservices, each responsible for a specific domain within the system. These microservices are containerized using Docker and orchestrated with Docker Compose to ensure easy deployment and scalability. Below is a summary of each service and its purpose, along with links to their detailed documentation.
+The backend application consists of several microservices, each responsible for a specific domain within the system. These microservices are containerized using Docker and orchestrated with Docker Compose to ensure easy system-agnostic deployment and scalability. Below is a summary of each service and its purpose, along with links to their detailed documentation.
 
 ### Services
 
 1. **AuthAPI**
    - **Purpose**: Manages user authentication and roles.
-   - **Technical Documentation**: [AuthAPI Technical Documentation](./Animalsy.BE.Services.AuthAPI/Documentation/Technical.md)
-   - **API Documentation**: [AuthAPI Documentation](./Animalsy.BE.Services.AuthAPI/Documentation/README.md)
+   - **Technical Documentation**: [AuthAPI Technical Documentation](https://github.com/Animalsy/Animalsy.BE/blob/main/Animalsy.BE.Services.AuthAPI/Documentation/Technical.md)
+   - **API Documentation**: [AuthAPI Documentation](https://github.com/Animalsy/Animalsy.BE/blob/main/Animalsy.BE.Services.AuthAPI/Documentation/README.md)
 
 2. **ContractorAPI**
    - **Purpose**: Manages contractor-related data.
-   - **Technical Documentation**: [ContractorAPI Technical Documentation](./Animalsy.BE.Services.ContractorAPI/Documentation/Technical.md)
-   - **API Documentation**: [ContractorAPI Documentation](./Animalsy.BE.Services.ContractorAPI/Documentation/README.md)
+   - **Technical Documentation**: [ContractorAPI Technical Documentation](https://github.com/Animalsy/Animalsy.BE/blob/main/Animalsy.BE.Services.ContractorAPI/Documentation/Technical.md)
+   - **API Documentation**: [ContractorAPI Documentation](https://github.com/Animalsy/Animalsy.BE/blob/main/Animalsy.BE.Services.ContractorAPI/Documentation/README.md)
 
 3. **CustomerAPI**
    - **Purpose**: Manages customer-related data.
-   - **Technical Documentation**: [CustomerAPI Technical Documentation](./Animalsy.BE.Services.CustomerAPI/Documentation/Technical.md)
-   - **API Documentation**: [CustomerAPI Documentation](./Animalsy.BE.Services.CustomerAPI/Documentation/README.md)
+   - **Technical Documentation**: [CustomerAPI Technical Documentation](https://github.com/Animalsy/Animalsy.BE/blob/main/Animalsy.BE.Services.CustomerAPI/Documentation/Technical.md)
+   - **API Documentation**: [CustomerAPI Documentation](https://github.com/Animalsy/Animalsy.BE/blob/main/Animalsy.BE.Services.CustomerAPI/Documentation/README.md)
 
 4. **PetAPI**
    - **Purpose**: Manages pet-related data.
-   - **Technical Documentation**: [PetAPI Technical Documentation](./Animalsy.BE.Services.PetAPI/Documentation/Technical.md)
-   - **API Documentation**: [PetAPI Documentation](./Animalsy.BE.Services.PetAPI/Documentation/README.md)
+   - **Technical Documentation**: [PetAPI Technical Documentation](https://github.com/Animalsy/Animalsy.BE/blob/main/Animalsy.BE.Services.PetAPI/Documentation/Technical.md)
+   - **API Documentation**: [PetAPI Documentation](https://github.com/Animalsy/Animalsy.BE/blob/main/Animalsy.BE.Services.PetAPI/Documentation/README.md)
 
 5. **ProductAPI**
    - **Purpose**: Manages product-related data.
-   - **Technical Documentation**: [ProductAPI Technical Documentation](./Animalsy.BE.Services.ProductAPI/Documentation/Technical.md)
-   - **API Documentation**: [ProductAPI Documentation](./Animalsy.BE.Services.ProductAPI/Documentation/README.md)
+   - **Technical Documentation**: [ProductAPI Technical Documentation](https://github.com/Animalsy/Animalsy.BE/blob/main/Animalsy.BE.Services.ProductAPI/Documentation/Technical.md)
+   - **API Documentation**: [ProductAPI Documentation](https://github.com/Animalsy/Animalsy.BE/blob/main/Animalsy.BE.Services.ProductAPI/Documentation/README.md)
 
 6. **VendorAPI**
    - **Purpose**: Manages vendor-related data.
-   - **Technical Documentation**: [VendorAPI Technical Documentation](./Animalsy.BE.Services.VendorAPI/Documentation/Technical.md)
-   - **API Documentation**: [VendorAPI Documentation](./Animalsy.BE.Services.VendorAPI/Documentation/README.md)
+   - **Technical Documentation**: [VendorAPI Technical Documentation](https://github.com/Animalsy/Animalsy.BE/blob/main/Animalsy.BE.Services.VendorAPI/Documentation/Technical.md)
+   - **API Documentation**: [VendorAPI Documentation](https://github.com/Animalsy/Animalsy.BE/blob/main/Animalsy.BE.Services.VendorAPI/Documentation/README.md)
 
 7. **VisitAPI**
    - **Purpose**: Manages visit-related data.
-   - **Technical Documentation**: [VisitAPI Technical Documentation](./Animalsy.BE.Services.VisitAPI/Documentation/Technical.md)
-   - **API Documentation**: [VisitAPI Documentation](./Animalsy.BE.Services.VisitAPI/Documentation/README.md)
+   - **Technical Documentation**: [VisitAPI Technical Documentation](https://github.com/Animalsy/Animalsy.BE/blob/main/Animalsy.BE.Services.VisitAPI/Documentation/Technical.md)
+   - **API Documentation**: [VisitAPI Documentation](https://github.com/Animalsy/Animalsy.BE/blob/main/Animalsy.BE.Services.VisitAPI/Documentation/README.md)
 
 ### Gateway
 
 The **Animalsy.BE.Gateway** acts as the entry point for all the backend services, providing a unified API gateway that routes requests to the appropriate downstream services. It simplifies communication between the frontend and multiple backend services by offering a single endpoint.
 
 - **Purpose**: Serves as a reverse proxy and routes requests to the corresponding backend services.
-- **Technical Documentation**: [Gateway Technical Documentation](./Animalsy.BE.Gateway/Documentation/Technical.md)
+- **Technical Documentation**: [Gateway Technical Documentation](https://github.com/Animalsy/Animalsy.BE/blob/main/Animalsy.BE.Gateway/Documentation/Technical.md)
 
 ## Deployment
 
@@ -69,10 +69,6 @@ This will build and start all the microservices defined in the `docker-compose.y
 ## Contributing
 
 We welcome contributions to improve Animalsy.BE. Please fork the repository, create a feature branch, and submit a pull request with your changes.
-
-## License
-
-Animalsy.BE is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more information.
 
 ## Contact
 
