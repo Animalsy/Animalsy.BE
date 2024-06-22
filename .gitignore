@@ -388,7 +388,7 @@ FodyWeavers.xsd
 .history/
 
 #docker dbserver data
-./dbserver
+dbserver/
 
 # Windows Installer files from build outputs
 *.cab
