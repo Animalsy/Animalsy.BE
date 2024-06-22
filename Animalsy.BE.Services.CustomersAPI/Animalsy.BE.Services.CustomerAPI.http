@@ -1,6 +1,0 @@
-@Animalsy.BE.Services.CustomerAPI_HostAddress = http://localhost:5220
-
-GET {{Animalsy.BE.Services.CustomerAPI_HostAddress}}/Api/Customer
-Accept: application/json
-
-###
