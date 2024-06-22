@@ -1,0 +1,43 @@
+version: '3.4'
+
+services:
+
+  animalsy-be:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONFIG_ENV=Docker
+
+  authapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONFIG_ENV=Docker
+
+  contractorapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONFIG_ENV=Docker
+
+  customerapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONFIG_ENV=Docker
+
+  petapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONFIG_ENV=Docker
+
+  productapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONFIG_ENV=Docker
+
+  vendorapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONFIG_ENV=Docker
+
+  visitapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONFIG_ENV=Docker

@@ -1,0 +1,175 @@
+version: '3.4'
+
+services:
+
+  animalsy-be:
+    image: 'animalsy-be'
+    container_name: 'animalsy-be'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+    build:
+      context: .
+      dockerfile: Animalsy.BE.Gateway/Dockerfile
+    ports:
+      - '5555:8080'
+    volumes:
+      - ./Animalsy.BE.Gateway/appsettings.json:/app/appsettings.json
+      - ./Animalsy.BE.Gateway/Ocelot.Production.json:/app/Ocelot.Production.json
+    depends_on:
+      - authapi
+      - contractorapi
+      - customerapi
+      - petapi
+      - productapi
+      - vendorapi
+      - visitapi
+
+
+  authapi:
+    image: 'authapi'
+    container_name: 'authapi'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+    build:
+      context: .
+      dockerfile: Animalsy.BE.Services.AuthAPI/Dockerfile
+    ports:
+      - "5000:8080"
+    volumes:
+      - ./Animalsy.BE.Services.AuthAPI/appsettings.json:/app/appsettings.json
+      - ./Animalsy.BE.Services.AuthAPI/appsettings.Production.json:/app/appsettings.Production.json
+    depends_on:
+      dbserver:
+        condition: service_healthy
+      
+
+  contractorapi:
+    image: 'contractorapi'
+    container_name: 'contractorapi'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+    build:
+      context: .
+      dockerfile: Animalsy.BE.Services.ContractorAPI/Dockerfile
+    ports:
+      - "5001:8080"
+    volumes:
+      - ./Animalsy.BE.Services.ContractorAPI/appsettings.json:/app/appsettings.json
+      - ./Animalsy.BE.Services.ContractorAPI/appsettings.Production.json:/app/appsettings.Production.json
+    depends_on:
+      dbserver:
+        condition: service_healthy
+
+
+  customerapi:
+    image: customerapi
+    container_name: customerapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+    build:
+      context: .
+      dockerfile: Animalsy.BE.Services.CustomerAPI/Dockerfile
+    ports:
+      - "5002:8080"
+    volumes:
+      - ./Animalsy.BE.Services.CustomerAPI/appsettings.json:/app/appsettings.json
+      - ./Animalsy.BE.Services.CustomerAPI/appsettings.Production.json:/app/appsettings.Production.json
+    depends_on:
+      dbserver:
+        condition: service_healthy
+
+  petapi:
+    image: 'petapi'
+    container_name: 'petapi'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+    build:
+      context: .
+      dockerfile: Animalsy.BE.Services.PetAPI/Dockerfile
+    ports:
+      - "5003:8080"
+    volumes:
+      - ./Animalsy.BE.Services.PetAPI/appsettings.json:/app/appsettings.json
+      - ./Animalsy.BE.Services.PetAPI/appsettings.Production.json:/app/appsettings.Production.json
+    depends_on:
+      dbserver:
+        condition: service_healthy
+
+  productapi:
+    image: 'productapi'
+    container_name: 'productapi'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+    build:
+      context: .
+      dockerfile: Animalsy.BE.Services.ProductAPI/Dockerfile
+    ports:
+      - "5004:8080"
+    volumes:
+      - ./Animalsy.BE.Services.ProductAPI/appsettings.json:/app/appsettings.json
+      - ./Animalsy.BE.Services.ProductAPI/appsettings.Production.json:/app/appsettings.Production.json
+    depends_on:
+      dbserver:
+        condition: service_healthy
+
+
+  vendorapi:
+    image: 'vendorapi'
+    container_name: 'vendorapi'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+    build:
+      context: .
+      dockerfile: Animalsy.BE.Services.VendorAPI/Dockerfile
+    ports:
+      - "5005:8080"
+    volumes:
+      - ./Animalsy.BE.Services.VendorAPI/appsettings.json:/app/appsettings.json
+      - ./Animalsy.BE.Services.VendorAPI/appsettings.Production.json:/app/appsettings.Production.json
+    depends_on:
+      dbserver:
+        condition: service_healthy
+
+  visitapi:
+    image: 'visitapi'
+    container_name: 'visitapi'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+    build:
+      context: .
+      dockerfile: Animalsy.BE.Services.VisitAPI/Dockerfile
+    ports:
+      - "5006:8080"
+    volumes:
+      - ./Animalsy.BE.Services.VisitAPI/appsettings.json:/app/appsettings.json
+      - ./Animalsy.BE.Services.VisitAPI/appsettings.Production.json:/app/appsettings.Production.json
+    depends_on:
+      dbserver:
+        condition: service_healthy
+
+  dbserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: dbserver
+    environment:
+      - SA_PASSWORD=Password123@
+      - ACCEPT_EULA=y
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./dbserver/data:/var/opt/mssql/data
+      - ./dbserver/log:/var/opt/mssql/log
+
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P "Password123@" -Q "SELECT 1" -b -o /dev/null
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s

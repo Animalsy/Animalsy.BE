@@ -1,0 +1,68 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/customer",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "customerapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "customerapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/customer",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/customer/{customerId}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "customerapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "customerapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/customer/{customerId}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/customer/profile/{userId}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "customerapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "customerapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/customer/profile/{userId}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/customer/{userId}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "customerapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "customerapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/customer/{userId}",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/pet/user/{userId}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "petapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "petapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/pet/user/{userId}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/pet/{petId}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "petapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "petapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/pet/{petId}",
+      "UpstreamHttpMethod": [ "GET", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/pet",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "petapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "petapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/pet",
+      "UpstreamHttpMethod": [ "POST", "PUT" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    }
+  ]
+}

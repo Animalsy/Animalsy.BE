@@ -1,0 +1,101 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/product",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "productapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "productapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/product",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/product/vendor/{vendorId}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "productapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "productapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/product/vendor/{vendorId}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/product/vendor/{categoryAndSubCategory}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "productapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "productapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/product/vendor/{categoryAndSubCategory}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/product/vendor/{vendorId}/{categoryAndSubCategory}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "productapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "productapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/product/vendor/{vendorId}/{categoryAndSubCategory}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/product/{productId}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "productapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "productapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/product/{productId}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/product",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "productapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "productapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/product",
+      "UpstreamHttpMethod": [ "POST", "PUT" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/product/{productId}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "productapi",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "productapi",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/product/{productId}",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    }
+  ]
+}

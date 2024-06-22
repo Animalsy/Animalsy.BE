@@ -10,6 +10,19 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure different appsettings files based on working environment
+
+builder.Configuration.AddEnvironmentVariables();
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+
+if (builder.Environment.IsDevelopment())
+{
+    var devenv = Environment.GetEnvironmentVariable("CONFIG_ENV");
+    builder.Configuration.AddJsonFile($"appsettings.Development.{devenv}.json", optional: true, reloadOnChange: true);
+}
+
 // Add services to the container.
 
 builder.Services.AddDbContext<AppDbContext>(option =>
@@ -52,12 +65,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-app.UseHttpsRedirection();
-
 app.UseAuthentication();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.ApplyPendingMigrations();
 
 app.Run();
