@@ -54,7 +54,7 @@ The backend application consists of several microservices, each responsible for 
 The **Animalsy.BE.Gateway** acts as the entry point for all the backend services, providing a unified API gateway that routes requests to the appropriate downstream services. It simplifies communication between the frontend and multiple backend services by offering a single endpoint.
 
 - **Purpose**: Serves as a reverse proxy and routes requests to the corresponding backend services.
-- **Technical Documentation**: [Gateway Technical Documentation](./Animalsy.BE.Gateway/Documentation/Technical.md)
+- **Technical Documentation**: [Gateway Technical Documentation](./Animalsy.BE.Gateway/Documentation/TechnicalDocumentation.md)
 
 ## Deployment
 
