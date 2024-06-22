@@ -2,207 +2,193 @@
 
 ## Overview
 
-This is the documentation for the ContractorAPI. It provides endpoints for managing customers within the system. Each endpoint description includes details about the request parameters, request body, response, authentication, authorization, and validation requirements.
+This is the documentation for the ContractorAPI. It provides endpoints for managing contractors within the system. Each endpoint description includes details about the request parameters, request body, response, authorization, and validation requirements.
 
-## Authentication and Authorization
+## Authorization
 
-All endpoints require a Bearer token for authentication. Add the token to the Authorization header as follows: `Bearer Generated-JWT-Token`.
+All endpoints require specific roles for authorization. Ensure that the JWT token includes the appropriate roles to access each endpoint.
 
 ## Endpoints
 
-### Get All Customers
+### Get Contractor by ID
 
-**Endpoint:** `GET /api/customer`
+**Endpoint:** `GET /Api/Contractor/{contractorId}`
 
-**Description:** Retrieves a list of all customers.
+**Description:** Retrieves a contractor by their unique ID.
+
+**Path Parameters:**
+- `contractorId` (uuid, required): Unique identifier for the contractor
 
 **Responses:**
 - `200 OK`: Success
-- `401 Unauthorized`: Missing or invalid authentication token
-- `403 Forbidden`: Insufficient permissions
+  - Content-Type: application/json
+  - Schema: `ContractorDto`
+- `400 Bad Request`: Invalid request data
 - `404 Not Found`: Resource not found
 - `500 Internal Server Error`: Server error
 
-**Authentication:** Yes
+**Authorization:** Yes
 
-**Authorization:** Yes, requires `CustomerViewer` role
-
-**Validation:** None
+**Validation:** Yes
 
 ---
 
-### Create a New Customer
+### Get Contractors by Vendor and Specialization
 
-**Endpoint:** `POST /api/customer`
+**Endpoint:** `GET /Api/Contractor/Vendor/{vendorId}/{specialization}`
 
-**Description:** Creates a new customer.
+**Description:** Retrieves contractors by vendor ID and specialization.
+
+**Path Parameters:**
+- `vendorId` (uuid, required): Unique identifier for the vendor
+- `specialization` (string, required): Specialization of the contractors
+
+**Responses:**
+- `200 OK`: Success
+  - Content-Type: application/json
+  - Schema: `array of ContractorDto`
+- `400 Bad Request`: Invalid request data
+- `404 Not Found`: Resource not found
+- `500 Internal Server Error`: Server error
+
+**Authorization:** Yes
+
+**Validation:** Yes
+
+---
+
+### Get Contractors by Vendor
+
+**Endpoint:** `GET /Api/Contractor/Vendor/{vendorId}`
+
+**Description:** Retrieves contractors by vendor ID.
+
+**Path Parameters:**
+- `vendorId` (uuid, required): Unique identifier for the vendor
+
+**Responses:**
+- `200 OK`: Success
+  - Content-Type: application/json
+  - Schema: `array of ContractorDto`
+- `400 Bad Request`: Invalid request data
+- `404 Not Found`: Resource not found
+- `500 Internal Server Error`: Server error
+
+**Authorization:** Yes
+
+**Validation:** Yes
+
+---
+
+### Create a New Contractor
+
+**Endpoint:** `POST /Api/Contractor`
+
+**Description:** Creates a new contractor.
 
 **Request Body:**
-- `userId` (string, uuid): Unique identifier for the user
-- `name` (string, nullable): First name of the customer
-- `lastName` (string, nullable): Last name of the customer
-- `city` (string, nullable): City of residence
-- `street` (string, nullable): Street address
-- `building` (string, nullable): Building number
-- `flat` (string, nullable): Flat number
-- `postalCode` (string, nullable): Postal code
-- `phoneNumber` (string, nullable): Phone number
-- `emailAddress` (string, nullable): Email address
+- `userId` (uuid, required): Unique identifier for the user
+- `name` (string, required): First name of the contractor
+- `lastName` (string, required): Last name of the contractor
+- `specialization` (string, required): Specialization of the contractor
+- `imageUrl` (string, nullable): URL of the contractor's image
 
 **Responses:**
 - `201 Created`: Success
+  - Content-Type: application/json
+  - Schema: `uuid`
 - `400 Bad Request`: Invalid request data
-- `404 Not Found`: Resource not found
-- `409 Conflict`: Conflict in resource creation
+- `403 Forbidden`: Insufficient permissions
 - `500 Internal Server Error`: Server error
 
-**Authentication:** Yes
-
-**Authorization:** Yes, requires `CustomerCreator` role
+**Authorization:** Yes, requires role `vendor` or `admin`
 
 **Validation:** Yes
 
 ---
 
-### Update a Customer
+### Update a Contractor
 
-**Endpoint:** `PUT /api/customer`
+**Endpoint:** `PUT /Api/Contractor`
 
-**Description:** Updates an existing customer.
+**Description:** Updates an existing contractor.
 
 **Request Body:**
-- `userId` (string, uuid): Unique identifier for the user
-- `name` (string, nullable): First name of the customer
-- `lastName` (string, nullable): Last name of the customer
-- `city` (string, nullable): City of residence
-- `street` (string, nullable): Street address
-- `building` (string, nullable): Building number
-- `flat` (string, nullable): Flat number
-- `postalCode` (string, nullable): Postal code
-- `phoneNumber` (string, nullable): Phone number
-- `emailAddress` (string, nullable): Email address
+- `id` (uuid, required): Unique identifier for the contractor
+- `userId` (uuid, required): Unique identifier for the user
+- `name` (string, required): First name of the contractor
+- `lastName` (string, required): Last name of the contractor
+- `specialization` (string, required): Specialization of the contractor
+- `imageUrl` (string, nullable): URL of the contractor's image
 
 **Responses:**
 - `200 OK`: Success
 - `400 Bad Request`: Invalid request data
-- `401 Unauthorized`: Missing or invalid authentication token
-- `404 Not Found`: Resource not found
-- `500 Internal Server Error`: Server error
-
-**Authentication:** Yes
-
-**Authorization:** Yes, requires `CustomerEditor` role
-
-**Validation:** Yes
-
----
-
-### Get Customer by ID
-
-**Endpoint:** `GET /api/customer/{customerId}`
-
-**Description:** Retrieves a customer by their unique ID.
-
-**Path Parameters:**
-- `customerId` (string, uuid): Unique identifier for the customer
-
-**Responses:**
-- `200 OK`: Success
-- `400 Bad Request`: Invalid request data
-- `401 Unauthorized`: Missing or invalid authentication token
 - `403 Forbidden`: Insufficient permissions
 - `404 Not Found`: Resource not found
 - `500 Internal Server Error`: Server error
 
-**Authentication:** Yes
+**Authorization:** Yes, requires role `vendor` or `admin`
 
-**Authorization:** Yes, requires `CustomerViewer` role
-
-**Validation:** None
+**Validation:** Yes
 
 ---
 
-### Delete Customer by ID
+### Delete Contractor by ID
 
-**Endpoint:** `DELETE /api/customer/{userId}`
+**Endpoint:** `DELETE /Api/Contractor/{contractorId}`
 
-**Description:** Deletes a customer by their unique ID.
+**Description:** Deletes a contractor by their unique ID.
 
 **Path Parameters:**
-- `userId` (string, uuid): Unique identifier for the user
+- `contractorId` (uuid, required): Unique identifier for the contractor
 
 **Responses:**
 - `200 OK`: Success
 - `400 Bad Request`: Invalid request data
-- `401 Unauthorized`: Missing or invalid authentication token
+- `403 Forbidden`: Insufficient permissions
 - `404 Not Found`: Resource not found
 - `500 Internal Server Error`: Server error
 
-**Authentication:** Yes
+**Authorization:** Yes, requires role `vendor` or `admin`
 
-**Authorization:** Yes, requires `CustomerDeleter` role
-
-**Validation:** None
-
----
-
-### Get Customer Profile by User ID
-
-**Endpoint:** `GET /api/customer/profile/{userId}`
-
-**Description:** Retrieves the profile of a customer by their user ID.
-
-**Path Parameters:**
-- `userId` (string, uuid): Unique identifier for the user
-
-**Responses:**
-- `200 OK`: Success
-- `400 Bad Request`: Invalid request data
-- `401 Unauthorized`: Missing or invalid authentication token
-- `404 Not Found`: Resource not found
-- `500 Internal Server Error`: Server error
-
-**Authentication:** Yes
-
-**Authorization:** Yes, requires `CustomerViewer` role
-
-**Validation:** None
+**Validation:** Yes
 
 ## Components
 
 ### Schemas
 
-#### CreateCustomerDto
+#### ContractorDto
 
-- `userId` (string, uuid): Unique identifier for the user
-- `name` (string, nullable): First name of the customer
-- `lastName` (string, nullable): Last name of the customer
-- `city` (string, nullable): City of residence
-- `street` (string, nullable): Street address
-- `building` (string, nullable): Building number
-- `flat` (string, nullable): Flat number
-- `postalCode` (string, nullable): Postal code
-- `phoneNumber` (string, nullable): Phone number
-- `emailAddress` (string, nullable): Email address
+- `id` (uuid, required): Unique identifier for the contractor
+- `userId` (uuid, required): Unique identifier for the user
+- `name` (string, required): First name of the contractor
+- `lastName` (string, required): Last name of the contractor
+- `specialization` (string, required): Specialization of the contractor
+- `imageUrl` (string, nullable): URL of the contractor's image
 
-#### UpdateCustomerDto
+#### CreateContractorDto
 
-- `userId` (string, uuid): Unique identifier for the user
-- `name` (string, nullable): First name of the customer
-- `lastName` (string, nullable): Last name of the customer
-- `city` (string, nullable): City of residence
-- `street` (string, nullable): Street address
-- `building` (string, nullable): Building number
-- `flat` (string, nullable): Flat number
-- `postalCode` (string, nullable): Postal code
-- `phoneNumber` (string, nullable): Phone number
-- `emailAddress` (string, nullable): Email address
+- `userId` (uuid, required): Unique identifier for the user
+- `name` (string, required): First name of the contractor
+- `lastName` (string, required): Last name of the contractor
+- `specialization` (string, required): Specialization of the contractor
+- `imageUrl` (string, nullable): URL of the contractor's image
+
+#### UpdateContractorDto
+
+- `id` (uuid, required): Unique identifier for the contractor
+- `userId` (uuid, required): Unique identifier for the user
+- `name` (string, required): First name of the contractor
+- `lastName` (string, required): Last name of the contractor
+- `specialization` (string, required): Specialization of the contractor
+- `imageUrl` (string, nullable): URL of the contractor's image
 
 #### ProblemDetails
 
 - `type` (string, nullable): A URI reference that identifies the problem type
 - `title` (string, nullable): A short, human-readable summary of the problem type
-- `status` (integer, format: int32, nullable): The HTTP status code
+- `status` (integer, nullable, format: int32): The HTTP status code
 - `detail` (string, nullable): A human-readable explanation specific to this occurrence of the problem
 - `instance` (string, nullable): A URI reference that identifies the specific occurrence of the problem
 
